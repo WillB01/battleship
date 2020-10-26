@@ -5,7 +5,6 @@ import styles from './Board.module.scss';
 
 const PlayerBoard = ({ type }) => {
   const { state, dispatch } = useContext(PlayerBoardContext);
-  console.log('STATE', state.board);
 
   return (
     <div className={styles.playerBoard}>

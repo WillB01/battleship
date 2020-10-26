@@ -1,6 +1,6 @@
 .playerBoard {
   background: blue;
-  max-width: 70rem;
+  max-width: 60rem;
   display: grid;
   grid-template-columns: repeat(11, minmax(2rem, 1fr));
   grid-template-rows: repeat(11, 1fr);
