@@ -15,23 +15,17 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
-  const socket = io();
-
   // sockets test
-
-  //  const socketRef = useRef();
+  const socketRef = useRef();
 
   useEffect(() => {
-    socket.on('hello', ({ message }) => alert(message));
-    // const url =
-    //   window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
-    // socketRef.current = io.connect(); // proxy fixes this
+    const port =
+      window.location.hostname === 'localhost' ? 'http://localhost:3231/' : '/';
+    socketRef.current = io.connect(port);
 
-    // socketRef.current =
-
-    // socketRef.current.on('your id', (id) => {
-    //   setYourId(id);
-    // });
+    socketRef.current.on('hello', (id) => {
+      console.log(id);
+    });
   }, []);
 
   const [state, dispatch] = useReducer(playerBoardReducer, initialState);

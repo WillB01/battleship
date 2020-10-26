@@ -1,35 +1,16 @@
-// const express = require('express');
-// const http = require('http');
-// const app = express();
-// const server = http.createServer(app);
-// const socket = require('socket.io');
-// const io = socket(server);
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = (module.exports.io = require('socket.io')(server));
 
-// io.on('connection', (socket) => {
-//   socket.emit('your id', socket.id);
-//   socket.on('send message', (body) => {
-//     io.emit('message', body);
-//   });
-// });
+const PORT = process.env.PORT || 3231;
 
-// server.listen(process.env.PORT || 8000, () =>
-//   console.log('server is running on port 8000')
-// );
+const SocketManager = require('./SocketManager');
 
-// const path = require('path');
-// const express = require('express');
-// const app = express();
-// const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
-// const port = process.env.PORT || 8080;
+app.use(express.static(__dirname + '/../../build'));
 
-// app.use(express.static(path.join(__dirname, '../../build')));
+io.on('connection', SocketManager);
 
-// app.get('/', (req, res, next) => res.sendFile(__dirname + './index.html'));
-
-// // sockets test
-// io.on('connection', (socket) =>
-//   socket.emit('hello', { message: 'hello from server!' })
-// );
-
-// server.listen(port);
+server.listen(PORT, () => {
+  console.log('Connected to port:' + PORT);
+});
