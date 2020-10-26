@@ -20,9 +20,7 @@ const App = () => {
   useEffect(() => {
     console.log(window.location.hostname);
     const url =
-      window.location.hostname === 'localhost'
-        ? 'http://localhost:8000'
-        : window.location.hostname;
+      window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
     socketRef.current = io.connect(url); // proxy fixes this
 
     socketRef.current.on('your id', (id) => {
