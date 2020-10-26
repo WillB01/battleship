@@ -1,8 +1,8 @@
 import React from 'react';
-import PlayerBoard from '../PlayerBoard/PlayerBoard';
+import Board from '../Board/Board';
 
 const Game = () => {
-  return <PlayerBoard />;
+  return <Board />;
 };
 
 export default Game;

@@ -1,19 +1,22 @@
 import React from 'react';
 import './App.css';
 
-import { BoardContext } from './context/storeContext';
-import { boardReducer, initialState } from './reducers/boardReducer.js';
+import { PlayerBoardContext } from './context/storeContext';
+import {
+  playerBoardReducer,
+  initialState,
+} from './reducers/playerBoardReducer.js';
 import Game from './components/Game/Game';
 const { useContext, useReducer } = React;
 
 const App = () => {
-  const [state, dispatch] = useReducer(boardReducer, initialState);
+  const [state, dispatch] = useReducer(playerBoardReducer, initialState);
 
   return (
     <div className='App'>
-      <BoardContext.Provider value={{ state, dispatch }}>
+      <PlayerBoardContext.Provider value={{ state, dispatch }}>
         <Game />
-      </BoardContext.Provider>
+      </PlayerBoardContext.Provider>
     </div>
   );
 };

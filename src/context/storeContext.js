@@ -1,3 +1,3 @@
 import React, { createContext } from 'react';
 
-export const BoardContext = createContext();
+export const PlayerBoardContext = createContext();

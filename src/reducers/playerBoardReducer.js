@@ -1,17 +1,18 @@
 import React from 'react';
 
 import { actionTypes } from '../actions/board';
+import { boardBlueprint } from '../services/boardBlueprint';
 
 export const initialState = {
-  test: 'NEJ',
+  board: boardBlueprint,
 };
 
-export const boardReducer = (state, action) => {
+export const playerBoardReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.TEST:
       return {
         ...state,
-        test: action.payload,
+        board: action.payload,
       };
     default:
       return state;
