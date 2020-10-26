@@ -21,7 +21,7 @@ const App = () => {
     console.log(window.location.hostname);
     const url =
       window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
-    socketRef.current = io.connect(url); // proxy fixes this
+    socketRef.current = io.connect(); // proxy fixes this
 
     socketRef.current.on('your id', (id) => {
       setYourId(id);
