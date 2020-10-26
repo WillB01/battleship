@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import './App.css';
 import { PlayerBoardContext } from './context/storeContext';
 import {
@@ -17,19 +17,19 @@ const App = () => {
 
   const socketRef = useRef();
 
-  useEffect(() => {
-    console.log(window.location.hostname);
-    const url =
-      window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
-    socketRef.current = io.connect(); // proxy fixes this
+  // useEffect(() => {
+  //   console.log(window.location.hostname);
+  //   const url =
+  //     window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
+  //   socketRef.current = io.connect(); // proxy fixes this
 
-    socketRef.current.on('your id', (id) => {
-      setYourId(id);
-    });
-  }, []);
+  //   socketRef.current.on('your id', (id) => {
+  //     setYourId(id);
+  //   });
+  // }, []);
 
   const [state, dispatch] = useReducer(playerBoardReducer, initialState);
-  console.log(yourIdD);
+  // console.log(yourIdD);
 
   return (
     <div className='App'>
