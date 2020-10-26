@@ -1,0 +1,4 @@
+[build]
+base = "battleship/"
+publish = "battleship/build/"
+command = "npm run build
