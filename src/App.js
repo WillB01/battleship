@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
 import './App.css';
 import { PlayerBoardContext } from './context/storeContext';
 import {
@@ -15,18 +15,24 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
-  const socketRef = useRef();
+  const socket = io();
 
-  // useEffect(() => {
-  //   console.log(window.location.hostname);
-  //   const url =
-  //     window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
-  //   socketRef.current = io.connect(); // proxy fixes this
+  // sockets test
 
-  //   socketRef.current.on('your id', (id) => {
-  //     setYourId(id);
-  //   });
-  // }, []);
+  //  const socketRef = useRef();
+
+  useEffect(() => {
+    socket.on('hello', ({ message }) => alert(message));
+    // const url =
+    //   window.location.hostname === 'localhost' ? 'http://localhost:8000' : '/';
+    // socketRef.current = io.connect(); // proxy fixes this
+
+    // socketRef.current =
+
+    // socketRef.current.on('your id', (id) => {
+    //   setYourId(id);
+    // });
+  }, []);
 
   const [state, dispatch] = useReducer(playerBoardReducer, initialState);
   // console.log(yourIdD);
