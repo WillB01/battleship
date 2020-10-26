@@ -6,17 +6,20 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "bufferutil": "^4.0.1",
     "concurrently": "^5.3.0",
     "express": "^4.17.1",
     "node-sass": "^4.14.1",
+    "npm-run-all": "^4.1.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.1",
+    "utf-8-validate": "^5.0.2",
     "web-vitals": "^0.2.4",
     "websocket": "^1.0.32",
-    "npm-run-all": "^4.1.5"
+    "ws": "^7.3.1"
   },
   "scripts": {
     "start-js": "react-scripts start",

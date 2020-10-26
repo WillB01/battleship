@@ -10,8 +10,10 @@ app.use(express.static(path.join(__dirname, '../../build')));
 app.get('/', (req, res, next) => res.sendFile(__dirname + './index.html'));
 
 // sockets test
-io.on('connection', (socket) =>
-  socket.emit('hello', { message: 'hello from server!' })
-);
+io.on('connection', (socket) => {
+  console.log(port);
+  console.log('Client connected');
+  socket.emit('hello', { message: 'hello from server!' });
+});
 
 server.listen(port);
