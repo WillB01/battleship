@@ -2,13 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import io from 'socket.io-client';
 import './App.css';
-import { PlayerBoardContext } from './context/storeContext';
+import { PlayerBoardContext, RoomsContext } from './context/storeContext';
 import {
   playerBoardReducer,
   initialState,
 } from './reducers/playerBoardReducer.js';
+import { roomReducer, roomInitialState } from './reducers/roomsReducer.js';
 import Game from './components/Game/Game';
+import { port } from './services/port';
+
 const { useContext, useReducer } = React;
+
+const socket = io.connect(port);
 
 const App = () => {
   const [yourIdD, setYourId] = useState();
@@ -16,38 +21,40 @@ const App = () => {
   const [message, setMessage] = useState('');
 
   // sockets test
-  const socketRef = useRef();
 
   useEffect(() => {
-    const port =
-      window.location.hostname === 'localhost' ? 'http://localhost:3231/' : '/';
-    socketRef.current = io.connect(port);
+    socket.on('test', 'bajs anus');
 
-    socketRef.current.on('test', 'bajs anus');
-
-    socketRef.current.on('hello', (id) => {
+    socket.on('hello', id => {
       console.log(id);
-      socketRef.current.on('clickHandler', (data) => {
+      socket.on('clickHandler', data => {
         setYourId(data);
       });
     });
   }, []);
 
-  const temp = (data) => {
+  const temp = data => {
     console.log(data);
 
-    socketRef.current.emit('boardClick', data);
+    socket.emit('boardClick', data);
   };
 
   const [state, dispatch] = useReducer(playerBoardReducer, initialState);
+  const [roomState, roomDispatch] = useReducer(roomReducer, roomInitialState);
   // console.log(yourIdD);
 
+  console.log('socket', socket);
+
   return (
-    <div className='App'>
-      <PlayerBoardContext.Provider value={{ state, dispatch }}>
-        <Game temp={temp} />
-        {yourIdD}
-      </PlayerBoardContext.Provider>
+    <div className="App">
+      <RoomsContext.Provider
+        value={{ state: roomState, dispatch: roomDispatch }}
+      >
+        <PlayerBoardContext.Provider value={{ state, dispatch }}>
+          <Game temp={temp} socket={socket} />
+          {yourIdD}
+        </PlayerBoardContext.Provider>
+      </RoomsContext.Provider>
     </div>
   );
 };
