@@ -3,7 +3,7 @@ import { PlayerBoardContext } from '../../context/storeContext';
 import { headingTop, headingSide } from '../../services/boardBlueprint';
 import styles from './Board.module.scss';
 
-const PlayerBoard = ({ type }) => {
+const PlayerBoard = ({ type, temp }) => {
   const { state, dispatch } = useContext(PlayerBoardContext);
 
   return (
@@ -18,7 +18,7 @@ const PlayerBoard = ({ type }) => {
         return item.map((itemItem, ii) => {
           itemItem = ii;
           return (
-            <div onClick={() => console.log('[i]', i, '[ii]', ii)}>
+            <div key={ii} onClick={() => temp(itemItem)}>
               {itemItem}
             </div>
           );

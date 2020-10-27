@@ -23,10 +23,21 @@ const App = () => {
       window.location.hostname === 'localhost' ? 'http://localhost:3231/' : '/';
     socketRef.current = io.connect(port);
 
+    socketRef.current.on('test', 'bajs anus');
+
     socketRef.current.on('hello', (id) => {
       console.log(id);
+      socketRef.current.on('clickHandler', (data) => {
+        setYourId(data);
+      });
     });
   }, []);
+
+  const temp = (data) => {
+    console.log(data);
+
+    socketRef.current.emit('boardClick', data);
+  };
 
   const [state, dispatch] = useReducer(playerBoardReducer, initialState);
   // console.log(yourIdD);
@@ -34,7 +45,8 @@ const App = () => {
   return (
     <div className='App'>
       <PlayerBoardContext.Provider value={{ state, dispatch }}>
-        <Game />
+        <Game temp={temp} />
+        {yourIdD}
       </PlayerBoardContext.Provider>
     </div>
   );
