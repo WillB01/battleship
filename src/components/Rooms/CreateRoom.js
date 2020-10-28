@@ -27,6 +27,8 @@ const CreateRooms = ({ socket }) => {
       },
     });
 
+    console.log(socketActions);
+
     socket.emit(socketActions.CREATE_ROOM, {
       roomName: inputText,
       rooms: updateRooms,

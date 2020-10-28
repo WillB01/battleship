@@ -17,6 +17,7 @@ io.on('connection', socket => {
   // create room
   /////////////////////////////
   socket.on(actions.CREATE_ROOM, data => {
+    console.log(actions);
     socket.join(data.roomName);
     data.rooms.push({ name: data.roomName, hostId: data.id });
     io.to('mainRoom').emit(actions.NEW_ROOM, data);
@@ -39,7 +40,7 @@ io.on('connection', socket => {
         socket.join(data.roomName);
         io.to(data.roomName).emit(actions.JOIN_ROOM, data);
         io.to(data.roomName).emit('startGame');
-        io.emit('removeRoom', data.index);
+        io.emit('removeRoom', data);
 
         socket.leave('mainRoom');
       });
@@ -48,9 +49,7 @@ io.on('connection', socket => {
   // Board click
   /////////////////////////////
   socket.on(actions.ATTACK_SHIP, data => {
-    Object.keys(socket.rooms).forEach((key, i) => {
-      io.to(key).emit(actions.ATTACK_SHIP_HANDLER, data);
-    });
+    io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
   });
 });
 

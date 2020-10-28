@@ -5,7 +5,7 @@ import socketActions from '../../services/socketActions';
 import CreateRooms from './CreateRoom';
 import { RoomsContext } from '../../context/storeContext';
 
-const Rooms = ({ socket, setPlayer }) => {
+const Rooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
   const [showSelf, setShowSelf] = useState(true);
 
@@ -26,7 +26,6 @@ const Rooms = ({ socket, setPlayer }) => {
 
       for (const key in rooms) {
         if (rooms[key].name === data.roomName) {
-          // setPlayer('PLAYER-TWO', socket.id, data.roomName);
           setShowSelf(false);
           rooms.splice(key);
           break;
@@ -41,15 +40,20 @@ const Rooms = ({ socket, setPlayer }) => {
   }, [state.rooms]);
 
   useEffect(() => {
-    socket.on('removeRoom', index => {
-      const rooms = [...state.rooms];
-      rooms.splice(index);
-      dispatch({ type: 'REMOVE-ROOM', payload: rooms });
+    socket.on('removeRoom', data => {
+      data.rooms.splice(data.roomIndex, 1);
+      dispatch({ type: 'REMOVE-ROOM', payload: data.rooms });
     });
   }, []);
 
-  const onClickHandler = (room, index) => {
-    socket.emit('joinRoom', { roomName: room.name, index });
+  const onClickHandler = (room, roomIndex, rooms) => {
+    socket.emit('joinRoom', {
+      roomName: room.name,
+      roomIndex,
+      rooms,
+      playerOneId: room.hostId,
+      playerTwoId: socket.id,
+    });
   };
 
   return (
@@ -63,7 +67,10 @@ const Rooms = ({ socket, setPlayer }) => {
                 return;
               }
               return (
-                <div key={room.name} onClick={() => onClickHandler(room, i)}>
+                <div
+                  key={room.name}
+                  onClick={() => onClickHandler(room, i, state.rooms)}
+                >
                   {room.name}
                 </div>
               );

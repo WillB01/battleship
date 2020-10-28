@@ -13,7 +13,9 @@ const Game = ({ socket }) => {
 
   useEffect(() => {
     socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
-      console.log('[AFTER CLICK]', state);
+      console.log('my id', socket.id);
+      console.log(data);
+      console.log('STATE', state);
     });
   }, []);
 
@@ -22,7 +24,7 @@ const Game = ({ socket }) => {
       setShowBoard(true);
       dispatch({
         type: 'START-GAME',
-        payload: data.roomName,
+        payload: { ...data },
       });
     });
 
@@ -37,14 +39,21 @@ const Game = ({ socket }) => {
     });
   }, []);
 
-  const boardClickHandler = (x, y, kewl) => {
-    console.log('STATE', kewl);
-    socket.emit(socketActions.ATTACK_SHIP, { x: x, y: y });
+  const boardClickHandler = (x, y) => {
+    socket.emit(socketActions.ATTACK_SHIP, {
+      x: x,
+      y: y,
+      gameName: state.game.name,
+      attackingPlayerId: socket.id,
+    });
   };
 
   return (
     <>
       {state.game.name}
+      {showBoard && <div>{state.game.playerOne.id}</div>}
+      {state.game.playerTwo.id}
+
       {gameHosted && !showBoard && <h1>wating for player two</h1>}
       {showBoard && <Board onClick={boardClickHandler} />}
     </>
