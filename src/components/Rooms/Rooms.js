@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { roomActionTypes } from '../../actions/actions';
+import socketActions from '../../server/socketActions';
 
 import CreateRooms from './CreateRoom';
 import { RoomsContext } from '../../context/storeContext';
@@ -8,7 +9,8 @@ const Rooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
 
   useEffect(() => {
-    socket.on('newRoom', data => {
+    console.log(socketActions);
+    socket.on(socketActions.NEW_ROOM, data => {
       console.log('DATA', data);
       if (data === null) {
         console.log('TRUE', data);
@@ -25,7 +27,7 @@ const Rooms = ({ socket }) => {
       });
     });
 
-    socket.on('joinRoom', data => {
+    socket.on(socketActions.JOIN_ROOM, data => {
       const rooms = [...state.rooms];
 
       const updatedRooms = rooms.map(r =>

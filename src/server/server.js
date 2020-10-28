@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = (module.exports.io = require('socket.io')(server));
+const actions = require('./socketActions');
 
 const PORT = process.env.PORT || 3231;
 
@@ -12,11 +13,11 @@ io.on('connect', socket => {
 });
 
 io.on('connection', socket => {
-  // creates new room for users
-  socket.on('createRoom', data => {
+  // CREATE ROOM ///
+  socket.on(actions.CREATE_ROOM, data => {
     socket.join(data.roomName);
     data.rooms.push({ name: data.roomName, hostId: socket.id, opponentId: '' });
-    io.to('mainRoom').emit('newRoom', data);
+    io.to('mainRoom').emit(actions.NEW_ROOM, data);
     socket.leave('mainRoom');
     console.log('ROOM', socket.rooms);
   });
@@ -28,14 +29,12 @@ io.on('connection', socket => {
       .clients((error, clients) => {
         if (error) throw error;
 
-        console.log('[NUMBER OF CLIENTS]', clients, clients.length);
-
         if (clients.length === 2) {
           return;
         }
 
         socket.join(data.roomName);
-        io.to('mainRoom').emit('joinRoom', data);
+        io.to('mainRoom').emit(actions.JOIN_ROOM, data);
         socket.leave('mainRoom');
 
         // io.sockets.emit('newRoom', data);

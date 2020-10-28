@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { roomActionTypes } from '../../actions/actions';
 import { RoomsContext } from '../../context/storeContext';
+import socketActions from '../../server/socketActions';
 
 const CreateRooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
@@ -9,7 +10,7 @@ const CreateRooms = ({ socket }) => {
 
   const onClickHandler = () => {
     const updateRooms = [...state.rooms];
-    socket.emit('createRoom', {
+    socket.emit(socketActions.CREATE_ROOM, {
       roomName: inputText,
       rooms: updateRooms,
     });

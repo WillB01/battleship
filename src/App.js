@@ -9,7 +9,7 @@ import {
 } from './reducers/playerBoardReducer.js';
 import { roomReducer, roomInitialState } from './reducers/roomsReducer.js';
 import Game from './components/Game/Game';
-import { port } from './services/port';
+import { port } from './server/port';
 
 const { useContext, useReducer } = React;
 
