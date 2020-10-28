@@ -1,4 +1,4 @@
-export const socketActions = {
+const socketActions = {
   CREATE_ROOM: 'CREATE-ROOM',
   NEW_ROOM: 'NEW-ROOM',
   JOIN_ROOM: 'JOIN-ROOM',
@@ -6,3 +6,5 @@ export const socketActions = {
   ATTACK_SHIP: 'ATTACK-SHIP',
   ATTACK_SHIP_HANDLER: 'ATTACK-SHIP-HANDLER',
 };
+
+export default socketActions;
