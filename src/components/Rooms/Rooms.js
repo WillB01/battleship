@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
-import socketActions from '../../server/socketActions';
+import socketActions from '../../services/socketActions';
 
 import CreateRooms from './CreateRoom';
 import { RoomsContext } from '../../context/storeContext';

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 
-import socketActions from '../../server/socketActions';
+import socketActions from '../../services/socketActions';
 
 import Board from '../Board/Board';
 

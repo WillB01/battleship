@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
 import { RoomsContext, GameContext } from '../../context/storeContext';
-import socketActions from '../../server/socketActions';
+import socketActions from '../../services/socketActions';
 
 const CreateRooms = ({ socket }) => {
   const { state: rState } = useContext(RoomsContext);
