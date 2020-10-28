@@ -4,10 +4,9 @@ import socketActions from '../../server/socketActions';
 
 import Board from '../Board/Board';
 
-import { RoomsContext, GameContext } from '../../context/storeContext';
+import { GameContext } from '../../context/storeContext';
 
 const Game = ({ socket }) => {
-  const { state: rState } = useContext(RoomsContext);
   const { state, dispatch } = useContext(GameContext);
   const [showBoard, setShowBoard] = useState(false);
   const [gameHosted, setGameHosted] = useState(false);
@@ -22,9 +21,7 @@ const Game = ({ socket }) => {
     socket.on(socketActions.JOIN_ROOM, () => {
       setShowBoard(true);
     });
-  }, []);
 
-  useEffect(() => {
     socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
       setGameHosted(true);
     });
@@ -36,7 +33,9 @@ const Game = ({ socket }) => {
     });
   }, []);
 
-  const boardClickHandler = (x, y) => {
+  const boardClickHandler = (x, y, roomName) => {
+    console.log('name', roomName);
+    console.log('STATE', state);
     socket.emit(socketActions.ATTACK_SHIP, { x: x, y: y });
   };
 

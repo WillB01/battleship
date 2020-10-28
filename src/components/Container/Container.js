@@ -11,7 +11,7 @@ const Container = ({ socket }) => {
   useEffect(() => {
     console.log('effetct', state);
     console.log('room state', rState);
-  }, [state, rState]);
+  }, []);
 
   const setPlayerHandler = (playerType, id, roomName) => {
     // socket.emit('uppdateAfterSecondPlayer');

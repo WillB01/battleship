@@ -26,10 +26,6 @@ const setPlayer = (state, action) => {
   let updateGame = [...state.game];
   let keyIndex = 0;
 
-  // updateGame = updateGame.filter(
-  //   (v, i, a) => a.findIndex(t => t.name === v.name) === i
-  // );
-
   for (const key in updateGame) {
     if (updateGame[key].name === action.payload.roomName) {
       keyIndex = key;
@@ -66,10 +62,6 @@ const setPlayer = (state, action) => {
     }
   }
 
-  // updateGame = updateGame.filter(
-  //   (v, i, a) => a.findIndex(t => t.name === v.name) === i
-  // );
-
   if (action.type === gameActionTypes.SET_PLAYER_TWO) {
     updateGame[keyIndex].playerTwo = {
       ...state.game[keyIndex].playerTwo,
@@ -77,10 +69,6 @@ const setPlayer = (state, action) => {
       name: action.payload.playerName,
     };
   }
-
-  // updateGame = updateGame.filter(
-  //   (v, i, a) => a.findIndex(t => t.name === v.name) === i
-  // );
 
   return updateGame;
 };
