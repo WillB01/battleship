@@ -7,8 +7,6 @@ export const roomInitialState = {
 };
 
 export const roomReducer = (state, action) => {
-  console.log(action);
-
   switch (action.type) {
     case roomActionTypes.CREATE_ROOM:
       return {
@@ -16,6 +14,11 @@ export const roomReducer = (state, action) => {
         rooms: action.payload.rooms,
       };
     case roomActionTypes.OPPONENT_JOINS:
+      return {
+        ...state,
+        rooms: action.payload,
+      };
+    case 'REMOVE-ROOM':
       return {
         ...state,
         rooms: action.payload,

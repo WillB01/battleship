@@ -1,31 +1,41 @@
-import React, { useReducer, useContext } from 'react';
-import { PlayerBoardContext } from '../../context/storeContext';
+import React, { useReducer, useContext, useEffect, useState } from 'react';
+import { GameContext } from '../../context/storeContext';
 import { headingTop, headingSide } from '../../services/boardBlueprint';
 import styles from './Board.module.scss';
 
-const PlayerBoard = ({ type, temp }) => {
-  const { state, dispatch } = useContext(PlayerBoardContext);
+const Board = ({ onClick }) => {
+  const { state, dispatch } = useContext(GameContext);
 
   return (
-    <div className={styles.playerBoard}>
-      {headingTop.map((item, i) => {
-        return <div style={{ gridColumn: `${i + 2} / span 1` }}>{item}</div>;
-      })}
-      {headingSide.map((item, i) => {
-        return <div style={{ gridRow: `${i + 2} / span 1` }}>{item}</div>;
-      })}
-      {state.board.map((item, i) => {
-        return item.map((itemItem, ii) => {
-          itemItem = ii;
+    <>
+      <div className={styles.playerBoard}>
+        {headingTop.map((item, i) => {
           return (
-            <div key={ii} onClick={() => temp(itemItem)}>
-              {itemItem}
+            <div key={i} style={{ gridColumn: `${i + 2} / span 1` }}>
+              {item}
             </div>
           );
-        });
-      })}
-    </div>
+        })}
+        {headingSide.map((item, i) => {
+          return (
+            <div key={i} style={{ gridRow: `${i + 2} / span 1` }}>
+              {item}
+            </div>
+          );
+        })}
+        {state.board.map((item, i) => {
+          return item.map((itemItem, ii) => {
+            itemItem = ii;
+            return (
+              <div key={ii} onClick={() => onClick(itemItem, i)}>
+                {itemItem}
+              </div>
+            );
+          });
+        })}
+      </div>
+    </>
   );
 };
 
-export default PlayerBoard;
+export default Board;

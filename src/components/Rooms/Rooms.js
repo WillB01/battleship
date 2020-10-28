@@ -1,24 +1,16 @@
-import React, { useContext, useEffect } from 'react';
-import { roomActionTypes } from '../../actions/actions';
+import React, { useContext, useEffect, useState } from 'react';
+import { roomActionTypes, gameActionTypes } from '../../actions/actions';
 import socketActions from '../../server/socketActions';
 
 import CreateRooms from './CreateRoom';
 import { RoomsContext } from '../../context/storeContext';
 
-const Rooms = ({ socket }) => {
+const Rooms = ({ socket, setPlayer }) => {
   const { state, dispatch } = useContext(RoomsContext);
+  const [showSelf, setShowSelf] = useState(true);
 
   useEffect(() => {
-    console.log(socketActions);
     socket.on(socketActions.NEW_ROOM, data => {
-      console.log('DATA', data);
-      if (data === null) {
-        console.log('TRUE', data);
-
-        data = {
-          rooms: [...state.rooms],
-        };
-      }
       dispatch({
         type: roomActionTypes.CREATE_ROOM,
         payload: {
@@ -26,39 +18,58 @@ const Rooms = ({ socket }) => {
         },
       });
     });
+  }, [socket.on]);
 
+  useEffect(() => {
     socket.on(socketActions.JOIN_ROOM, data => {
       const rooms = [...state.rooms];
 
-      const updatedRooms = rooms.map(r =>
-        r.name === data.roomName ? { ...r, opponentId: data.opponentId } : r
-      );
-
-      console.log('[UPDATED ROOMS JOIN]', updatedRooms);
+      for (const key in rooms) {
+        if (rooms[key].name === data.roomName) {
+          // setPlayer('PLAYER-TWO', socket.id, data.roomName);
+          setShowSelf(false);
+          rooms.splice(key);
+          break;
+        }
+      }
 
       dispatch({
         type: roomActionTypes.OPPONENT_JOINS,
-        payload: updatedRooms,
+        payload: rooms,
       });
     });
-  }, [state, socket]);
+  }, [state.rooms]);
 
-  const onClickHandler = room => {
-    socket.emit('joinRoom', { roomName: room.name, opponentId: socket.id });
+  useEffect(() => {
+    socket.on('removeRoom', index => {
+      const rooms = [...state.rooms];
+      rooms.splice(index);
+      dispatch({ type: 'REMOVE-ROOM', payload: rooms });
+    });
+  }, []);
+
+  const onClickHandler = (room, index) => {
+    socket.emit('joinRoom', { roomName: room.name, index });
   };
 
-  console.log('[STATE]', state.rooms);
   return (
     <div>
-      <CreateRooms socket={socket} />
-      {state.rooms &&
-        state.rooms.map((room, i) => {
-          return (
-            <div key={room.name} onClick={() => onClickHandler(room)}>
-              {room.name}
-            </div>
-          );
-        })}
+      {showSelf && (
+        <>
+          <CreateRooms socket={socket} />
+          {state.rooms &&
+            state.rooms.map((room, i) => {
+              if (room.hostId === socket.id) {
+                return;
+              }
+              return (
+                <div key={room.name} onClick={() => onClickHandler(room, i)}>
+                  {room.name}
+                </div>
+              );
+            })}
+        </>
+      )}
     </div>
   );
 };

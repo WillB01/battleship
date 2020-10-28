@@ -3,7 +3,8 @@ export const roomActionTypes = {
   OPPONENT_JOINS: 'OPPONENT_JOINS',
 };
 
-export const BoardActionTypes = {
-  CREATE_ROOM: 'CREATE_ROOM',
+export const gameActionTypes = {
+  SET_PLAYER_ONE: 'SET-PLAYER-ONE',
+  SET_PLAYER_TWO: 'SET-PLAYER-TWO',
   OPPONENT_JOINS: 'OPPONENT_JOINS',
 };

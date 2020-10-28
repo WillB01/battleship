@@ -13,16 +13,19 @@ io.on('connect', socket => {
 });
 
 io.on('connection', socket => {
-  // CREATE ROOM ///
+  ///////////////////////////////
+  // create room
+  /////////////////////////////
   socket.on(actions.CREATE_ROOM, data => {
     socket.join(data.roomName);
-    data.rooms.push({ name: data.roomName, hostId: socket.id, opponentId: '' });
+    data.rooms.push({ name: data.roomName, hostId: data.id });
     io.to('mainRoom').emit(actions.NEW_ROOM, data);
     socket.leave('mainRoom');
-    console.log('ROOM', socket.rooms);
+    io.to(socket.id).emit(actions.WAITING_FOR_PLAYER_TWO);
   });
   ///////////////////////////////
   // join room
+  /////////////////////////////
   socket.on('joinRoom', data => {
     io.of('/')
       .in(data.roomName)
@@ -34,22 +37,20 @@ io.on('connection', socket => {
         }
 
         socket.join(data.roomName);
-        io.to('mainRoom').emit(actions.JOIN_ROOM, data);
-        socket.leave('mainRoom');
+        io.to(data.roomName).emit(actions.JOIN_ROOM, data);
+        io.to(data.roomName).emit('startGame');
+        io.emit('removeRoom', data.index);
 
-        // io.sockets.emit('newRoom', data);
-        console.log('ROOM', data.roomName);
-        // Returns an array of client IDs like ["Anw2LatarvGVVXEIAAAD"]
+        socket.leave('mainRoom');
       });
   });
-  //////////////////////////////////////
-
-  socket.on('boardClick', data => {
-    // console.log('[SERVER KEWL]', data);
-    // io.sockets.emit('clickHandler', data);
-    console.log(data);
-
-    // io.to('room1').br('clickHandler', data);
+  ///////////////////////////////
+  // Board click
+  /////////////////////////////
+  socket.on(actions.ATTACK_SHIP, data => {
+    Object.keys(socket.rooms).forEach((key, i) => {
+      io.to(key).emit(actions.ATTACK_SHIP_HANDLER, data);
+    });
   });
 });
 

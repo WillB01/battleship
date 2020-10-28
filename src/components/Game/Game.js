@@ -1,40 +1,49 @@
 import React, { useContext, useState, useEffect } from 'react';
 
+import socketActions from '../../server/socketActions';
+
 import Board from '../Board/Board';
-import Rooms from '../Rooms/Rooms';
 
-import { RoomsContext } from '../../context/storeContext';
+import { RoomsContext, GameContext } from '../../context/storeContext';
 
-const Game = ({ temp, socket }) => {
-  const { state, dispatch } = useContext(RoomsContext);
-  const [showRows, setShowRows] = useState();
+const Game = ({ socket }) => {
+  const { state: rState } = useContext(RoomsContext);
+  const { state, dispatch } = useContext(GameContext);
+  const [showBoard, setShowBoard] = useState(false);
+  const [gameHosted, setGameHosted] = useState(false);
 
   useEffect(() => {
-    const roomsState = [...state.rooms];
-    let rooms = null;
+    socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
+      console.log('[AFTER CLICK]', state);
+    });
+  }, []);
 
-    if (state.rooms.length === 0) {
-      return setShowRows(<Rooms socket={socket} />);
-    } else {
-      for (const key in roomsState) {
-        console.log('game', roomsState[key].hostId, socket.id);
-        if (roomsState[key].hostId === socket.id) {
-          console.log('yes');
-          return setShowRows(null);
-        }
-        if (roomsState[key].opponentId === socket.id) {
-          return setShowRows(null);
-        }
-      }
+  useEffect(() => {
+    socket.on(socketActions.JOIN_ROOM, () => {
+      setShowBoard(true);
+    });
+  }, []);
 
-      return setShowRows(<Rooms socket={socket} />);
-    }
-  }, [state, setShowRows]);
+  useEffect(() => {
+    socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
+      setGameHosted(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('gameHosted', () => {
+      setGameHosted(true);
+    });
+  }, []);
+
+  const boardClickHandler = (x, y) => {
+    socket.emit(socketActions.ATTACK_SHIP, { x: x, y: y });
+  };
 
   return (
     <>
-      {showRows}
-      <Board temp={temp} socket={socket} />
+      {gameHosted && !showBoard && <h1>wating for player two</h1>}
+      {showBoard && <Board onClick={boardClickHandler} />}
     </>
   );
 };
