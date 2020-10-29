@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Game from '../Game/Game';
 import Rooms from '../Rooms/Rooms';
 import CreateRooms from '../Rooms/CreateRoom';
@@ -9,10 +9,19 @@ const Container = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
   const { rState, rDispatch } = useContext(GameContext);
 
-  console.log(state);
+  const [connectedUsers, setConnectedUsers] = useState(0);
+
+  useEffect(() => {
+    socket.on('getConnectedSockets', sockets => {
+      setConnectedUsers(sockets);
+    });
+  }, []);
 
   return (
     <>
+      {!state.game.playerTwo.id && !state.game.playerTwo.id && (
+        <div>online: {connectedUsers}</div>
+      )}
       {!state.game.playerTwo.id && <CreateRooms socket={socket} />}
       {!state.game.playerOne.id && <Rooms socket={socket} />}
       <Game socket={socket} />

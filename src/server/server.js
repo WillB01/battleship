@@ -10,10 +10,16 @@ const MAIN_ROOM = 'MAIN_ROOM';
 app.use(express.static(__dirname + '/../../build'));
 
 io.on('connect', socket => {
+  const sockets = Object.keys(io.sockets.sockets).length;
   socket.join(MAIN_ROOM);
+  io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
 });
 
 io.on('connection', socket => {
+  socket.on('disconnect', socket => {
+    const sockets = Object.keys(io.sockets.sockets).length;
+    io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
+  });
   ///////////////////////////////
   // create room
   /////////////////////////////

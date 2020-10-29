@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, Fragment } from 'react';
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
 import socketActions from '../../services/socketActions';
 
@@ -19,7 +19,7 @@ const Rooms = ({ socket }) => {
         },
       });
     });
-  }, [socket.on]);
+  }, []);
 
   useEffect(() => {
     socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
@@ -41,7 +41,7 @@ const Rooms = ({ socket }) => {
     });
   }, []);
 
-  const onClickHandler = (room, roomIndex, rooms) => {
+  const onClickHandler = () => {
     setShowNameInput(true);
   };
 
@@ -61,33 +61,38 @@ const Rooms = ({ socket }) => {
     <div>
       {showSelf && (
         <>
+          {showNameInput && (
+            <div>
+              <input
+                type="text"
+                onChange={e => setPlayerTwoInput(e.target.value)}
+              />
+            </div>
+          )}
           {state.rooms &&
             state.rooms.map((room, i) => {
               if (room.hostId === socket.id) {
                 return;
               }
               return (
-                <>
-                  <div
-                    key={room.name}
-                    onClick={() => onClickHandler(room, i, state.rooms)}
-                  >
-                    <span>
-                      {room.name} - {room.hostName}
-                    </span>
-                  </div>
+                <Fragment key={`${Math.random()}-${i}`}>
+                  {!showNameInput && (
+                    <div>
+                      <div onClick={() => onClickHandler(room, i, state.rooms)}>
+                        <span>
+                          {room.name} - {room.hostName}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   {showNameInput && (
-                    <div key={room.name}>
-                      <input
-                        type="text"
-                        onChange={e => setPlayerTwoInput(e.target.value)}
-                      />
+                    <div>
                       <button onClick={() => joinRoom(room, i, state.rooms)}>
                         lets go!
                       </button>
                     </div>
                   )}
-                </>
+                </Fragment>
               );
             })}
         </>
