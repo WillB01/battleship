@@ -19,10 +19,14 @@ io.on('connection', socket => {
   /////////////////////////////
   socket.on(actions.CREATE_ROOM, data => {
     socket.join(data.roomName);
-    data.rooms.push({ name: data.roomName, hostId: data.id });
+    data.rooms.push({
+      name: data.roomName,
+      hostId: data.id,
+      hostName: data.hostName,
+    });
     socket.leave(MAIN_ROOM);
 
-    io.to(MAIN_ROOM).emit(actions.NEW_ROOM, data);
+    io.to(MAIN_ROOM).emit(actions.CREATE_ROOM_HANDLER, data);
     io.to(socket.id).emit(actions.WAITING_FOR_PLAYER_TWO);
   });
   ///////////////////////////////

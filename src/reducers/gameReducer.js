@@ -54,10 +54,12 @@ export const gameReducer = (state, action) => {
           playerOne: {
             ...state.game.playerOne,
             id: action.payload.playerOneId,
+            name: action.payload.playerOneName,
           },
           playerTwo: {
             ...state.game.playerTwo,
             id: action.payload.playerTwoId,
+            name: action.payload.playerTwoName,
           },
         },
       };

@@ -7,9 +7,11 @@ import { RoomsContext } from '../../context/storeContext';
 const Rooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
   const [showSelf, setShowSelf] = useState(true);
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [playerTwoInput, setPlayerTwoInput] = useState('');
 
   useEffect(() => {
-    socket.on(socketActions.NEW_ROOM, data => {
+    socket.on(socketActions.CREATE_ROOM_HANDLER, data => {
       dispatch({
         type: roomActionTypes.CREATE_ROOM,
         payload: {
@@ -40,12 +42,18 @@ const Rooms = ({ socket }) => {
   }, []);
 
   const onClickHandler = (room, roomIndex, rooms) => {
+    setShowNameInput(true);
+  };
+
+  const joinRoom = (room, roomIndex, rooms) => {
     socket.emit(socketActions.JOIN_ROOM, {
       roomName: room.name,
       roomIndex,
       rooms,
       playerOneId: room.hostId,
       playerTwoId: socket.id,
+      playerOneName: room.hostName,
+      playerTwoName: playerTwoInput,
     });
   };
 
@@ -59,12 +67,27 @@ const Rooms = ({ socket }) => {
                 return;
               }
               return (
-                <div
-                  key={room.name}
-                  onClick={() => onClickHandler(room, i, state.rooms)}
-                >
-                  {room.name}
-                </div>
+                <>
+                  <div
+                    key={room.name}
+                    onClick={() => onClickHandler(room, i, state.rooms)}
+                  >
+                    <span>
+                      {room.name} - {room.hostName}
+                    </span>
+                  </div>
+                  {showNameInput && (
+                    <div key={room.name}>
+                      <input
+                        type="text"
+                        onChange={e => setPlayerTwoInput(e.target.value)}
+                      />
+                      <button onClick={() => joinRoom(room, i, state.rooms)}>
+                        lets go!
+                      </button>
+                    </div>
+                  )}
+                </>
               );
             })}
         </>

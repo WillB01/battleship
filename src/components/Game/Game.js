@@ -45,8 +45,8 @@ const Game = ({ socket }) => {
   return (
     <>
       {state.game.name}
-      {showBoard && <div>{state.game.playerOne.id}</div>}
-      {state.game.playerTwo.id}
+      {showBoard && <div>player 1: {state.game.playerOne.name}</div>}
+      {showBoard && <div>player: 2{state.game.playerTwo.name}</div>}
 
       {gameHosted && !showBoard && <h1>wating for player two</h1>}
       {showBoard && <Board onClick={boardClickHandler} />}

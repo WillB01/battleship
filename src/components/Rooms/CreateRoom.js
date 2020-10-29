@@ -7,32 +7,37 @@ import socketActions from '../../services/socketActions';
 const CreateRooms = ({ socket }) => {
   const { state: rState } = useContext(RoomsContext);
   const { state, dispatch } = useContext(GameContext);
-  const [inputText, setInputText] = useState('');
+  const [roomText, setRoomText] = useState('');
+  const [nicknameText, setNicknameText] = useState('');
 
   const onClickHandler = () => {
     const updateRooms = [...rState.rooms];
 
     for (const key in updateRooms) {
-      if (updateRooms[key].name === inputText) {
+      if (updateRooms[key].name === roomText) {
         return alert('NO');
       }
+    }
+
+    // TODO validation
+    if (roomText === '' || nicknameText === '') {
+      return;
     }
 
     dispatch({
       type: gameActionTypes.SET_PLAYER_ONE,
       payload: {
         id: socket.id,
-        roomName: inputText,
-        playerName: 'willy',
+        roomName: roomText,
+        playerName: nicknameText,
       },
     });
 
-    console.log(socketActions);
-
     socket.emit(socketActions.CREATE_ROOM, {
-      roomName: inputText,
+      roomName: roomText,
       rooms: updateRooms,
       id: socket.id,
+      hostName: nicknameText,
     });
   };
 
@@ -42,7 +47,12 @@ const CreateRooms = ({ socket }) => {
       <input
         type="text"
         placeholder="game name"
-        onChange={e => setInputText(e.target.value)}
+        onChange={e => setRoomText(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="nick-name"
+        onChange={e => setNicknameText(e.target.value)}
       />
     </>
   );
