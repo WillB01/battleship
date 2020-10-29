@@ -58,7 +58,7 @@ const Rooms = ({ socket }) => {
       rooms: roomToJoin.rooms,
       playerOneId: roomToJoin.room.hostId,
       playerTwoId: socket.id,
-      playerOneName: roomToJoin.room.name,
+      playerOneName: roomToJoin.room.hostName,
       playerTwoName: playerTwoInput,
     });
   };
