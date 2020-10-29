@@ -5,11 +5,12 @@ const io = (module.exports.io = require('socket.io')(server));
 const actions = require('./socketActions');
 
 const PORT = process.env.PORT || 3231;
+const MAIN_ROOM = 'MAIN_ROOM';
 
 app.use(express.static(__dirname + '/../../build'));
 
 io.on('connect', socket => {
-  socket.join('mainRoom');
+  socket.join(MAIN_ROOM);
 });
 
 io.on('connection', socket => {
@@ -17,17 +18,17 @@ io.on('connection', socket => {
   // create room
   /////////////////////////////
   socket.on(actions.CREATE_ROOM, data => {
-    console.log(actions);
     socket.join(data.roomName);
     data.rooms.push({ name: data.roomName, hostId: data.id });
-    io.to('mainRoom').emit(actions.NEW_ROOM, data);
-    socket.leave('mainRoom');
+    socket.leave(MAIN_ROOM);
+
+    io.to(MAIN_ROOM).emit(actions.NEW_ROOM, data);
     io.to(socket.id).emit(actions.WAITING_FOR_PLAYER_TWO);
   });
   ///////////////////////////////
   // join room
   /////////////////////////////
-  socket.on('joinRoom', data => {
+  socket.on(actions.JOIN_ROOM, data => {
     io.of('/')
       .in(data.roomName)
       .clients((error, clients) => {
@@ -38,11 +39,9 @@ io.on('connection', socket => {
         }
 
         socket.join(data.roomName);
-        io.to(data.roomName).emit(actions.JOIN_ROOM, data);
-        io.to(data.roomName).emit('startGame');
+        io.to(data.roomName).emit(actions.JOIN_ROOM_HANDLER, data);
         io.emit('removeRoom', data);
-
-        socket.leave('mainRoom');
+        socket.leave(MAIN_ROOM);
       });
   });
   ///////////////////////////////

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
 import socketActions from '../../services/socketActions';
 
-import CreateRooms from './CreateRoom';
 import { RoomsContext } from '../../context/storeContext';
 
 const Rooms = ({ socket }) => {
@@ -21,23 +20,17 @@ const Rooms = ({ socket }) => {
   }, [socket.on]);
 
   useEffect(() => {
-    socket.on(socketActions.JOIN_ROOM, data => {
+    socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
       const rooms = [...state.rooms];
 
       for (const key in rooms) {
         if (rooms[key].name === data.roomName) {
           setShowSelf(false);
-          rooms.splice(key);
           break;
         }
       }
-
-      dispatch({
-        type: roomActionTypes.OPPONENT_JOINS,
-        payload: rooms,
-      });
     });
-  }, [state.rooms]);
+  }, []);
 
   useEffect(() => {
     socket.on('removeRoom', data => {
@@ -47,7 +40,7 @@ const Rooms = ({ socket }) => {
   }, []);
 
   const onClickHandler = (room, roomIndex, rooms) => {
-    socket.emit('joinRoom', {
+    socket.emit(socketActions.JOIN_ROOM, {
       roomName: room.name,
       roomIndex,
       rooms,
@@ -60,7 +53,6 @@ const Rooms = ({ socket }) => {
     <div>
       {showSelf && (
         <>
-          <CreateRooms socket={socket} />
           {state.rooms &&
             state.rooms.map((room, i) => {
               if (room.hostId === socket.id) {

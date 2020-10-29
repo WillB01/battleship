@@ -1,17 +1,20 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import { gameActionTypes } from '../../actions/actions';
-import { RoomsContext, GameContext } from '../../context/storeContext';
-
+import React, { useContext } from 'react';
 import Game from '../Game/Game';
 import Rooms from '../Rooms/Rooms';
+import CreateRooms from '../Rooms/CreateRoom';
+
+import { GameContext, RoomsContext } from '../../context/storeContext';
 
 const Container = ({ socket }) => {
-  const { state: rState } = useContext(RoomsContext);
   const { state, dispatch } = useContext(GameContext);
+  const { rState, rDispatch } = useContext(GameContext);
+
+  console.log(state);
 
   return (
     <>
-      <Rooms socket={socket} />
+      {!state.game.playerTwo.id && <CreateRooms socket={socket} />}
+      {!state.game.playerOne.id && <Rooms socket={socket} />}
       <Game socket={socket} />
     </>
   );

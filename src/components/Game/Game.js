@@ -20,7 +20,7 @@ const Game = ({ socket }) => {
   }, []);
 
   useEffect(() => {
-    socket.on(socketActions.JOIN_ROOM, data => {
+    socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
       setShowBoard(true);
       dispatch({
         type: 'START-GAME',
@@ -29,12 +29,6 @@ const Game = ({ socket }) => {
     });
 
     socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
-      setGameHosted(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.on('gameHosted', () => {
       setGameHosted(true);
     });
   }, []);

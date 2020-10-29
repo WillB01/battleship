@@ -16,7 +16,6 @@ export const roomReducer = (state, action) => {
     case roomActionTypes.OPPONENT_JOINS:
       return {
         ...state,
-        rooms: action.payload,
       };
     case 'REMOVE-ROOM':
       return {
