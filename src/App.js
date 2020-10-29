@@ -20,13 +20,13 @@ const App = () => {
 
   return (
     <div className="App">
-      <RoomsContext.Provider
-        value={{ state: roomState, dispatch: roomDispatch }}
-      >
-        <GameContext.Provider value={{ state, dispatch }}>
+      <GameContext.Provider value={{ state, dispatch }}>
+        <RoomsContext.Provider
+          value={{ state: roomState, dispatch: roomDispatch }}
+        >
           <Container socket={socket} />
-        </GameContext.Provider>
-      </RoomsContext.Provider>
+        </RoomsContext.Provider>
+      </GameContext.Provider>
     </div>
   );
 };

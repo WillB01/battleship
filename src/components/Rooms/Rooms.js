@@ -8,6 +8,11 @@ const Rooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
   const [showSelf, setShowSelf] = useState(true);
   const [showNameInput, setShowNameInput] = useState(false);
+  const [roomToJoin, setRoomToJoin] = useState({
+    room: {},
+    roomIndex: '',
+    rooms: [],
+  });
   const [playerTwoInput, setPlayerTwoInput] = useState('');
 
   useEffect(() => {
@@ -41,18 +46,19 @@ const Rooms = ({ socket }) => {
     });
   }, []);
 
-  const onClickHandler = () => {
+  const onClickHandler = (room, i, rooms) => {
+    setRoomToJoin({ room, roomIndex: i, rooms });
     setShowNameInput(true);
   };
 
-  const joinRoom = (room, roomIndex, rooms) => {
+  const joinRoom = () => {
     socket.emit(socketActions.JOIN_ROOM, {
-      roomName: room.name,
-      roomIndex,
-      rooms,
-      playerOneId: room.hostId,
+      roomName: roomToJoin.room.name,
+      roomIndex: roomToJoin.roomIndex,
+      rooms: roomToJoin.rooms,
+      playerOneId: roomToJoin.room.hostId,
       playerTwoId: socket.id,
-      playerOneName: room.hostName,
+      playerOneName: roomToJoin.room.name,
       playerTwoName: playerTwoInput,
     });
   };
@@ -67,6 +73,7 @@ const Rooms = ({ socket }) => {
                 type="text"
                 onChange={e => setPlayerTwoInput(e.target.value)}
               />
+              <button onClick={joinRoom}>lets go!</button>
             </div>
           )}
           {state.rooms &&
@@ -83,13 +90,6 @@ const Rooms = ({ socket }) => {
                           {room.name} - {room.hostName}
                         </span>
                       </div>
-                    </div>
-                  )}
-                  {showNameInput && (
-                    <div>
-                      <button onClick={() => joinRoom(room, i, state.rooms)}>
-                        lets go!
-                      </button>
                     </div>
                   )}
                 </Fragment>

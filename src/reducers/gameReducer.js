@@ -8,12 +8,14 @@ export const initialState = {
     playerOne: {
       id: '',
       name: '',
-      attackLocation: [{ x: '', y: '' }],
+      attackLocation: [],
+      shipLocation: [{ x: '', y: '' }],
     },
     playerTwo: {
       id: '',
       name: '',
       attackLocation: [{ x: '', y: '' }],
+      shipLocation: [{ x: '', y: '' }],
     },
   },
 };
@@ -33,18 +35,6 @@ export const gameReducer = (state, action) => {
         },
       };
 
-    case gameActionTypes.SET_PLAYER_TWO:
-      return {
-        ...state,
-        game: {
-          ...state.game,
-          playerTwo: {
-            ...state.playerTwo,
-            id: action.payload.id,
-            name: action.payload.playerName,
-          },
-        },
-      };
     case 'START-GAME': {
       return {
         ...state,
@@ -62,6 +52,11 @@ export const gameReducer = (state, action) => {
             name: action.payload.playerTwoName,
           },
         },
+      };
+    }
+    case 'ATTACK-PLAYER': {
+      return {
+        ...action.payload.state,
       };
     }
     default:

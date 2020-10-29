@@ -58,7 +58,24 @@ io.on('connection', socket => {
   // Board click
   /////////////////////////////
   socket.on(actions.ATTACK_SHIP, data => {
-    io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
+    if (data.state.game.playerOne.id === socket.id) {
+      data.state.game.playerOne.attackLocation.push({
+        x: data.x,
+        y: data.y,
+      });
+
+      data.state.board[data.y][data.x - 1] = 'p1';
+    }
+    if (data.state.game.playerTwo.id === socket.id) {
+      data.state.game.playerTwo.attackLocation.push({
+        x: data.x,
+        y: data.y,
+      });
+
+      data.state.board[data.y][data.x - 1] = 'p2';
+    }
+
+    return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
   });
 });
 

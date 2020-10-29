@@ -20,7 +20,10 @@ const Container = ({ socket }) => {
   return (
     <>
       {!state.game.playerTwo.id && !state.game.playerTwo.id && (
-        <div>online: {connectedUsers - 1}</div>
+        <div>
+          online: {connectedUsers - 1 === 0 ? 0 : connectedUsers - 1} other
+          players
+        </div>
       )}
       {!state.game.playerTwo.id && <CreateRooms socket={socket} />}
       {!state.game.playerOne.id && <Rooms socket={socket} />}

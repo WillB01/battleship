@@ -24,14 +24,14 @@ const CreateRooms = ({ socket }) => {
       return;
     }
 
-    dispatch({
-      type: gameActionTypes.SET_PLAYER_ONE,
-      payload: {
-        id: socket.id,
-        roomName: roomText,
-        playerName: nicknameText,
-      },
-    });
+    // dispatch({
+    //   type: gameActionTypes.SET_PLAYER_ONE,
+    //   payload: {
+    //     id: socket.id,
+    //     roomName: roomText,
+    //     playerName: nicknameText,
+    //   },
+    // });
 
     socket.emit(socketActions.CREATE_ROOM, {
       roomName: roomText,

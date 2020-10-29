@@ -2,6 +2,7 @@ import React, { useReducer, useContext, useEffect, useState } from 'react';
 import { GameContext } from '../../context/storeContext';
 import { headingTop, headingSide } from '../../services/boardBlueprint';
 import styles from './Board.module.scss';
+import socketActions from '../../services/socketActions';
 
 const Board = ({ onClick }) => {
   const { state, dispatch } = useContext(GameContext);
@@ -25,7 +26,6 @@ const Board = ({ onClick }) => {
         })}
         {state.board.map((item, i) => {
           return item.map((itemItem, ii) => {
-            itemItem = ii;
             return (
               <div key={ii} onClick={() => onClick(itemItem, i, state.game)}>
                 {itemItem}

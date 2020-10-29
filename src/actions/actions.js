@@ -5,6 +5,5 @@ export const roomActionTypes = {
 
 export const gameActionTypes = {
   SET_PLAYER_ONE: 'SET-PLAYER-ONE',
-  SET_PLAYER_TWO: 'SET-PLAYER-TWO',
   OPPONENT_JOINS: 'OPPONENT_JOINS',
 };

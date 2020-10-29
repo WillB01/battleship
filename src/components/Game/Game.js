@@ -12,26 +12,34 @@ const Game = ({ socket }) => {
   const [gameHosted, setGameHosted] = useState(false);
 
   useEffect(() => {
+    //clean up later
     socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
-      console.log('my id', socket.id);
-      console.log(data);
-      console.log('STATE', state);
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
-      setShowBoard(true);
       dispatch({
-        type: 'START-GAME',
-        payload: { ...data },
+        type: 'ATTACK-PLAYER',
+        payload: {
+          state: data.state,
+        },
       });
     });
-
-    socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
-      setGameHosted(true);
-    });
   }, []);
+
+  useEffect(
+    () => {
+      socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
+        setShowBoard(true);
+        dispatch({
+          type: 'START-GAME',
+          payload: { ...data },
+        });
+      });
+
+      socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
+        setGameHosted(true);
+      });
+    },
+    [],
+    () => socket.close()
+  );
 
   const boardClickHandler = (x, y) => {
     socket.emit(socketActions.ATTACK_SHIP, {
@@ -39,6 +47,7 @@ const Game = ({ socket }) => {
       y: y,
       gameName: state.game.name,
       attackingPlayerId: socket.id,
+      state: state,
     });
   };
 
@@ -49,7 +58,7 @@ const Game = ({ socket }) => {
       {showBoard && <div>player 2: {state.game.playerTwo.name}</div>}
 
       {gameHosted && !showBoard && <h1>wating for player two</h1>}
-      {showBoard && <Board onClick={boardClickHandler} />}
+      {showBoard && <Board onClick={boardClickHandler} socket={socket} />}
     </>
   );
 };
