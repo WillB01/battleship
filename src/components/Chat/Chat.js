@@ -18,6 +18,7 @@ const Chat = ({ socket, type, gameName }) => {
   }, [type]);
 
   const onCLickHandler = () => {
+    setInput('');
     socket.emit('sendMessage', {
       message: input,
       id: socket.id,
@@ -41,6 +42,9 @@ const Chat = ({ socket, type, gameName }) => {
         <input
           type="text"
           onChange={e => setInput(e.target.value)}
+          onKeyPress={e => {
+            e.key === 'Enter' && onCLickHandler();
+          }}
           value={input}
         />
       </div>
