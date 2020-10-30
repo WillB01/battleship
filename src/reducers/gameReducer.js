@@ -5,6 +5,7 @@ export const initialState = {
   board: boardBlueprint,
   game: {
     name: '',
+    playerTurn: 'PLAYER-ONE',
     playerOne: {
       id: '',
       name: '',

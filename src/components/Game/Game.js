@@ -42,6 +42,9 @@ const Game = ({ socket }) => {
   );
 
   const boardClickHandler = (x, y) => {
+    if (state.board[y][x - 1] === undefined) {
+      alert('no');
+    }
     socket.emit(socketActions.ATTACK_SHIP, {
       x: x,
       y: y,
