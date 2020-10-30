@@ -1,4 +1,5 @@
 const express = require('express');
+const { type } = require('os');
 const app = express();
 const server = require('http').Server(app);
 const io = (module.exports.io = require('socket.io')(server));
@@ -91,6 +92,20 @@ io.on('connection', socket => {
       data.state.board[data.y][data.x - 1] = 'p2';
 
       return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
+    }
+  });
+  /////////////////////////////////
+  /////////////////////////////////
+
+  //////////////////////////////
+  //CHAT//////////////////////
+  /////////////////////////
+  socket.on('sendMessage', data => {
+    if (data.type === 'private') {
+      io.to(data.gameName).emit('sendMessageHandler', data);
+    }
+    if (data.type === 'public') {
+      io.to(MAIN_ROOM).emit('sendMessageHandler', data);
     }
   });
 });
