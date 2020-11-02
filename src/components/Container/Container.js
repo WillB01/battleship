@@ -11,10 +11,12 @@ const Container = ({ socket }) => {
   const { rState, rDispatch } = useContext(GameContext);
 
   const [connectedUsers, setConnectedUsers] = useState(0);
+  const [sockets, setSockets] = useState();
 
   useEffect(() => {
     socket.on('getConnectedSockets', sockets => {
-      setConnectedUsers(sockets);
+      setSockets(sockets);
+      setConnectedUsers(sockets.length);
     });
   }, []);
 
@@ -26,8 +28,7 @@ const Container = ({ socket }) => {
           players
         </div>
       )}
-      {!state.game.playerTwo.id && <CreateRooms socket={socket} />}
-      {!state.game.playerOne.id && <Rooms socket={socket} />}
+      {!state.game.playerOne.id && <Rooms socket={socket} sockets={sockets} />}
       <Game socket={socket} />
       {state.game.playerTwo.id !== '' && (
         <Chat

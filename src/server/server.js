@@ -11,15 +11,21 @@ const MAIN_ROOM = 'MAIN_ROOM';
 app.use(express.static(__dirname + '/../../build'));
 
 io.on('connect', socket => {
-  const sockets = Object.keys(io.sockets.sockets).length;
+  const sockets = Object.keys(io.sockets.sockets);
   socket.join(MAIN_ROOM);
   io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
 });
 
 io.on('connection', socket => {
   socket.on('disconnect', socket => {
-    const sockets = Object.keys(io.sockets.sockets).length;
+    const sockets = Object.keys(io.sockets.sockets);
     io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
+  });
+
+  socket.on('disconnect', socket => {
+    const sockets = Object.keys(io.sockets.sockets);
+    io.emit('DELETE-ROOM', sockets);
+    io.to(MAIN_ROOM).emit('getConnectedSockets', sockets.length);
   });
   ///////////////////////////////
   // create room
@@ -27,13 +33,13 @@ io.on('connection', socket => {
   socket.on(actions.CREATE_ROOM, data => {
     socket.join(data.roomName);
     socket.leave(MAIN_ROOM);
-    io.to(MAIN_ROOM).emit(actions.CREATE_ROOM_HANDLER);
+    // io.to(MAIN_ROOM).emit(actions.CREATE_ROOM_HANDLER);
     io.to(socket.id).emit(actions.WAITING_FOR_PLAYER_TWO);
   });
   ///////////////////////////////
   // join room
   /////////////////////////////
-  socket.on(actions.JOIN_ROOM, data => {
+  socket.on('GAME-CREATED', data => {
     io.of('/')
       .in(data.roomName)
       .clients((error, clients) => {
@@ -44,8 +50,8 @@ io.on('connection', socket => {
         }
 
         socket.join(data.roomName);
-        io.to(data.roomName).emit(actions.JOIN_ROOM_HANDLER, data);
-        io.emit('removeRoom', data);
+        io.to(data.roomName).emit('GAME-CREATED-HANDLER', data);
+        // io.emit('removeRoom', data);
         socket.leave(MAIN_ROOM);
       });
   });

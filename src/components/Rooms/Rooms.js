@@ -1,13 +1,23 @@
 import React, { useContext, useEffect, useState, Fragment } from 'react';
-import { roomActionTypes, gameActionTypes } from '../../actions/actions';
-import { getAllRooms } from '../../database/crud';
-import socketActions from '../../services/socketActions';
+import io from 'socket.io-client';
 
+import { roomActionTypes, gameActionTypes } from '../../actions/actions';
+import {
+  getAllRooms,
+  removeRoom,
+  getRoomById,
+  createGame,
+  changeRoomStatus,
+} from '../../database/crud';
+import socketActions from '../../services/socketActions';
+import CreateRooms from './CreateRoom/CreateRoom';
+
+import { getOfflineHosts } from '../../services/helpers';
 import { RoomsContext } from '../../context/storeContext';
 
 import styles from './Rooms.module.scss';
 
-const Rooms = ({ socket }) => {
+const Rooms = ({ socket, sockets }) => {
   const { state, dispatch } = useContext(RoomsContext);
   const [showSelf, setShowSelf] = useState(true);
   const [showNameInput, setShowNameInput] = useState(false);
@@ -20,29 +30,21 @@ const Rooms = ({ socket }) => {
 
   useEffect(() => {
     getAllRooms(data => {
-      console.log(data);
       dispatch({ type: 'SET-ALL-ROOMS', payload: data });
     });
   }, []);
 
-  useEffect(() => {
-    socket.on(socketActions.CREATE_ROOM_HANDLER, () => {
-      getAllRooms();
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on(socketActions.CREATE_ROOM_HANDLER, () => {
+  //     // getAllRooms();
+  //   });
+  // }, []);
 
   useEffect(() => {
-    socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
-      const rooms = [...state.rooms];
-
-      for (const key in rooms) {
-        if (rooms[key].name === data.roomName) {
-          setShowSelf(false);
-          break;
-        }
-      }
+    socket.on('DELETE-ROOM', sockets => {
+      removeRoom(sockets, state.rooms);
     });
-  }, []);
+  }, [sockets]);
 
   useEffect(() => {
     socket.on('removeRoom', data => {
@@ -51,61 +53,82 @@ const Rooms = ({ socket }) => {
     });
   }, []);
 
-  const onClickHandler = (room, i, rooms) => {
-    setRoomToJoin({ room, roomIndex: i, rooms });
+  const onClickHandler = id => {
+    setRoomToJoin(id);
     setShowNameInput(true);
+    changeRoomStatus('ACTIVE', id);
   };
 
   const joinRoom = () => {
-    socket.emit(socketActions.JOIN_ROOM, {
-      roomName: roomToJoin.room.name,
-      roomIndex: roomToJoin.roomIndex,
-      rooms: roomToJoin.rooms,
-      playerOneId: roomToJoin.room.hostId,
-      playerTwoId: socket.id,
-      playerOneName: roomToJoin.room.hostName,
-      playerTwoName: playerTwoInput,
+    getRoomById(roomToJoin, ({ roomId, roomName, hostName, hostId }) => {
+      const key = createGame({
+        roomId: roomId,
+        roomName: roomName,
+        playerOneId: hostId,
+        playerOneName: hostName,
+        playerTwoId: socket.id,
+        playerTwoName: playerTwoInput,
+      });
+      setShowNameInput(false);
+      setShowSelf(false);
+
+      socket.emit('GAME-CREATED', { roomName, gameId: key });
     });
   };
 
-  console.log('state', state);
-
   return (
-    <div className={styles.rooms}>
+    <>
       {showSelf && (
         <>
-          {showNameInput && (
-            <div>
-              <input
-                type="text"
-                placeholder="Your name"
-                onChange={e => setPlayerTwoInput(e.target.value)}
-              />
-              <button onClick={joinRoom}>lets go!</button>
-            </div>
-          )}
-          {state.rooms &&
-            state.rooms.map((room, i) => {
-              if (room.hostId === socket.id) {
-                return;
-              }
-              return (
-                <Fragment key={`${Math.random()}-${i}`}>
-                  {!showNameInput && (
-                    <div>
-                      <div onClick={() => onClickHandler(room, i, state.rooms)}>
-                        <span>
-                          {room.roomName} - {room.hostName}
-                        </span>
+          {!showNameInput && <CreateRooms socket={socket} />}
+
+          <div className={styles.rooms}>
+            {showNameInput && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  onChange={e => setPlayerTwoInput(e.target.value)}
+                />
+                <button onClick={joinRoom}>lets go!</button>
+              </div>
+            )}
+            {!showNameInput &&
+              state.rooms &&
+              state.rooms.map((room, i) => {
+                if (room.hostId === socket.id) {
+                  return;
+                }
+                return (
+                  <Fragment key={`${Math.random()}-${i}`}>
+                    {!showNameInput && (
+                      <div>
+                        <div
+                          onClick={
+                            room.status !== 'ACTIVE'
+                              ? () => onClickHandler(room.firebaseId)
+                              : null
+                          }
+                        >
+                          <span
+                            className={
+                              room.status === 'ACTIVE'
+                                ? styles.active
+                                : styles.available
+                            }
+                          >
+                            {room.roomName} - {room.hostName} {room.hostId}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </Fragment>
-              );
-            })}
+                    )}
+                  </Fragment>
+                );
+              })}
+          </div>
         </>
       )}
-    </div>
+    </>
   );
 };
 

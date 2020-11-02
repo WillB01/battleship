@@ -5,6 +5,7 @@ import socketActions from '../../services/socketActions';
 import Board from '../Board/Board';
 
 import { GameContext } from '../../context/storeContext';
+import { getGameById } from '../../database/crud';
 
 import styles from './Game.module.scss';
 
@@ -25,23 +26,22 @@ const Game = ({ socket }) => {
     });
   }, []);
 
-  useEffect(
-    () => {
-      socket.on(socketActions.JOIN_ROOM_HANDLER, data => {
-        setShowBoard(true);
+  useEffect(() => {
+    socket.on('GAME-CREATED-HANDLER', data => {
+      setShowBoard(true);
+      getGameById(data.gameId, snapshot => {
         dispatch({
           type: 'START-GAME',
-          payload: { ...data },
+          payload: snapshot,
         });
       });
+    });
 
-      socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
-        setGameHosted(true);
-      });
-    },
-    [],
-    () => socket.close()
-  );
+    socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
+      setGameHosted(true);
+    });
+    return () => socket.close();
+  }, []);
 
   const boardClickHandler = (x, y) => {
     if (state.board[y][x - 1] === undefined) {
