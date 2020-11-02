@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import io from 'socket.io-client';
-import config from './config';
-import firebase from 'firebase';
-import { getAllRooms } from './firebase/crud';
 
 import './App.scss';
 import { GameContext, RoomsContext } from './context/storeContext';
