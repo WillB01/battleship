@@ -1,4 +1,6 @@
 import React, { useContext, useState } from 'react';
+import firebase from 'firebase';
+import { addNewRoom } from '../../../firebase/crud';
 
 import { roomActionTypes, gameActionTypes } from '../../../actions/actions';
 import { RoomsContext, GameContext } from '../../../context/storeContext';
@@ -28,20 +30,15 @@ const CreateRooms = ({ socket }) => {
       return;
     }
 
-    // dispatch({
-    //   type: gameActionTypes.SET_PLAYER_ONE,
-    //   payload: {
-    //     id: socket.id,
-    //     roomName: roomText,
-    //     playerName: nicknameText,
-    //   },
-    // });
-
-    socket.emit(socketActions.CREATE_ROOM, {
-      roomName: roomText,
-      rooms: updateRooms,
-      id: socket.id,
-      hostName: nicknameText,
+    addNewRoom(socket.id, nicknameText, roomText, err => {
+      if (err) {
+      } else {
+        socket.emit(socketActions.CREATE_ROOM, {
+          roomName: roomText,
+          rooms: updateRooms,
+          id: socket.id,
+        });
+      }
     });
   };
 

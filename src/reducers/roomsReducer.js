@@ -22,6 +22,11 @@ export const roomReducer = (state, action) => {
         ...state,
         rooms: action.payload,
       };
+    case 'SET-ALL-ROOMS':
+      return {
+        ...state,
+        rooms: action.payload,
+      };
     default:
       return state;
   }

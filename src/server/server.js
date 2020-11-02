@@ -7,8 +7,6 @@ const server = require('http').Server(app);
 const io = (module.exports.io = require('socket.io')(server));
 const actions = require('./socketActions');
 
-const axios = require('axios');
-
 const PORT = process.env.PORT || 3231;
 const MAIN_ROOM = 'MAIN_ROOM';
 
@@ -16,8 +14,6 @@ app.use(express.static(__dirname + '/../../build'));
 
 io.on('connect', socket => {
   const sockets = Object.keys(io.sockets.sockets).length;
-  // console.log(process.env);
-  console.log(process.env.REACT_APP_BART_API_KEY);
   socket.join(MAIN_ROOM);
   io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
 });
@@ -32,14 +28,8 @@ io.on('connection', socket => {
   /////////////////////////////
   socket.on(actions.CREATE_ROOM, data => {
     socket.join(data.roomName);
-    data.rooms.push({
-      name: data.roomName,
-      hostId: data.id,
-      hostName: data.hostName,
-    });
     socket.leave(MAIN_ROOM);
-
-    io.to(MAIN_ROOM).emit(actions.CREATE_ROOM_HANDLER, data);
+    io.to(MAIN_ROOM).emit(actions.CREATE_ROOM_HANDLER);
     io.to(socket.id).emit(actions.WAITING_FOR_PLAYER_TWO);
   });
   ///////////////////////////////

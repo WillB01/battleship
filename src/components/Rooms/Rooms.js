@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, Fragment } from 'react';
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
+import { getAllRooms } from '../../firebase/crud';
 import socketActions from '../../services/socketActions';
 
 import { RoomsContext } from '../../context/storeContext';
@@ -18,13 +19,15 @@ const Rooms = ({ socket }) => {
   const [playerTwoInput, setPlayerTwoInput] = useState('');
 
   useEffect(() => {
-    socket.on(socketActions.CREATE_ROOM_HANDLER, data => {
-      dispatch({
-        type: roomActionTypes.CREATE_ROOM,
-        payload: {
-          rooms: data.rooms,
-        },
-      });
+    getAllRooms(data => {
+      console.log(data);
+      dispatch({ type: 'SET-ALL-ROOMS', payload: data });
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on(socketActions.CREATE_ROOM_HANDLER, () => {
+      getAllRooms();
     });
   }, []);
 
@@ -65,6 +68,8 @@ const Rooms = ({ socket }) => {
     });
   };
 
+  console.log('state', state);
+
   return (
     <div className={styles.rooms}>
       {showSelf && (
@@ -90,7 +95,7 @@ const Rooms = ({ socket }) => {
                     <div>
                       <div onClick={() => onClickHandler(room, i, state.rooms)}>
                         <span>
-                          {room.name} - {room.hostName}
+                          {room.roomName} - {room.hostName}
                         </span>
                       </div>
                     </div>

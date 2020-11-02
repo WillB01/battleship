@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import io from 'socket.io-client';
 import config from './config';
-import Firebase from 'firebase';
+import firebase from 'firebase';
+import { getAllRooms } from './firebase/crud';
+
 import './App.scss';
 import { GameContext, RoomsContext } from './context/storeContext';
 import { gameReducer, initialState } from './reducers/gameReducer';
@@ -21,7 +23,11 @@ const App = () => {
   const [roomState, roomDispatch] = useReducer(roomReducer, roomInitialState);
 
   useEffect(() => {
-    Firebase.initializeApp(config);
+    console.log('init app');
+    // getAllRooms(data => {
+    //   console.log(data);
+    //   // dispatch({ type: 'SET-ALL-ROOM', acion: data });
+    // });
   }, []);
 
   return (

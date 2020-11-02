@@ -3,8 +3,6 @@ import Game from '../Game/Game';
 import Rooms from '../Rooms/Rooms';
 import CreateRooms from '../Rooms/CreateRoom/CreateRoom';
 import Chat from '../Chat/Chat';
-import axios from 'axios';
-import Firebase from 'firebase';
 
 import { GameContext, RoomsContext } from '../../context/storeContext';
 
@@ -16,11 +14,6 @@ const Container = ({ socket }) => {
 
   useEffect(() => {
     socket.on('getConnectedSockets', sockets => {
-      const ref = Firebase.database().ref('/');
-
-      ref.on('value', snapshot => {
-        console.log(snapshot.val());
-      });
       setConnectedUsers(sockets);
     });
   }, []);
