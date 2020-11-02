@@ -1,6 +1,6 @@
 var config = {
-  apiKey: process.env.API_KEY,
-  databaseURL: process.env.FIREBASE_URL,
+  apiKey: process.env.REACT_APP_API_KEY,
+  databaseURL: process.env.REACT_APP_URL,
   projectId: 'will-battleship',
 };
 

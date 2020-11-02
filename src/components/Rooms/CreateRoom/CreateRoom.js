@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import firebase from 'firebase';
-import { addNewRoom } from '../../../firebase/crud';
+import { addNewRoom } from '../../../database/crud';
 
 import { roomActionTypes, gameActionTypes } from '../../../actions/actions';
 import { RoomsContext, GameContext } from '../../../context/storeContext';

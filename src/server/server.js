@@ -1,5 +1,3 @@
-require('dotenv').config({ path: '../../.env' });
-
 const express = require('express');
 const { type } = require('os');
 const app = express();

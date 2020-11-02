@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, Fragment } from 'react';
 import { roomActionTypes, gameActionTypes } from '../../actions/actions';
-import { getAllRooms } from '../../firebase/crud';
+import { getAllRooms } from '../../database/crud';
 import socketActions from '../../services/socketActions';
 
 import { RoomsContext } from '../../context/storeContext';

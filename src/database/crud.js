@@ -17,6 +17,8 @@ export const addNewRoom = (hostId, hostName, roomName, cb) => {
 };
 
 export const getAllRooms = cb => {
+  // console.log(config);
+
   const ref = firebase.database().ref('/rooms');
 
   if (cb) {
