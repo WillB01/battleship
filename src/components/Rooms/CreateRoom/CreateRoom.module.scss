@@ -1,0 +1,30 @@
+.createRoom {
+  // background: red;
+  margin: 0 auto;
+  max-width: 40rem;
+  height: 30rem;
+  // display: grid;
+  // grid-template-rows: 1fr 1fr 1fr;
+
+  // grid-template-columns: repeat(1, minmax(20rem, 1fr));
+  transition: all 0.3s;
+
+  input {
+    width: 100%;
+  }
+
+  &__item {
+    &:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .label {
+    font-size: 1.2rem;
+    transition: all 0.3s;
+  }
+}

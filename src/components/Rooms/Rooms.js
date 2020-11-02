@@ -4,6 +4,8 @@ import socketActions from '../../services/socketActions';
 
 import { RoomsContext } from '../../context/storeContext';
 
+import styles from './Rooms.module.scss';
+
 const Rooms = ({ socket }) => {
   const { state, dispatch } = useContext(RoomsContext);
   const [showSelf, setShowSelf] = useState(true);
@@ -64,13 +66,14 @@ const Rooms = ({ socket }) => {
   };
 
   return (
-    <div>
+    <div className={styles.rooms}>
       {showSelf && (
         <>
           {showNameInput && (
             <div>
               <input
                 type="text"
+                placeholder="Your name"
                 onChange={e => setPlayerTwoInput(e.target.value)}
               />
               <button onClick={joinRoom}>lets go!</button>

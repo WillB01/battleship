@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import io from 'socket.io-client';
-import './App.css';
+import config from './config';
+import Firebase from 'firebase';
+import './App.scss';
 import { GameContext, RoomsContext } from './context/storeContext';
 import { gameReducer, initialState } from './reducers/gameReducer';
 import { roomReducer, roomInitialState } from './reducers/roomsReducer.js';
@@ -17,6 +19,10 @@ const socket = io.connect(port);
 const App = () => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [roomState, roomDispatch] = useReducer(roomReducer, roomInitialState);
+
+  useEffect(() => {
+    Firebase.initializeApp(config);
+  }, []);
 
   return (
     <div className="App">

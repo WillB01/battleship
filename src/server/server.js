@@ -1,9 +1,13 @@
+require('dotenv').config({ path: '../../.env' });
+
 const express = require('express');
 const { type } = require('os');
 const app = express();
 const server = require('http').Server(app);
 const io = (module.exports.io = require('socket.io')(server));
 const actions = require('./socketActions');
+
+const axios = require('axios');
 
 const PORT = process.env.PORT || 3231;
 const MAIN_ROOM = 'MAIN_ROOM';
@@ -12,6 +16,8 @@ app.use(express.static(__dirname + '/../../build'));
 
 io.on('connect', socket => {
   const sockets = Object.keys(io.sockets.sockets).length;
+  // console.log(process.env);
+  console.log(process.env.REACT_APP_BART_API_KEY);
   socket.join(MAIN_ROOM);
   io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
 });

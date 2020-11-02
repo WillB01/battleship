@@ -6,6 +6,8 @@ import Board from '../Board/Board';
 
 import { GameContext } from '../../context/storeContext';
 
+import styles from './Game.module.scss';
+
 const Game = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
   const [showBoard, setShowBoard] = useState(false);
@@ -60,7 +62,15 @@ const Game = ({ socket }) => {
       {showBoard && <div>player 1: {state.game.playerOne.name}</div>}
       {showBoard && <div>player 2: {state.game.playerTwo.name}</div>}
 
-      {gameHosted && !showBoard && <h1>wating for player two</h1>}
+      {gameHosted && !showBoard && (
+        <div className={styles.wating}>
+          <div class="lds-ripple">
+            <div></div>
+            <div></div>
+          </div>
+          wating for player two
+        </div>
+      )}
       {showBoard && <Board onClick={boardClickHandler} socket={socket} />}
     </>
   );
