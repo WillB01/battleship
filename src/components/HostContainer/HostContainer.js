@@ -5,20 +5,14 @@ import GamesList from '../GamesList/GameList';
 import PlayerTwoForm from '../PlayerTwoForm/PlayerTwoForm';
 
 import { GameContext } from '../../context/storeContext';
-import {
-  getAllGames,
-  getGameById,
-  deleteGame,
-  setGameActive,
-  setGameStatus,
-} from '../../database/crud';
+import { deleteGame, setGameStatus } from '../../database/crud';
 import { isUserOnline } from '../../services/helpers';
 
 const HostContainer = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
 
   const [hideHostDetails, setHideHostDetails] = useState([false, false]);
-  const [connectedUsers, setConnectedUsers] = useState(0);
+  const [currentGameIndex, setCurrentGameIndex] = useState('');
   const [currentGameId, setCurrentGameId] = useState('');
 
   // logic to show hosting details
@@ -46,12 +40,12 @@ const HostContainer = ({ socket }) => {
     });
   }, [state.connectedUsers]);
 
-  const onClickDisplayGamesHandler = gameId => {
+  const onClickDisplayGamesHandler = (gameId, gameIndex) => {
     setGameStatus(gameId, 'PLAYER-TWO-JOINING');
+    setCurrentGameIndex(gameIndex);
     setCurrentGameId(gameId);
     setHideHostDetails([false, true]);
   };
-
   return (
     <>
       {!hideHostDetails[0] && !hideHostDetails[1] && (
@@ -63,7 +57,11 @@ const HostContainer = ({ socket }) => {
       )}
       {hideHostDetails[0] && <div>waiting player two</div>}
       {hideHostDetails[1] && (
-        <PlayerTwoForm socket={socket} gameId={currentGameId} />
+        <PlayerTwoForm
+          socket={socket}
+          gameId={currentGameId}
+          gameName={state.games[currentGameIndex].name}
+        />
       )}
     </>
   );

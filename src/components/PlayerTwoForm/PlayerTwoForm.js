@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import useInput from '../hooks/useInput/useInput';
 
+import { GameContext } from '../../context/storeContext';
 import { setGameActive } from '../../database/crud';
 
-const PlayerTwoForm = ({ socket, gameId }) => {
+const PlayerTwoForm = ({ socket, gameId, gameName }) => {
+  const { state } = useContext(GameContext);
   const [playerTwoName, setPlayerTwoName] = useState('');
 
   const onChangeHandler = value => {
@@ -12,6 +14,7 @@ const PlayerTwoForm = ({ socket, gameId }) => {
   };
 
   const onClickHandler = () => {
+    socket.emit('JOIN-GAME', gameName);
     setGameActive(gameId, socket.id, playerTwoName);
   };
 

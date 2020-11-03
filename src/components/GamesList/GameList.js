@@ -26,13 +26,13 @@ const GamesList = ({ socket, onClick }) => {
   return (
     <div>
       {state.games.length !== 0 &&
-        state.games.map(game => {
+        state.games.map((game, i) => {
           return (
             <div
               key={game.id}
               className={addStyle(game.status, game.game.playerOne.id)}
               onClick={() =>
-                game.status === 'HOSTED' ? onClick(game.id) : null
+                game.status === 'HOSTED' ? onClick(game.id, i) : null
               }
             >
               game: {game.name} || host: {game.game.playerOne.name}{' '}

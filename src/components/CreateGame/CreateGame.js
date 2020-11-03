@@ -7,7 +7,6 @@ import useInput from '../hooks/useInput/useInput';
 import styles from './CreateGame.module.scss';
 
 const CreateGame = ({ socket }) => {
-  const { state, dispatch } = useContext(GameContext);
   const [gameName, setGameName] = useState('');
   const [playerOneName, setPlayerOneName] = useState('');
   const [showLabel, setShowLabel] = useState([false, false]);
@@ -34,6 +33,7 @@ const CreateGame = ({ socket }) => {
       playerTwoName: '',
     });
     setShowSelf(false);
+    socket.emit('JOIN-GAME', gameName);
   };
 
   const onChangeHandler = (value, labelIndex) => {

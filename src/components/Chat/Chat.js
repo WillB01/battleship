@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import { socketActions } from '../../services/socketActions';
 import useInput from '../hooks/useInput/useInput';
 import styles from './Chat.module.scss';
 
@@ -10,7 +9,6 @@ const Chat = ({ socket, type, gameName }) => {
 
   useEffect(() => {
     socket.on('sendMessageHandler', data => {
-      console.log(data);
       if (data.message === '') {
         return;
       }
@@ -20,10 +18,6 @@ const Chat = ({ socket, type, gameName }) => {
       div.scrollTop = div.scrollHeight - div.clientHeight;
     });
   }, [socket.on]);
-
-  // useEffect(() => {
-  //   setMessages([]);
-  // }, [type]);
 
   const onClickHandler = () => {
     setInput('');

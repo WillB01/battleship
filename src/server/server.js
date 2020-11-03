@@ -21,33 +21,13 @@ io.on('connection', socket => {
     const sockets = Object.keys(io.sockets.sockets);
     io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
   });
-  ///////////////////////////////
-  // create room
-  /////////////////////////////
-  socket.on('CREATE-ROOM', data => {
-    socket.join(data.roomName);
+
+  //JOIN PRIVATE GAME ROOM
+  socket.on('JOIN-GAME', gameName => {
+    socket.join(gameName);
     socket.leave(MAIN_ROOM);
-    io.to(socket.id).emit('CREATE-ROOM-HANDLER', data);
   });
-  ///////////////////////////////
-  // join room
-  /////////////////////////////
-  socket.on('GAME-CREATED', data => {
-    io.of('/')
-      .in(data.roomName)
-      .clients((error, clients) => {
-        if (error) throw error;
 
-        if (clients.length === 2) {
-          return;
-        }
-
-        socket.join(data.roomName);
-        io.to(data.roomName).emit('GAME-CREATED-HANDLER', data);
-        // io.emit('removeRoom', data);
-        socket.leave(MAIN_ROOM);
-      });
-  });
   ///////////////////////////////
   // Board click
   /////////////////////////////
@@ -94,8 +74,9 @@ io.on('connection', socket => {
   //CHAT//////////////////////
   /////////////////////////
   socket.on('sendMessage', data => {
-    console.log('data', data);
     if (data.type === 'private') {
+      console.log('DATAAAAA', data);
+
       io.to(data.gameName).emit('sendMessageHandler', data);
     }
     if (data.type === 'public') {
