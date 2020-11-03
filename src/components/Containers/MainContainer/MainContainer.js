@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
 
 import HostContainer from '../HostContainer/HostContainer';
-import Game from '../Game/Game';
-import Chat from '../Chat/Chat';
+import Game from '../../Game/Game';
+import Chat from '../../Chat/Chat';
+import GameDetails from '../../ui/GameDetails/GameDetails';
 
-import { GameContext } from '../../context/storeContext';
-import { getAllGames, getGameById, updateSockets } from '../../database/crud';
+import { GameContext } from '../../../context/storeContext';
+import { getAllGames, updateSockets } from '../../../database/crud';
 
-const Container = ({ socket }) => {
+const MainContainer = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
   const [gameIndex, setGameIndex] = useState('');
 
@@ -44,7 +45,8 @@ const Container = ({ socket }) => {
       {gameIndex === '' && <HostContainer socket={socket} />}
       {gameIndex !== '' && (
         <>
-          <Game socket={socket} />
+          <GameDetails index={gameIndex} />
+          <Game socket={socket} index={gameIndex} />
           <Chat
             socket={socket}
             type={'private'}
@@ -56,4 +58,4 @@ const Container = ({ socket }) => {
   );
 };
 
-export default Container;
+export default MainContainer;

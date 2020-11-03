@@ -6,7 +6,7 @@ import './App.scss';
 import { GameContext } from './context/storeContext';
 import { gameReducer, initialState } from './reducers/gameReducer';
 
-import Container from './components/Container/Container';
+import MainContainer from './components/Containers/MainContainer/MainContainer';
 
 import { port } from './server/port';
 
@@ -18,7 +18,7 @@ const App = () => {
   return (
     <div className="App">
       <GameContext.Provider value={{ state, dispatch }}>
-        <Container socket={socket} />
+        <MainContainer socket={socket} />
       </GameContext.Provider>
     </div>
   );

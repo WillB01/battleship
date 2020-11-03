@@ -1,13 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 
-import CreateGame from '../CreateGame/CreateGame';
-import GamesList from '../GamesList/GameList';
-import PlayerTwoForm from '../PlayerTwoForm/PlayerTwoForm';
-import Loading from '../ui/Loading/Loading';
+import CreateGame from '../../CreateGame/CreateGame';
+import GamesList from '../../GamesList/GameList';
+import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
+import Loading from '../../ui/Loading/Loading';
 
-import { GameContext } from '../../context/storeContext';
-import { deleteGame, setGameStatus } from '../../database/crud';
-import { isUserOnline } from '../../services/helpers';
+import { GameContext } from '../../../context/storeContext';
+import { deleteGame, setGameStatus } from '../../../database/crud';
+import { isUserOnline } from '../../../services/helpers';
 
 const HostContainer = ({ socket }) => {
   const { state } = useContext(GameContext);

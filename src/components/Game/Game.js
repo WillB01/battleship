@@ -78,7 +78,10 @@ import styles from './Game.module.scss';
 //   return { renderPicker };
 // };
 
-const Game = ({ socket }) => {
+const Game = ({ socket, index }) => {
+  const { state, dispatch } = useContext(GameContext);
+
+  console.log('in game', state.games[index]);
   return <div>GAME</div>;
 };
 
