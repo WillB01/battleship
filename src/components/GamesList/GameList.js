@@ -16,6 +16,10 @@ const GamesList = ({ socket, onClick }) => {
       return styles.active;
     }
 
+    if (status === 'PLAYER-TWO-JOINING') {
+      return styles.unavailable;
+    }
+
     return '';
   };
 
@@ -27,7 +31,9 @@ const GamesList = ({ socket, onClick }) => {
             <div
               key={game.id}
               className={addStyle(game.status, game.game.playerOne.id)}
-              onClick={() => onClick(game.id)}
+              onClick={() =>
+                game.status === 'HOSTED' ? onClick(game.id) : null
+              }
             >
               game: {game.name} || host: {game.game.playerOne.name}{' '}
               {game.status}

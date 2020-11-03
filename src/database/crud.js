@@ -5,35 +5,6 @@ import firebase from 'firebase';
 import { boardBlueprint } from '../services/boardBlueprint';
 
 firebase.initializeApp(config);
-
-//////////////////////////////
-///ROOMS//////////////////////
-//////////////////////////////
-
-export const removeRoom = (sockets, data) => {
-  if (!data) {
-    return;
-  }
-
-  const db = firebase.database().ref('/rooms');
-  const removeIds = [];
-  data.forEach(r => {
-    if (!sockets.includes(r.hostId)) {
-      removeIds.push(r.firebaseId);
-    }
-  });
-
-  if (removeIds) {
-    removeIds.forEach(id => {
-      if (id) {
-        db.child(id).set(null);
-      }
-    });
-  }
-};
-
-///////////////////////////////////////////
-
 ///////////////////////////////
 ///GAME///////////////////////
 //////////////////////////////
@@ -94,6 +65,23 @@ export const deleteGame = gameId => {
   const ref = firebase.database().ref(`/games/${gameId}`);
   ref.set(null);
 };
+
+export const setGameActive = (gameId, playerTwoId, playerTwoName) => {
+  getGameById(gameId, game => {
+    game.status = 'ACTIVE';
+    game.game.playerTwo = {
+      ...game.game.playerTwo,
+      id: playerTwoId,
+      name: playerTwoName,
+    };
+    const ref = firebase.database().ref(`/games/${gameId}`);
+    ref.update(game);
+  });
+};
+
+////////////////////////////////
+///GAME PLAY///////////////////
+//////////////////////////////
 
 ////////////////////////////////
 ///SOCKETS/////////////////////

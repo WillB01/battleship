@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { socketActions } from '../../services/socketActions';
-import useInput from '../shared/useInput';
+import useInput from '../hooks/useInput/useInput';
 import styles from './Chat.module.scss';
 
 const Chat = ({ socket, type, gameName }) => {
@@ -10,6 +10,7 @@ const Chat = ({ socket, type, gameName }) => {
 
   useEffect(() => {
     socket.on('sendMessageHandler', data => {
+      console.log(data);
       if (data.message === '') {
         return;
       }
@@ -38,7 +39,6 @@ const Chat = ({ socket, type, gameName }) => {
       gameName,
     });
   };
-  console.log(messages);
   return (
     <div className={styles.chat}>
       <div className={styles.messages}>

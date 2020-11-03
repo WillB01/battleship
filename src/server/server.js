@@ -94,6 +94,7 @@ io.on('connection', socket => {
   //CHAT//////////////////////
   /////////////////////////
   socket.on('sendMessage', data => {
+    console.log('data', data);
     if (data.type === 'private') {
       io.to(data.gameName).emit('sendMessageHandler', data);
     }

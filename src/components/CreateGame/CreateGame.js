@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { createGame } from '../../database/crud';
 import { GameContext } from '../../context/storeContext';
 import socketActions from '../../services/socketActions';
-import useInput from '../shared/useInput';
+import useInput from '../hooks/useInput/useInput';
 
 import styles from './CreateGame.module.scss';
 
