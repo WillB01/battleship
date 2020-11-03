@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import styles from './PlayerTwoForm.module.scss';
 
 import useInput from '../hooks/useInput/useInput';
 
@@ -27,7 +28,7 @@ const PlayerTwoForm = ({ socket, gameId, gameName }) => {
   );
 
   return (
-    <div>
+    <div className={styles.playerTwoForm}>
       {useNameInput}
       <button onClick={onClickHandler}>Let's go!</button>
     </div>
