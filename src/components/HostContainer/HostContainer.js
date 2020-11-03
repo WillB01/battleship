@@ -3,13 +3,14 @@ import React, { useContext, useState, useEffect } from 'react';
 import CreateGame from '../CreateGame/CreateGame';
 import GamesList from '../GamesList/GameList';
 import PlayerTwoForm from '../PlayerTwoForm/PlayerTwoForm';
+import Loading from '../ui/Loading/Loading';
 
 import { GameContext } from '../../context/storeContext';
 import { deleteGame, setGameStatus } from '../../database/crud';
 import { isUserOnline } from '../../services/helpers';
 
 const HostContainer = ({ socket }) => {
-  const { state, dispatch } = useContext(GameContext);
+  const { state } = useContext(GameContext);
 
   const [hideHostDetails, setHideHostDetails] = useState([false, false]);
   const [currentGameIndex, setCurrentGameIndex] = useState('');
@@ -55,7 +56,11 @@ const HostContainer = ({ socket }) => {
           <GamesList socket={socket} onClick={onClickDisplayGamesHandler} />
         </div>
       )}
-      {hideHostDetails[0] && <div>waiting player two</div>}
+      {hideHostDetails[0] && (
+        <div>
+          <Loading> waiting player two</Loading>
+        </div>
+      )}
       {hideHostDetails[1] && (
         <PlayerTwoForm
           socket={socket}

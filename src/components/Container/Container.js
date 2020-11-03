@@ -41,8 +41,7 @@ const Container = ({ socket }) => {
 
   return (
     <>
-      <HostContainer socket={socket} />
-
+      {gameIndex === '' && <HostContainer socket={socket} />}
       {gameIndex !== '' && (
         <>
           <Game socket={socket} />

@@ -72,17 +72,7 @@ import styles from './Game.module.scss';
 //         </div>
 //       );
 //     }
-//     if (status === 'HOSTED') {
-//       return (
-//         <div className={styles.wating}>
-//           <div className="lds-ripple">
-//             <div></div>
-//             <div></div>
-//           </div>
-//           wating for player two
-//         </div>
-//       );
-//     }
+//
 //   };
 
 //   return { renderPicker };
