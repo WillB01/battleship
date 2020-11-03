@@ -1,10 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 
-import { ReactSVG } from 'react-svg';
 import { GiBattleship } from 'react-icons/gi';
 import { DiYeoman } from 'react-icons/di';
-
-import boatIcon from '../../assets/icons/boat.svg';
 
 import styles from './GameList.module.scss';
 import { isUserOnline } from '../../services/helpers';

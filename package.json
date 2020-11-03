@@ -11,7 +11,6 @@
     "@testing-library/user-event": "^12.1.10",
     "bufferutil": "^4.0.1",
     "concurrently": "^5.3.0",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "firebase": "^8.0.0",
     "node-sass": "^4.14.1",

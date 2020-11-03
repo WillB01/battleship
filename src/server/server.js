@@ -1,5 +1,4 @@
 const express = require('express');
-const { type } = require('os');
 const app = express();
 const server = require('http').Server(app);
 const io = (module.exports.io = require('socket.io')(server));
