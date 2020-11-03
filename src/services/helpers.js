@@ -1,6 +1,6 @@
-export const getOfflineHosts = (rooms, sockets) => {
+export const getOfflineHosts = (games, sockets) => {
   const removeIds = [];
-  rooms.forEach(v => {
+  games.forEach(v => {
     console.log(v);
     if (!sockets.includes(v.hostId)) {
       removeIds.push(v.firebaseId);
@@ -8,4 +8,13 @@ export const getOfflineHosts = (rooms, sockets) => {
   });
 
   return removeIds;
+};
+
+export const isUserOnline = (socketId, sockets) => {
+  for (const key in sockets) {
+    if (sockets[key] === socketId) {
+      return true;
+    }
+  }
+  return false;
 };

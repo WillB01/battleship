@@ -11,6 +11,7 @@ const Container = ({ socket }) => {
   useEffect(() => {
     socket.on('getConnectedSockets', sockets => {
       updateSockets(sockets);
+      dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
     });
   }, []);
 

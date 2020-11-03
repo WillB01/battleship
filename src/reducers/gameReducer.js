@@ -30,6 +30,12 @@ export const initialState = {
 
 export const gameReducer = (state, action) => {
   switch (action.type) {
+    case 'UPDATED-SOCKETS': {
+      return {
+        ...state,
+        connectedUsers: action.payload,
+      };
+    }
     case 'SET-GAMES': {
       return {
         ...state,

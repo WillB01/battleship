@@ -1,15 +1,21 @@
 import React, { useEffect, useContext } from 'react';
 import styles from './GameList.module.scss';
+import { isUserOnline } from '../../services/helpers';
 import { GameContext } from '../../context/storeContext';
 import { getAllGames } from '../../database/crud';
 
 const GamesList = ({ socket, onClick }) => {
   const { state } = useContext(GameContext);
 
-  const addStyle = status => {
+  const addStyle = (status, playerOneId) => {
+    const isHostOnline = isUserOnline(playerOneId, state.connectedUsers);
     if (status === 'HOSTED') {
       return styles.hosted;
     }
+    if (status === 'ACTIVE') {
+      return styles.active;
+    }
+
     return '';
   };
 
@@ -20,7 +26,7 @@ const GamesList = ({ socket, onClick }) => {
           return (
             <div
               key={game.id}
-              className={addStyle(game.status)}
+              className={addStyle(game.status, game.game.playerOne.id)}
               onClick={() => onClick(game.id)}
             >
               game: {game.name} || host: {game.game.playerOne.name}{' '}

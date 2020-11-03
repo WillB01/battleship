@@ -90,9 +90,14 @@ export const setGameStatus = (id, status) => {
   ref.update({ status: status });
 };
 
+export const deleteGame = gameId => {
+  const ref = firebase.database().ref(`/games/${gameId}`);
+  ref.set(null);
+};
+
 ////////////////////////////////
 ///SOCKETS/////////////////////
 //////////////////////////////
 export const updateSockets = sockets => {
-  const ref = firebase.database().ref('/').child('/sockets').set(sockets);
+  firebase.database().ref('/').child('/sockets').set(sockets);
 };

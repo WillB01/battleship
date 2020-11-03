@@ -4,7 +4,8 @@ import CreateGame from '../CreateGame/CreateGame';
 import GamesList from '../GamesList/GameList';
 
 import { GameContext } from '../../context/storeContext';
-import { getAllGames, getGameById } from '../../database/crud';
+import { getAllGames, getGameById, deleteGame } from '../../database/crud';
+import { isUserOnline } from '../../services/helpers';
 
 const HostContainer = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
@@ -25,11 +26,17 @@ const HostContainer = ({ socket }) => {
     });
   }, [state, socket.id]);
 
+  // delete games that has ofline hosts
   useEffect(() => {
-    socket.on('getConnectedSockets', sockets => {
-      setConnectedUsers(sockets.length);
+    if (state.games.length === 0) {
+      return;
+    }
+    state.games.map(game => {
+      if (!isUserOnline(game.game.playerOne.id, state.connectedUsers)) {
+        deleteGame(game.id);
+      }
     });
-  }, []);
+  }, [state]);
 
   const onClickDisplayGamesHandler = gameId => {
     setHideHostDetails([true, true]);
@@ -38,6 +45,7 @@ const HostContainer = ({ socket }) => {
     <>
       {!hideHostDetails[0] && !hideHostDetails[1] && (
         <div>
+          {state.connectedUsers.length}
           <CreateGame socket={socket} />
           <GamesList socket={socket} onClick={onClickDisplayGamesHandler} />
         </div>
