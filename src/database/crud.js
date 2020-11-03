@@ -10,37 +10,6 @@ firebase.initializeApp(config);
 ///ROOMS//////////////////////
 //////////////////////////////
 
-export const addNewRoom = (hostId, hostName, roomName, cb) => {
-  firebase.database().ref('/').child('/rooms').push(
-    {
-      hostId,
-      hostName,
-      roomName,
-      status: 'WAITING-PLAYER-TWO',
-    },
-    cb()
-  );
-};
-
-export const changeRoomStatus = (status, id) => {
-  const ref = firebase.database().ref(`/rooms/${id}`);
-  ref.update({ status: status });
-};
-
-export const getAllRooms = cb => {
-  const db = firebase.database().ref('/rooms');
-
-  if (cb) {
-    db.on('value', snapshot => {
-      const data = [];
-      snapshot.forEach((child, i) => {
-        data.push({ ...child.val(), firebaseId: child.key });
-      });
-      cb(data);
-    });
-  }
-};
-
 export const removeRoom = (sockets, data) => {
   if (!data) {
     return;
@@ -48,10 +17,9 @@ export const removeRoom = (sockets, data) => {
 
   const db = firebase.database().ref('/rooms');
   const removeIds = [];
-  data.forEach(v => {
-    console.log(v);
-    if (!sockets.includes(v.hostId)) {
-      removeIds.push(v.firebaseId);
+  data.forEach(r => {
+    if (!sockets.includes(r.hostId)) {
+      removeIds.push(r.firebaseId);
     }
   });
 
@@ -64,19 +32,13 @@ export const removeRoom = (sockets, data) => {
   }
 };
 
-export const getRoomById = (roomId, cb) => {
-  const ref = firebase.database().ref(`/rooms/${roomId}`);
-  ref.on('value', snapshot => cb({ ...snapshot.val(), roomId }));
-};
-
 ///////////////////////////////////////////
 
+///////////////////////////////
+///GAME///////////////////////
 //////////////////////////////
-///GAME//////////////////////
-//////////////////////////////
-
 export const createGame = (
-  { roomId, roomName, playerOneId, playerOneName, playerTwoId, playerTwoName },
+  { status, gameName, playerOneId, playerOneName, playerTwoId, playerTwoName },
   cb
 ) => {
   const ref = firebase
@@ -84,10 +46,10 @@ export const createGame = (
     .ref('/')
     .child('/games')
     .push({
-      roomId: roomId,
-      board: boardBlueprint,
+      status: status,
+      name: gameName,
       game: {
-        name: roomName,
+        board: boardBlueprint,
         playerTurn: 'PLAYER-ONE',
         playerOne: {
           id: playerOneId,
@@ -106,7 +68,31 @@ export const createGame = (
   return ref.key;
 };
 
+export const getAllGames = cb => {
+  const db = firebase.database().ref('/games');
+
+  return db.on('value', snapshot => {
+    const data = [];
+    snapshot.forEach((child, i) => {
+      data.push({ ...child.val(), id: child.key });
+    });
+    cb(data);
+  });
+};
+
 export const getGameById = (id, cb) => {
   const ref = firebase.database().ref(`/games/${id}`);
   ref.on('value', snapshot => cb({ ...snapshot.val() }));
+};
+
+export const setGameStatus = (id, status) => {
+  const ref = firebase.database().ref(`/games/${id}`);
+  ref.update({ status: status });
+};
+
+////////////////////////////////
+///SOCKETS/////////////////////
+//////////////////////////////
+export const updateSockets = sockets => {
+  const ref = firebase.database().ref('/').child('/sockets').set(sockets);
 };

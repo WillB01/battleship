@@ -11,9 +11,6 @@ import styles from './Game.module.scss';
 
 const Game = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
-  const [showBoard, setShowBoard] = useState(false);
-  const [gameHosted, setGameHosted] = useState(false);
-
   useEffect(() => {
     //clean up later
     socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
@@ -28,7 +25,6 @@ const Game = ({ socket }) => {
 
   useEffect(() => {
     socket.on('GAME-CREATED-HANDLER', data => {
-      setShowBoard(true);
       getGameById(data.gameId, snapshot => {
         dispatch({
           type: 'START-GAME',
@@ -37,10 +33,19 @@ const Game = ({ socket }) => {
       });
     });
 
-    socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
-      setGameHosted(true);
-    });
     return () => socket.close();
+  }, []);
+
+  useEffect(() => {
+    //clean up later
+    socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
+      dispatch({
+        type: 'ATTACK-PLAYER',
+        payload: {
+          state: data.state,
+        },
+      });
+    });
   }, []);
 
   const boardClickHandler = (x, y) => {
@@ -56,13 +61,19 @@ const Game = ({ socket }) => {
     });
   };
 
-  return (
-    <>
-      {state.game.name}
-      {showBoard && <div>player 1: {state.game.playerOne.name}</div>}
-      {showBoard && <div>player 2: {state.game.playerTwo.name}</div>}
-
-      {gameHosted && !showBoard && (
+  const renderPicker = () => {
+    const { status } = state;
+    if (status === 'ACTIVE') {
+      return (
+        <div>
+          <div>player 1: {state.game.playerOne.name}</div>
+          <div>player 2: {state.game.playerTwo.name}</div>
+          <Board onClick={boardClickHandler} socket={socket} />
+        </div>
+      );
+    }
+    if (status === 'HOSTED') {
+      return (
         <div className={styles.wating}>
           <div className="lds-ripple">
             <div></div>
@@ -70,10 +81,11 @@ const Game = ({ socket }) => {
           </div>
           wating for player two
         </div>
-      )}
-      {showBoard && <Board onClick={boardClickHandler} socket={socket} />}
-    </>
-  );
+      );
+    }
+  };
+
+  return { renderPicker };
 };
 
 export default Game;
