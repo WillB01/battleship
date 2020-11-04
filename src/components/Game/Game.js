@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, Children } from 'react';
 
 import socketActions from '../../services/socketActions';
 
@@ -36,31 +36,6 @@ import styles from './Game.module.scss';
 //     return () => socket.close();
 //   }, []);
 
-//   useEffect(() => {
-//     //clean up later
-//     socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
-//       dispatch({
-//         type: 'ATTACK-PLAYER',
-//         payload: {
-//           state: data.state,
-//         },
-//       });
-//     });
-//   }, []);
-
-//   const boardClickHandler = (x, y) => {
-//     if (state.board[y][x - 1] === undefined) {
-//       alert('no');
-//     }
-//     socket.emit(socketActions.ATTACK_SHIP, {
-//       x: x,
-//       y: y,
-//       gameName: state.game.name,
-//       attackingPlayerId: socket.id,
-//       state: state,
-//     });
-//   };
-
 //   const renderPicker = () => {
 //     const { status } = state;
 //     if (status === 'ACTIVE') {
@@ -81,8 +56,38 @@ import styles from './Game.module.scss';
 const Game = ({ socket, index }) => {
   const { state, dispatch } = useContext(GameContext);
 
-  console.log('in game', state.games[index]);
-  return <div>GAME</div>;
+  useEffect(() => {
+    //clean up later
+    socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
+      dispatch({
+        type: 'ATTACK-PLAYER',
+        payload: {
+          index: index,
+          game: data.game,
+        },
+      });
+    });
+  }, []);
+
+  const boardClickHandler = (x, y) => {
+    if (state.games[index].game.board[y][x - 1] === undefined) {
+      alert('no');
+    }
+    console.log(state.games[index].game);
+    socket.emit(socketActions.ATTACK_SHIP, {
+      x: x,
+      y: y,
+      gameName: state.games[index].name,
+      attackingPlayerId: socket.id,
+      game: state.games[index].game,
+    });
+  };
+
+  return (
+    <div>
+      <Board onClick={boardClickHandler} socket={socket} index={index} />
+    </div>
+  );
 };
 
 export default Game;

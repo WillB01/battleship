@@ -30,14 +30,17 @@ const GamesList = ({ socket, onClick }) => {
 
   return (
     <div className={styles.gameList}>
-      <div className={styles.img}></div>
+      {/* <div className={styles.img}></div> */}
       {state.games.length !== 0 &&
         state.games.map((game, i) => {
           return (
-            <div key={game.id} className={styles.game}>
-              <div
-                className={`${addStyle(game.status, game.game.playerOne.id)}`}
-              ></div>
+            <div
+              key={game.id}
+              className={` ${styles.game} ${addStyle(
+                game.status,
+                game.game.playerOne.id
+              )}`}
+            >
               <div className={`${styles.content}`}>
                 <div className={`${styles.content__item}`}>
                   {/* <GiBattleship /> */}
@@ -48,13 +51,9 @@ const GamesList = ({ socket, onClick }) => {
                   {game.game.playerOne.name}
                   {/* <DiYeoman /> */}
                 </div>
-                <button
-                  onClick={() =>
-                    game.status === 'HOSTED' ? onClick(game.id, i) : null
-                  }
-                >
-                  join game
-                </button>
+                {game.status === 'HOSTED' && (
+                  <button onClick={() => onClick(game.id, i)}>join game</button>
+                )}
               </div>
             </div>
           );

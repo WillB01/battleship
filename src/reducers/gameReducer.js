@@ -29,6 +29,8 @@ export const initialState = {
 };
 
 export const gameReducer = (state, action) => {
+  const { games } = state;
+
   switch (action.type) {
     case 'UPDATED-SOCKETS': {
       return {
@@ -50,8 +52,11 @@ export const gameReducer = (state, action) => {
       };
     }
     case 'ATTACK-PLAYER': {
+      games[action.payload.index].game = action.payload.game;
+
       return {
-        ...action.payload.state,
+        ...state,
+        games: games,
       };
     }
     default:

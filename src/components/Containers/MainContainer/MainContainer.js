@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import styles from './MainContainer.module.scss';
 
 import HostContainer from '../HostContainer/HostContainer';
 import Game from '../../Game/Game';
@@ -44,7 +45,7 @@ const MainContainer = ({ socket }) => {
     <>
       {gameIndex === '' && <HostContainer socket={socket} />}
       {gameIndex !== '' && (
-        <>
+        <div className={styles.gameContainer}>
           <GameDetails index={gameIndex} />
           <Game socket={socket} index={gameIndex} />
           <Chat
@@ -52,7 +53,7 @@ const MainContainer = ({ socket }) => {
             type={'private'}
             gameName={state.games[gameIndex].name}
           />
-        </>
+        </div>
       )}
     </>
   );

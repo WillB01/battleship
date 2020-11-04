@@ -122,7 +122,10 @@
 }
 
 .active {
-  color: blueviolet;
+  filter: grayscale(1);
+  button {
+    cursor: pointer;
+  }
 }
 
 .unavailable {

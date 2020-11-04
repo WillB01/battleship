@@ -4,8 +4,10 @@ import { headingTop, headingSide } from '../../services/boardBlueprint';
 import styles from './Board.module.scss';
 import socketActions from '../../services/socketActions';
 
-const Board = ({ onClick }) => {
+const Board = ({ onClick, index }) => {
   const { state, dispatch } = useContext(GameContext);
+
+  const { board } = state.games[index].game;
 
   return (
     <>
@@ -24,10 +26,10 @@ const Board = ({ onClick }) => {
             </div>
           );
         })}
-        {state.board.map((item, i) => {
+        {board.map((item, i) => {
           return item.map((itemItem, ii) => {
             return (
-              <div key={ii} onClick={() => onClick(itemItem, i, state.game)}>
+              <div key={ii} onClick={() => onClick(itemItem, i)}>
                 {itemItem}
               </div>
             );
