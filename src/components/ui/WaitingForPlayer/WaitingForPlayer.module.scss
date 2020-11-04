@@ -8,10 +8,10 @@
     position: fixed;
     top: 0;
     left: 0;
-    filter: contrast(0.5);
+    filter: contrast(0.5) brightness(0.5);
   }
 
   div {
-    color: $c-beige--1;
+    color: $c-primary-blue-light;
   }
 }

@@ -9,7 +9,7 @@ import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
 import { GameContext } from '../../../context/storeContext';
 import { deleteGame, setGameStatus } from '../../../database/crud';
 import { isUserOnline } from '../../../services/helpers';
-import { HiUserGroup } from 'react-icons/hi';
+import { HiOutlineUsers } from 'react-icons/hi';
 
 const HostContainer = ({ socket }) => {
   const { state } = useContext(GameContext);
@@ -58,7 +58,7 @@ const HostContainer = ({ socket }) => {
               Host or join a game of battleship!
             </div>
             <div className={styles.information__users}>
-              <HiUserGroup />
+              <HiOutlineUsers />
               <p>{state.connectedUsers.length}</p>
             </div>
           </div>

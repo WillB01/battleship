@@ -17,7 +17,6 @@
   border-radius: 0.3rem;
   height: 20rem;
   margin-top: 3rem;
-  margin-bottom: 3rem;
 
   display: grid;
   grid-template-columns: 1fr;
@@ -25,13 +24,21 @@
   text-align: center;
 
   &__heading {
+    font-size: 72px;
+    background: radial-gradient(
+      circle,
+      rgba(46, 59, 73, 1) 0%,
+      rgba(58, 58, 64, 1) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   &__users {
     position: absolute;
     top: 1rem;
-    left: 2rem;
-    color: $c-green-gray;
+    right: 2rem;
+    color: $c-gray-light--1;
 
     display: flex;
     justify-content: center;
@@ -39,8 +46,8 @@
 
     svg {
       margin-right: 1rem;
-      height: 4rem;
-      width: 4rem;
+      height: 3rem;
+      width: 3rem;
     }
 
     p {

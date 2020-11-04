@@ -1,11 +1,13 @@
 import React, { useEffect, useContext } from 'react';
+import styles from './GameList.module.scss';
 
 import { GiBattleship } from 'react-icons/gi';
 import { DiYeoman } from 'react-icons/di';
 
-import styles from './GameList.module.scss';
 import { isUserOnline } from '../../services/helpers';
 import { GameContext } from '../../context/storeContext';
+
+import img from '../../assets/img/war-ship-2.jpg';
 
 const GamesList = ({ socket, onClick }) => {
   const { state } = useContext(GameContext);
@@ -28,25 +30,31 @@ const GamesList = ({ socket, onClick }) => {
 
   return (
     <div className={styles.gameList}>
+      <div className={styles.img}></div>
       {state.games.length !== 0 &&
         state.games.map((game, i) => {
           return (
-            <div
-              key={game.id}
-              className={`${addStyle(game.status, game.game.playerOne.id)} ${
-                styles.gameList__item
-              }`}
-              onClick={() =>
-                game.status === 'HOSTED' ? onClick(game.id, i) : null
-              }
-            >
-              <div>
-                <GiBattleship />
-                {game.name}
-              </div>
-              <div>
-                <DiYeoman />
-                {game.game.playerOne.name}
+            <div key={game.id} className={styles.game}>
+              <div
+                className={`${addStyle(game.status, game.game.playerOne.id)}`}
+              ></div>
+              <div className={`${styles.content}`}>
+                <div className={`${styles.content__item}`}>
+                  {/* <GiBattleship /> */}
+                  {game.name}
+                </div>
+                <div className={styles.line}></div>
+                <div className={`${styles.content__item}`}>
+                  {game.game.playerOne.name}
+                  {/* <DiYeoman /> */}
+                </div>
+                <button
+                  onClick={() =>
+                    game.status === 'HOSTED' ? onClick(game.id, i) : null
+                  }
+                >
+                  join game
+                </button>
               </div>
             </div>
           );

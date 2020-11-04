@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styles from './useInput.module.scss';
 
-const useInput = (onClick, setInput, value, placeholder, id) => {
+const useInput = (onClick, setInput, value, placeholder, id, dropLabel) => {
   useEffect(() => {}, [onClick, value]);
 
   const [showLabel, setShowLabel] = useState(false);
 
   const onChangeHandler = (value, id) => {
     setInput(value, id);
+
+    if (dropLabel) {
+      return;
+    }
 
     if (value === '') {
       return setShowLabel(false);
@@ -28,13 +32,15 @@ const useInput = (onClick, setInput, value, placeholder, id) => {
         value={value}
         placeholder={placeholder}
       />
-      <div
-        className={`${styles.label} ${
-          showLabel ? styles.label__showLabel : styles.label__hideLabel
-        }`}
-      >
-        {placeholder}
-      </div>
+      {!dropLabel && (
+        <div
+          className={`${styles.label} ${
+            showLabel ? styles.label__showLabel : styles.label__hideLabel
+          }`}
+        >
+          {placeholder}
+        </div>
+      )}
     </div>
   );
 };

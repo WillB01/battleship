@@ -59,7 +59,7 @@ const Chat = ({ socket, type, gameName }) => {
       </div>
 
       <div className={styles.inputContainer}>
-        {useInput(onClickHandler, setInput, input, 'message')}
+        {useInput(onClickHandler, setInput, input, 'message', '', true)}
         <div className={styles.button}>
           <i onClick={onClickHandler} className="far fa-paper-plane"></i>
         </div>

@@ -36,6 +36,9 @@ const CreateGame = ({ socket }) => {
   };
 
   const onChangeHandler = (value, labelIndex) => {
+    if (value.length > 25) {
+      return;
+    }
     if (labelIndex === 0) {
       setGameName(value);
     } else {
