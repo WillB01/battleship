@@ -5,6 +5,7 @@ import useInput from '../hooks/useInput/useInput';
 
 import { GameContext } from '../../context/storeContext';
 import { setGameActive } from '../../database/crud';
+import { GiShipWheel } from 'react-icons/gi';
 
 const PlayerTwoForm = ({ socket, gameId, gameName }) => {
   const { state } = useContext(GameContext);
@@ -29,6 +30,7 @@ const PlayerTwoForm = ({ socket, gameId, gameName }) => {
 
   return (
     <div className={styles.playerTwoForm}>
+      <GiShipWheel />
       {useNameInput}
       <button onClick={onClickHandler}>Let's go!</button>
     </div>

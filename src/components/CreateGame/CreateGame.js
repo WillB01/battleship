@@ -9,7 +9,6 @@ import styles from './CreateGame.module.scss';
 const CreateGame = ({ socket }) => {
   const [gameName, setGameName] = useState('');
   const [playerOneName, setPlayerOneName] = useState('');
-  const [showLabel, setShowLabel] = useState([false, false]);
   const [showSelf, setShowSelf] = useState(true);
 
   useEffect(() => {
@@ -42,11 +41,6 @@ const CreateGame = ({ socket }) => {
     } else {
       setPlayerOneName(value);
     }
-
-    showLabel[labelIndex] = true;
-    if (value === '') {
-      showLabel[labelIndex] = false;
-    }
   };
 
   const useGameInput = useInput(
@@ -68,16 +62,9 @@ const CreateGame = ({ socket }) => {
   return (
     <>
       {showSelf && (
-        <div className={`${styles.createRoom} ${showLabel}`}>
-          <div className={styles.createRoom__item}>
-            {useGameInput}
-            {showLabel[0] && <div className={styles.label}>Game name:</div>}
-          </div>
-          <div className={styles.createRoom__item}>
-            {useNameInput}
-            {showLabel[1] && <div className={styles.label}>Your name:</div>}
-          </div>
-
+        <div className={`${styles.createRoom}`}>
+          <div className={styles.createRoom__item}>{useGameInput}</div>
+          <div className={styles.createRoom__item}>{useNameInput}</div>
           <button onClick={onClickHandler}>Host game</button>
         </div>
       )}

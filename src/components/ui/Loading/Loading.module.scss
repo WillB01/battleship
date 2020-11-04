@@ -4,4 +4,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  svg {
+    color: currentColor;
+    height: 9rem;
+    width: 9rem;
+    margin-top: 1.5rem;
+    transform: rotate(359deg);
+
+    animation: rotate 1s infinite;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }

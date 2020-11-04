@@ -1,0 +1,17 @@
+@import '../../../scss//variables';
+
+.waitingForPlayer {
+  video {
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    filter: contrast(0.5);
+  }
+
+  div {
+    color: $c-beige--1;
+  }
+}

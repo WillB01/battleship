@@ -1,2 +1,27 @@
+.container {
+  position: relative;
+  padding: 1rem 0;
+}
+
 .input {
+}
+
+.label {
+  position: absolute;
+
+  font-size: 1.2rem;
+  transition: all 0.3s;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  &__showLabel {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__hideLabel {
+    transform: translateY(-3.5rem);
+    opacity: 0;
+    visibility: hidden;
+  }
 }

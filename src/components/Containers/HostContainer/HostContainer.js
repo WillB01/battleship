@@ -1,13 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
+import styles from './HostContainer.module.scss';
 
 import CreateGame from '../../CreateGame/CreateGame';
 import GamesList from '../../GamesList/GameList';
 import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
-import Loading from '../../ui/Loading/Loading';
+import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
 
 import { GameContext } from '../../../context/storeContext';
 import { deleteGame, setGameStatus } from '../../../database/crud';
 import { isUserOnline } from '../../../services/helpers';
+import { HiUserGroup } from 'react-icons/hi';
 
 const HostContainer = ({ socket }) => {
   const { state } = useContext(GameContext);
@@ -48,19 +50,23 @@ const HostContainer = ({ socket }) => {
     setHideHostDetails([false, true]);
   };
   return (
-    <>
+    <div className={styles.hostContainer}>
       {!hideHostDetails[0] && !hideHostDetails[1] && (
-        <div>
-          {state.connectedUsers.length}
+        <>
+          <div className={styles.information}>
+            <div className={`${styles.information__heading} heading--1`}>
+              Host or join a game of battleship!
+            </div>
+            <div className={styles.information__users}>
+              <HiUserGroup />
+              <p>{state.connectedUsers.length}</p>
+            </div>
+          </div>
           <CreateGame socket={socket} />
           <GamesList socket={socket} onClick={onClickDisplayGamesHandler} />
-        </div>
+        </>
       )}
-      {hideHostDetails[0] && (
-        <div>
-          <Loading> waiting player two</Loading>
-        </div>
-      )}
+      {hideHostDetails[0] && <WaitingForPlayer />}
       {hideHostDetails[1] && (
         <PlayerTwoForm
           socket={socket}
@@ -68,7 +74,7 @@ const HostContainer = ({ socket }) => {
           gameName={state.games[currentGameIndex].name}
         />
       )}
-    </>
+    </div>
   );
 };
 

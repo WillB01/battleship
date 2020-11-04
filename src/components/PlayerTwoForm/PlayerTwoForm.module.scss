@@ -1,7 +1,25 @@
+@import '../../scss/variables';
+
 .playerTwoForm {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   height: 100vh;
   width: 100%;
+
+  button {
+    margin-top: 2rem;
+  }
+
+  svg {
+    color: $c-gray-dark-1;
+    height: 9rem;
+    width: 9rem;
+    margin-bottom: 5rem;
+
+    // &:not(:first-child) {
+    //   margin-bottom: 5rem;
+    // }
+  }
 }
