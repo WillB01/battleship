@@ -25,41 +25,43 @@ const Game = ({ socket, index }) => {
     });
   }, []);
 
-  const boardClickHandler = (x, y, itemItem) => {
+  const boardClickHandler = (x, y, boardType) => {
     // TODO REFACTOR
-    console.log('ITEMITEM', itemItem);
+    // move to serer
+    console.log('ITEMITEM', boardType);
     // player one hits enemy
-    if (
-      itemItem === 'p1' &&
-      socket.id === state.games[index].game.playerOne.id
-    ) {
-      return alert('friendly fire');
-    }
+    // if (
+    //   itemItem === 'p1' &&
+    //   socket.id === state.games[index].game.playerOne.id
+    // ) {
+    //   return alert('friendly fire');
+    // }
 
-    if (
-      itemItem === 'p2' &&
-      socket.id === state.games[index].game.playerOne.id
-    ) {
-      alert('YEAH HIT');
-    }
+    // if (
+    //   itemItem === 'p2' &&
+    //   socket.id === state.games[index].game.playerOne.id
+    // ) {
+    //   alert('YEAH HIT');
+    // }
 
     // player two hits enemy
-    if (
-      itemItem === 'p2' &&
-      socket.id === state.games[index].game.playerTwo.id
-    ) {
-      return alert('friendly fire');
-    }
+    // if (
+    //   itemItem === 'p2' &&
+    //   socket.id === state.games[index].game.playerTwo.id
+    // ) {
+    //   return alert('friendly fire');
+    // }
 
-    if (
-      itemItem === 'p1' &&
-      socket.id === state.games[index].game.playerTwo.id
-    ) {
-      alert('YEAH HIT');
-    }
+    // if (
+    //   itemItem === 'p1' &&
+    //   socket.id === state.games[index].game.playerTwo.id
+    // ) {
+    //   alert('YEAH HIT');
+    // }
 
     console.log(state.games[index].game);
     socket.emit(socketActions.ATTACK_SHIP, {
+      boardType: boardType,
       x: x,
       y: y,
       gameName: state.games[index].name,
@@ -67,6 +69,8 @@ const Game = ({ socket, index }) => {
       game: state.games[index].game,
     });
   };
+
+  console.log('game render state', state);
 
   return (
     <div>

@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
+import styles from './CreateGame.module.scss';
+
+import { GiShipWheel } from 'react-icons/gi';
 import { createGame } from '../../database/crud';
 import { GameContext } from '../../context/storeContext';
 import socketActions from '../../services/socketActions';
 import useInput from '../hooks/useInput/useInput';
-
-import styles from './CreateGame.module.scss';
 
 const CreateGame = ({ socket }) => {
   const [gameName, setGameName] = useState('');
@@ -66,9 +67,25 @@ const CreateGame = ({ socket }) => {
     <>
       {showSelf && (
         <div className={`${styles.createRoom}`}>
-          <div className={styles.createRoom__item}>{useGameInput}</div>
-          <div className={styles.createRoom__item}>{useNameInput}</div>
-          <button onClick={onClickHandler}>Host game</button>
+          <div className={`${styles.item} ${styles.item__icon}`}>
+            {/* <GiShipWheel /> */}
+            heading
+          </div>
+          {/* <div className={`${styles.line}`}></div> */}
+
+          <div className={`${styles.item} ${styles.item__1}`}>
+            {useGameInput}
+          </div>
+          <div className={`${styles.item} ${styles.item__2}`}>
+            {useNameInput}
+          </div>
+          {/* <div className={`${styles.line__right}`}></div> */}
+          <button
+            className={`${styles.item} ${styles.item__btn}`}
+            onClick={onClickHandler}
+          >
+            Host game
+          </button>
         </div>
       )}
     </>

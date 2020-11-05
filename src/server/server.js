@@ -31,37 +31,68 @@ io.on('connection', socket => {
   // Board click
   /////////////////////////////
   socket.on(actions.ATTACK_SHIP, data => {
-    // refactor duplicate code
-    //player one
+    //TODO REFACTOR
+    // PLAYER ONE //////////////
     if (
       data.game.playerOne.id === socket.id &&
       data.game.playerTurn === 'PLAYER-ONE'
     ) {
+      if (
+        data.boardType === 'p1' ||
+        data.boardType === 'p2' ||
+        data.boardType === 'p1-ship'
+      ) {
+        console.log('ALREADY ATTACKED');
+        return;
+      }
+
+      data.game.board[data.y][data.x - 1] = 'p1';
+
       data.game.playerOne.attackLocation.push({
         x: data.x,
         y: data.y,
+        type: data.boardType,
       });
 
-      data.game.playerTurn = 'PLAYER-TWO';
-
-      data.game.board[data.y][data.x - 1] = 'p1';
+      // if player hit enemy ship same player turn
+      if (data.boardType === 'p2-ship') {
+        data.game.playerTurn = 'PLAYER-ONE';
+      } else {
+        data.game.playerTurn = 'PLAYER-TWO';
+      }
 
       return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
     }
 
-    //player two
+    // PLAYER TWO //////////////
+
     if (
       data.game.playerTwo.id === socket.id &&
       data.game.playerTurn === 'PLAYER-TWO'
     ) {
+      if (
+        data.boardType === 'p1' ||
+        data.boardType === 'p2' ||
+        data.boardType === 'p2-ship'
+      ) {
+        console.log('ALREADY ATTACKED');
+        return;
+      }
+
+      data.game.board[data.y][data.x - 1] = 'p2';
+
       data.game.playerTwo.attackLocation.push({
         x: data.x,
         y: data.y,
+        type: data.boardType,
       });
 
-      data.game.playerTurn = 'PLAYER-ONE';
-
-      data.game.board[data.y][data.x - 1] = 'p2';
+      // if player hit enemy ship same player turn
+      if (data.boardType === 'p1-ship') {
+        data.game.playerTurn = 'PLAYER-TWO';
+      } else {
+        data.game.playerTurn = 'PLAYER-ONE';
+      }
 
       return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
     }
