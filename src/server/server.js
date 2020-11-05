@@ -33,68 +33,61 @@ io.on('connection', socket => {
   socket.on(actions.ATTACK_SHIP, data => {
     //TODO REFACTOR
     // PLAYER ONE //////////////
-    if (
-      data.game.playerOne.id === socket.id &&
-      data.game.playerTurn === 'PLAYER-ONE'
-    ) {
-      if (
-        data.boardType === 'p1' ||
-        data.boardType === 'p2' ||
-        data.boardType === 'p1-ship'
-      ) {
+
+    const { boardType, game, gameName } = data;
+
+    const p1 = 'p1';
+    const p1Ship = 'p1-ship';
+    const p2 = 'p2';
+    const p2Ship = 'p2-ship';
+
+    if (game.playerOne.id === socket.id && game.playerTurn === 'PLAYER-ONE') {
+      if (boardType === p1 || boardType === p2 || boardType === p1Ship) {
         console.log('ALREADY ATTACKED');
         return;
       }
 
-      data.game.board[data.y][data.x - 1] = 'p1';
+      // if player hit enemy ship same player turn
+      if (boardType === p2Ship) {
+        game.playerTurn = 'PLAYER-ONE';
+      } else {
+        game.playerTurn = 'PLAYER-TWO';
+      }
 
-      data.game.playerOne.attackLocation.push({
+      game.board[data.y][data.x] = p1;
+
+      game.playerOne.attackLocation.push({
         x: data.x,
         y: data.y,
         type: data.boardType,
       });
 
-      // if player hit enemy ship same player turn
-      if (data.boardType === 'p2-ship') {
-        data.game.playerTurn = 'PLAYER-ONE';
-      } else {
-        data.game.playerTurn = 'PLAYER-TWO';
-      }
-
-      return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
+      return io.to(gameName).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
 
     // PLAYER TWO //////////////
-
-    if (
-      data.game.playerTwo.id === socket.id &&
-      data.game.playerTurn === 'PLAYER-TWO'
-    ) {
-      if (
-        data.boardType === 'p1' ||
-        data.boardType === 'p2' ||
-        data.boardType === 'p2-ship'
-      ) {
+    if (game.playerTwo.id === socket.id && game.playerTurn === 'PLAYER-TWO') {
+      if (boardType === p1 || boardType === p2 || boardType === p2Ship) {
         console.log('ALREADY ATTACKED');
         return;
       }
 
-      data.game.board[data.y][data.x - 1] = 'p2';
+      // if player hit enemy ship same player turn
+      if (boardType === p1Ship) {
+        game.playerTurn = 'PLAYER-TWO';
+      } else {
+        game.playerTurn = 'PLAYER-ONE';
+      }
 
-      data.game.playerTwo.attackLocation.push({
+      game.board[data.y][data.x] = p2;
+
+      game.playerTwo.attackLocation.push({
         x: data.x,
         y: data.y,
         type: data.boardType,
       });
 
-      // if player hit enemy ship same player turn
-      if (data.boardType === 'p1-ship') {
-        data.game.playerTurn = 'PLAYER-TWO';
-      } else {
-        data.game.playerTurn = 'PLAYER-ONE';
-      }
-
-      return io.to(data.gameName).emit(actions.ATTACK_SHIP_HANDLER, data);
+      return io.to(gameName).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
   });
   /////////////////////////////////

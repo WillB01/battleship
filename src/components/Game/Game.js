@@ -14,58 +14,23 @@ const Game = ({ socket, index }) => {
 
   useEffect(() => {
     //clean up later
-    socket.on(socketActions.ATTACK_SHIP_HANDLER, data => {
+    socket.on(socketActions.ATTACK_SHIP_HANDLER, game => {
       dispatch({
         type: 'ATTACK-PLAYER',
         payload: {
-          index: index,
-          game: data.game,
+          index,
+          game,
         },
       });
     });
   }, []);
 
   const boardClickHandler = (x, y, boardType) => {
-    // TODO REFACTOR
-    // move to serer
-    console.log('ITEMITEM', boardType);
-    // player one hits enemy
-    // if (
-    //   itemItem === 'p1' &&
-    //   socket.id === state.games[index].game.playerOne.id
-    // ) {
-    //   return alert('friendly fire');
-    // }
-
-    // if (
-    //   itemItem === 'p2' &&
-    //   socket.id === state.games[index].game.playerOne.id
-    // ) {
-    //   alert('YEAH HIT');
-    // }
-
-    // player two hits enemy
-    // if (
-    //   itemItem === 'p2' &&
-    //   socket.id === state.games[index].game.playerTwo.id
-    // ) {
-    //   return alert('friendly fire');
-    // }
-
-    // if (
-    //   itemItem === 'p1' &&
-    //   socket.id === state.games[index].game.playerTwo.id
-    // ) {
-    //   alert('YEAH HIT');
-    // }
-
-    console.log(state.games[index].game);
     socket.emit(socketActions.ATTACK_SHIP, {
       boardType: boardType,
       x: x,
       y: y,
       gameName: state.games[index].name,
-      attackingPlayerId: socket.id,
       game: state.games[index].game,
     });
   };

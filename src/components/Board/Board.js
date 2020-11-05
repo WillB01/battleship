@@ -29,7 +29,7 @@ const Board = ({ onClick, index }) => {
         {board.map((item, i) => {
           return item.map((itemItem, ii) => {
             return (
-              <div key={ii} onClick={() => onClick(ii + 1, i, itemItem)}>
+              <div key={ii} onClick={() => onClick(ii, i, itemItem)}>
                 {itemItem}
               </div>
             );
