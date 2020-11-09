@@ -1,0 +1,49 @@
+.boardSquare {
+}
+
+.square {
+  width: 5rem;
+  height: 3rem;
+  background: hotpink;
+
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+
+  // position: absolute;
+  // top: 50px;
+  // left: 50px;
+  // bottom: 50px;
+  // right: 50px;
+  // background: black;
+  // opacity: 0.5;
+  // border-radius: 50px;
+}
+
+.ships {
+  background: coral;
+  width: 5rem;
+  height: 3rem;
+
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stickToMouse {
+  position: fixed; /* Floating above */
+  transition: transform 0.23s; /* Sticking effect */
+  pointer-events: none; /* Allow clicking trough the div */
+}
+
+.shipSelector {
+  padding: 1rem;
+}
+
+.shipContainer {
+  background: red;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.displayNone {
+  display: none;
+}

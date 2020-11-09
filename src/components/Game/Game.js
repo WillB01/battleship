@@ -2,7 +2,8 @@ import React, { useContext, useState, useEffect, Children } from 'react';
 
 import socketActions from '../../services/socketActions';
 
-import Board from '../Board/Board';
+import Board from '../Boards/SharedBoard/Board';
+import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
 
 import { GameContext } from '../../context/storeContext';
 import { getGameById } from '../../database/crud';
@@ -39,7 +40,8 @@ const Game = ({ socket, index }) => {
 
   return (
     <div>
-      <Board onClick={boardClickHandler} socket={socket} index={index} />
+      <PrivateBoard socket={socket.id} index={index} />
+      {/* <Board onClick={boardClickHandler} socket={socket} index={index} /> */}
     </div>
   );
 };

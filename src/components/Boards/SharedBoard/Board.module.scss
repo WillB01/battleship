@@ -5,3 +5,7 @@
   grid-template-columns: repeat(11, minmax(2rem, 1fr));
   grid-template-rows: repeat(11, 1fr);
 }
+
+.privateBoard__item:hover {
+  background: yellowgreen;
+}

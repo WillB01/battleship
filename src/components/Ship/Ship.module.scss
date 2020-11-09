@@ -1,0 +1,27 @@
+// .ship {
+//   position: relative;
+//   background: hotpink;
+//   height: 6rem;
+//   z-index: 50;
+// }
+
+.ship {
+  &__square {
+    width: 5rem;
+    height: 3rem;
+    background: gray;
+
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.absolute {
+  position: absolute;
+  display: none;
+}
+
+.relative {
+  position: relative;
+  display: block;
+}

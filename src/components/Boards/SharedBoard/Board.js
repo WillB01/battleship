@@ -1,8 +1,8 @@
 import React, { useReducer, useContext, useEffect, useState } from 'react';
-import { GameContext } from '../../context/storeContext';
-import { headingTop, headingSide } from '../../services/boardBlueprint';
+import { GameContext } from '../../../context/storeContext';
+import { headingTop, headingSide } from '../../../services/boardBlueprint';
 import styles from './Board.module.scss';
-import socketActions from '../../services/socketActions';
+import socketActions from '../../../services/socketActions';
 
 const Board = ({ onClick, index }) => {
   const { state, dispatch } = useContext(GameContext);
