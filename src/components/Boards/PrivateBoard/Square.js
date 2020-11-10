@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const Square = ({ x, y, content, onClick }) => {
   return (
     <>
-      {content[0] !== undefined ? (
+      {content[0] && content[0] !== undefined ? (
         <motion.div
           className={styles.ships}
           drag

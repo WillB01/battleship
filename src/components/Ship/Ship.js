@@ -16,6 +16,7 @@ const Ship = ({
   onDragEnd,
   shipClickPosition,
   resetShips,
+  directionHandler,
 }) => {
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
@@ -23,19 +24,22 @@ const Ship = ({
 
   const [ships, startLocation] = useState([]);
 
+  const [isDragging, setIsdragging] = useState(false);
+
   useEffect(() => {
-    console.log('RESET');
-
-    setAbsolute(false);
-    setDirection('row');
-
-    crateBlocks();
+    if (resetShips) {
+      const blocks = crateBlocks(size);
+      setBlocks(blocks);
+      setIsdragging(false);
+      setDirection('row');
+      setAbsolute(false);
+    }
   }, [resetShips]);
 
   useEffect(() => {
     const blocks = crateBlocks(size);
     setBlocks(blocks);
-  }, []);
+  }, [resetShips]);
 
   const crateBlocks = length => {
     const blocks = [];
@@ -54,40 +58,51 @@ const Ship = ({
   };
 
   const updateDirection = () => {
-    setDirection(direction === 'column' ? 'row' : 'column');
+    const dir = direction === 'column' ? 'row' : 'column';
+    directionHandler(dir);
+    setDirection(dir);
   };
 
+  console.log(direction);
+
   return (
-    !absolute && (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+      }}
+    >
       <motion.div
         style={{
           cursor: 'grab',
+          opacity: !absolute ? 1 : 0,
+          fontSize: 25,
+          fontWeight: 'bold',
+          display: 'flex',
+          flexDirection: direction,
+          width: 'min-content',
         }}
         drag
         whileTap={{ cursor: 'grabbing' }}
-        dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
         onDragEnd={(event, info) => {
           setAbsolute(true);
+          setIsdragging(false);
           onDragEnd(event, info);
         }}
-        onDragStart={() => onDrag(direction)}
+        onDragStart={() => {
+          setIsdragging(true);
+          onDrag(direction);
+        }}
+      >
+        {blocks}
+      </motion.div>
+      <motion.div
+        animate={{ opacity: !isDragging && absolute ? 0 : 1 }}
         onTap={() => updateDirection()}
       >
-        <div className={`${styles.ship}`}>
-          <div>-</div>
-          <div
-            style={{
-              fontSize: 25,
-              fontWeight: 'bold',
-              display: 'flex',
-              flexDirection: direction,
-            }}
-          >
-            {blocks}
-          </div>
-        </div>
+        rotate icon
       </motion.div>
-    )
+    </div>
   );
 };
 

@@ -24,7 +24,7 @@ export const privateBoardTemp = [
   ['', '', '', '', '', '', '', '', '', ''],
 ];
 
-export const shipSizes = [2, 3, 3, 4, 5];
+export const shipSizes = [, 2, 3, 3, 4, 5];
 
 export const headingTop = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 export const headingSide = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];

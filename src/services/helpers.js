@@ -18,3 +18,50 @@ export const isUserOnline = (socketId, sockets) => {
   }
   return false;
 };
+
+function getArraysIntersection(a1, a2) {
+  return a1.filter(function (n) {
+    return a2.indexOf(n) !== -1;
+  });
+}
+
+export const isOccupied = (board, clickPosition, shipSize, id) => {
+  console.log(board);
+  console.log(clickPosition);
+
+  let tempStart = clickPosition.x;
+
+  let start = clickPosition.x;
+
+  const tempBoard = [];
+  let tempNewArray = ['', '', '', '', '', '', '', '', '', ''];
+
+  for (let i = 0; i < 10; i++) {
+    if (board[clickPosition.y][i] !== '') {
+      tempBoard[i] = board[clickPosition.y][i][0];
+    } else {
+      tempBoard[i] = '-';
+    }
+  }
+
+  for (let i = 0; i < 10; i++) {
+    if (board[clickPosition.y][i] !== '') {
+      tempNewArray[i] = id;
+    }
+  }
+
+  // for (let i = 0; i < tempNewArray.length; i++) {
+  //   if (tempNewArray[i] === '') {
+  //     tempNewArray = tempNewArray.splice(i, 1);
+  //   }
+  // }
+
+  // tempBoard.map((item, i) => {
+  //   tempNewArray[i]
+  // })
+
+  console.log(tempBoard);
+  console.log(tempNewArray);
+
+  return true;
+};
