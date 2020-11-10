@@ -75,6 +75,7 @@ const RenderBoard = ({ shipPositions }) => {
   };
 
   const onDragHandler = (e, dragElement, ship, direction, shipClickIndex) => {
+    console.log(direction);
     const blocksToHover = [];
     let error = false;
 
@@ -87,9 +88,16 @@ const RenderBoard = ({ shipPositions }) => {
           const originalX = parseInt(el.dataset.pos[2]);
 
           if (isEventInElement(e, square.current)) {
-            const index = originalX - shipClickIndex;
+            const indexX = originalX - shipClickIndex;
+            const indexY = originalY - shipClickIndex;
+
             for (let i = 0; i < ship.size; i++) {
-              blocksToHover.push(board[index + i].current);
+              if (direction === 'row') {
+                blocksToHover.push(board[indexX + i].current);
+              }
+              if (direction === 'column') {
+                blocksToHover.push(refs[indexY + i][originalX].current);
+              }
             }
           }
         });
