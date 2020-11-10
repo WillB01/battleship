@@ -65,3 +65,12 @@ export const isOccupied = (board, clickPosition, shipSize, id) => {
 
   return true;
 };
+
+export const isEventInElement = (event, element) => {
+  const rect = element.getBoundingClientRect();
+  const x = event.clientX;
+  if (x < rect.left || x >= rect.right) return false;
+  const y = event.clientY;
+  if (y < rect.top || y >= rect.bottom) return false;
+  return true;
+};

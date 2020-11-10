@@ -1,27 +1,17 @@
-// .ship {
-//   position: relative;
-//   background: hotpink;
-//   height: 6rem;
-//   z-index: 50;
-// }
+.container {
+  background: palegreen;
+  width: min-content;
+  display: flex;
+  flex-direction: row;
+}
 
 .ship {
   &__square {
-    width: 5rem;
+    width: 3rem;
     height: 3rem;
     background: gray;
 
     margin-right: 1rem;
     margin-bottom: 1rem;
   }
-}
-
-.absolute {
-  position: absolute;
-  display: none;
-}
-
-.relative {
-  position: relative;
-  display: block;
 }

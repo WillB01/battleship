@@ -1,10 +1,20 @@
-.boardSquare {
+.privateBoard {
+  background: blue;
+  max-width: 70rem;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(2rem, 1fr));
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.container {
+  background: orange;
 }
 
 .square {
   width: 5rem;
   height: 3rem;
   background: hotpink;
+  z-index: 20;
 
   margin-right: 1rem;
   margin-bottom: 1rem;

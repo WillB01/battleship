@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './Ship.module.scss';
+
 import {
   motion,
   useDragControls,
@@ -7,46 +8,27 @@ import {
   useTransform,
 } from 'framer-motion';
 
-import { MdRotate90DegreesCcw } from 'react-icons/md';
-
-const Ship = ({
-  onDrag,
-  size,
-  id,
-  onDragEnd,
-  shipClickPosition,
-  resetShips,
-  directionHandler,
-}) => {
+const Ship = ({ onDragEnd, onDrag, ship }) => {
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
-  const [absolute, setAbsolute] = useState(false);
-
-  const [ships, startLocation] = useState([]);
-
-  const [isDragging, setIsdragging] = useState(false);
+  const elementRef = useRef(null);
+  const shipClickIndex = useRef('');
 
   useEffect(() => {
-    if (resetShips) {
-      const blocks = crateBlocks(size);
-      setBlocks(blocks);
-      setIsdragging(false);
-      setDirection('row');
-      setAbsolute(false);
-    }
-  }, [resetShips]);
-
-  useEffect(() => {
-    const blocks = crateBlocks(size);
+    const blocks = crateBlocks(ship.size);
     setBlocks(blocks);
-  }, [resetShips]);
+  }, []);
+
+  const rotateHandler = () => {
+    setDirection(direction === 'row' ? 'column' : 'row');
+  };
 
   const crateBlocks = length => {
     const blocks = [];
     for (let i = 0; i < length; i++) {
       blocks.push(
         <motion.div
-          onTapStart={() => shipClickPosition(i)}
+          onTapStart={() => (shipClickIndex.current = i)}
           className={styles.ship__square}
           key={i}
         >
@@ -57,51 +39,28 @@ const Ship = ({
     return blocks;
   };
 
-  const updateDirection = () => {
-    const dir = direction === 'column' ? 'row' : 'column';
-    directionHandler(dir);
-    setDirection(dir);
-  };
-
-  console.log(direction);
-
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-      }}
-    >
+    <div className={styles.container}>
       <motion.div
-        style={{
-          cursor: 'grab',
-          opacity: !absolute ? 1 : 0,
-          fontSize: 25,
-          fontWeight: 'bold',
-          display: 'flex',
-          flexDirection: direction,
-          width: 'min-content',
-        }}
+        style={{ display: 'flex', flexDirection: direction }}
+        ref={elementRef}
         drag
-        whileTap={{ cursor: 'grabbing' }}
-        onDragEnd={(event, info) => {
-          setAbsolute(true);
-          setIsdragging(false);
-          onDragEnd(event, info);
-        }}
-        onDragStart={() => {
-          setIsdragging(true);
-          onDrag(direction);
-        }}
+        onDragEnd={e =>
+          onDragEnd(
+            e,
+            elementRef.current,
+            ship,
+            direction,
+            shipClickIndex.current
+          )
+        }
+        onDrag={e =>
+          onDrag(e, elementRef.current, ship, direction, shipClickIndex.current)
+        }
       >
-        {blocks}
+        {blocks.map(block => block)}
       </motion.div>
-      <motion.div
-        animate={{ opacity: !isDragging && absolute ? 0 : 1 }}
-        onTap={() => updateDirection()}
-      >
-        rotate icon
-      </motion.div>
+      <div onClick={rotateHandler}>rotate</div>
     </div>
   );
 };
