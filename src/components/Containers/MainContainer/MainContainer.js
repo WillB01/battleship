@@ -10,9 +10,6 @@ import { GameContext } from '../../../context/storeContext';
 import { getAllGames, updateSockets } from '../../../database/crud';
 
 import PrivateBoard from '../../Boards/PrivateBoard/PrivateBoard';
-import { TouchBackend } from 'react-dnd-touch-backend';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
 
 const MainContainer = ({ socket }) => {
   const { state, dispatch } = useContext(GameContext);
@@ -48,9 +45,7 @@ const MainContainer = ({ socket }) => {
 
   return (
     <>
-      <DndProvider backend={HTML5Backend}>
-        <PrivateBoard socket={socket.id} index={0} />
-      </DndProvider>
+      <PrivateBoard socket={socket.id} index={0} />
 
       {gameIndex === '' && <HostContainer socket={socket} />}
       {gameIndex !== '' && (
