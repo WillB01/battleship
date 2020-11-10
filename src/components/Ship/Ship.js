@@ -8,7 +8,7 @@ import {
   useTransform,
 } from 'framer-motion';
 
-const Ship = ({ onDragEnd, onDrag, ship }) => {
+const Ship = ({ onDragEnd, onDrag, ship, dropSucess }) => {
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
   const elementRef = useRef(null);
@@ -38,11 +38,15 @@ const Ship = ({ onDragEnd, onDrag, ship }) => {
     }
     return blocks;
   };
-
+  console.log(dropSucess);
   return (
     <div className={styles.container}>
       <motion.div
-        style={{ display: 'flex', flexDirection: direction }}
+        style={{
+          display: 'flex',
+          flexDirection: direction,
+          opacity: ship.dropped ? 0 : 1,
+        }}
         ref={elementRef}
         drag
         onDragEnd={e =>
