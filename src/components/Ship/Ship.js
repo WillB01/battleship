@@ -3,24 +3,50 @@ import styles from './Ship.module.scss';
 
 import {
   motion,
+  transform,
   useDragControls,
   useMotionValue,
   useTransform,
 } from 'framer-motion';
 
-const Ship = ({ onDragEnd, onDrag, ship, dropSucess }) => {
+const Ship = ({
+  onDragEnd,
+  onDragStart,
+  onDrag,
+  ship,
+  onTap,
+  reset,
+  isDragging,
+}) => {
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
+  const [isSelected, setIsSelected] = useState(false);
+  const [isRotate, setIsRotate] = useState(false);
+
   const elementRef = useRef(null);
   const shipClickIndex = useRef('');
 
   useEffect(() => {
     const blocks = crateBlocks(ship.size);
     setBlocks(blocks);
-  }, []);
+  }, [isSelected]);
 
   const rotateHandler = () => {
     setDirection(direction === 'row' ? 'column' : 'row');
+  };
+
+  const onTapHandler = i => {
+    shipClickIndex.current = i;
+    onTap();
+  };
+
+  const onDragStartHandler = () => {
+    onDragStart(ship.id);
+  };
+
+  const onHandEndHandler = e => {
+    onDragEnd(e, elementRef.current, ship, direction, shipClickIndex.current);
+    setIsSelected(false);
   };
 
   const crateBlocks = length => {
@@ -28,43 +54,51 @@ const Ship = ({ onDragEnd, onDrag, ship, dropSucess }) => {
     for (let i = 0; i < length; i++) {
       blocks.push(
         <motion.div
-          onTapStart={() => (shipClickIndex.current = i)}
+          onTapStart={() => {
+            onTapHandler(i);
+            setIsSelected(true);
+          }}
+          style={{
+            cursor: isSelected ? 'grabbing' : 'grab',
+          }}
           className={styles.ship__square}
           key={i}
-        >
-          i
-        </motion.div>
+        ></motion.div>
       );
     }
     return blocks;
   };
-  console.log(dropSucess);
+
   return (
     <div className={styles.container}>
       <motion.div
         style={{
           display: 'flex',
           flexDirection: direction,
-          opacity: ship.dropped ? 0 : 1,
+          visibility: !ship.dropped ? 'visible' : 'hidden',
+
+          position: 'absolute',
+          zIndex: direction === 'column' ? 10 : 1,
         }}
         ref={elementRef}
         drag
-        onDragEnd={e =>
-          onDragEnd(
-            e,
-            elementRef.current,
-            ship,
-            direction,
-            shipClickIndex.current
-          )
-        }
+        onDragStart={onDragStartHandler}
+        onDragEnd={onHandEndHandler}
         onDrag={e =>
           onDrag(e, elementRef.current, ship, direction, shipClickIndex.current)
         }
       >
         {blocks.map(block => block)}
       </motion.div>
-      <div onClick={rotateHandler}>rotate</div>
+      <div
+        className={styles.rotateBtn}
+        style={{
+          visibility: !ship.dropped && !isDragging ? 'visible' : 'hidden',
+        }}
+        onClick={rotateHandler}
+      >
+        rotate icon
+      </div>
     </div>
   );
 };

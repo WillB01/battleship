@@ -12,6 +12,8 @@ import boardStyles from '../SharedBoard/Board.module.scss';
 
 import { isOccupied, isEventInElement } from '../../../services/helpers';
 
+import * as constants from './privateBoardConstants';
+
 import Ship from '../../Ship/Ship';
 import { motion, AnimateSharedLayout, createBatcher } from 'framer-motion';
 
@@ -23,6 +25,7 @@ import {
   privateBoardTemp,
   shipSizes,
 } from '../../../services/boardBlueprint';
+import { HiOutlineReceiptRefund } from 'react-icons/hi';
 
 const PrivateBoard = ({ socket, index }) => {
   return (
@@ -34,29 +37,56 @@ const PrivateBoard = ({ socket, index }) => {
 
 export default PrivateBoard;
 
-const RenderBoard = ({ shipPositions }) => {
+const RenderBoard = () => {
   const [board, setBoard] = useState([]);
   const [ships, setShips] = useState([]);
-  const [dropSuccess, setDropSuccess] = useState([]);
+  const [reset, setReset] = useState(false);
+  const [allShipsDropped, setAllShipsAllDropped] = useState(false);
 
-  let refs = useMemo(() => Array.from({ length: 10 }).map(() => 'test'), []);
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggingId, setDraggingId] = useState(false);
+
+  let refs = useMemo(() => Array.from({ length: 10 }).map(() => ''), []);
   refs = refs.map(item => {
     return (item = Array.from({ length: 10 }).map(() => createRef()));
   });
 
   useEffect(() => {
-    const test = [...privateBoardTemp];
-    setBoard(test);
-  }, []);
+    const board = [...privateBoardTemp];
+    setBoard(board);
+  }, [reset]);
 
   useEffect(() => {
-    const ships = [];
+    const updateShips = [];
     shipSizes.map((size, i) => {
-      ships.push({ id: i, size: size, dropped: false });
+      updateShips.push({ id: i, size: size, dropped: false, hide: false });
+    });
+
+    setShips(updateShips);
+  }, [reset]);
+
+  useEffect(() => {
+    const isAllDropped = ships.every(ship => ship.dropped === true);
+    setAllShipsAllDropped(isAllDropped);
+  }, [ships]);
+
+  const resetBoard = () => {
+    const updateShips = [];
+    shipSizes.map((size, i) => {
+      updateShips.push({ id: i, size: size, dropped: false });
+    });
+
+    refs.map((board, i) => {
+      board.map((square, ii) => {
+        square.current.style.background = constants.squareColor;
+      });
     });
 
     setShips(ships);
-  }, [dropSuccess]);
+    setReset(true);
+    setIsDragging(false);
+    setDraggingId('');
+  };
 
   //TODO Refactor and fix better drop validation then background color!!!!!!////
   //////////////////////
@@ -69,8 +99,8 @@ const RenderBoard = ({ shipPositions }) => {
     shipClickIndex
   ) => {
     const blocksToHover = [];
+    const blocksToAddBoard = [];
     let error = false;
-
     try {
       refs.map((board, i) => {
         board.map((square, ii) => {
@@ -84,17 +114,26 @@ const RenderBoard = ({ shipPositions }) => {
             const indexY = originalY - shipClickIndex;
 
             for (let i = 0; i < ship.size; i++) {
-              if (direction === 'row') {
-                if (board[indexX + i].current.style.background === 'blue') {
-                  blocksToHover.push(board[indexX + i].current);
+              if (direction === constants.directionRow) {
+                if (
+                  board[indexX + i].current.style.background ===
+                  constants.squareColor
+                ) {
+                  blocksToHover.push({
+                    element: board[indexX + i].current,
+                    shipLocation: { x: originalX, y: originalY },
+                  });
                 }
               }
-              if (direction === 'column') {
+              if (direction === constants.directionColumn) {
                 if (
                   refs[indexY + i][originalX].current.style.background ===
-                  'blue'
+                  constants.squareColor
                 ) {
-                  blocksToHover.push(refs[indexY + i][originalX].current);
+                  blocksToHover.push({
+                    element: refs[indexY + i][originalX].current,
+                    shipLocation: { x: originalX, y: originalY },
+                  });
                 }
               }
             }
@@ -107,20 +146,31 @@ const RenderBoard = ({ shipPositions }) => {
 
     if (!error && blocksToHover.length === ship.size) {
       const updateShips = [...ships];
-
       updateShips.map((s, i) => {
         if (s.id === ship.id) {
-          return (ship.dropped = true);
+          s.dropped = true;
+          s.hide = true;
+        } else {
+          s.hide = false;
         }
+
+        return s;
+      });
+
+      console.log(updateShips);
+
+      blocksToHover.map(block => {
+        // setTimeout(() => {
+        block.element.style.background = constants.shipDropColor;
+        // }, 5);
       });
 
       setShips(updateShips);
+      setIsDragging(false);
 
-      blocksToHover.map(item => {
-        setTimeout(function () {
-          item.style.background = 'orange';
-        }, 5);
-      });
+      //temp change to playership location later
+      ////////////////////////////////////////
+      const updatedBoard = [...board];
     }
   };
 
@@ -144,15 +194,18 @@ const RenderBoard = ({ shipPositions }) => {
             const indexY = originalY - shipClickIndex;
 
             for (let i = 0; i < ship.size; i++) {
-              if (direction === 'row') {
-                if (board[indexX + i].current.style.background === 'blue') {
+              if (direction === constants.directionRow) {
+                if (
+                  board[indexX + i].current.style.background ===
+                  constants.squareColor
+                ) {
                   blocksToHover.push(board[indexX + i].current);
                 }
               }
-              if (direction === 'column') {
+              if (direction === constants.directionColumn) {
                 if (
                   refs[indexY + i][originalX].current.style.background ===
-                  'blue'
+                  constants.squareColor
                 ) {
                   blocksToHover.push(refs[indexY + i][originalX].current);
                 }
@@ -168,49 +221,83 @@ const RenderBoard = ({ shipPositions }) => {
     if (blocksToHover.length === ship.size) {
       blocksToHover.map(item => {
         if (!error) {
-          item.style.background = 'hotpink';
+          item.style.background = constants.squareHoverColor;
+
+          // item.children[0].style.background = 'hotpink';
+          // item.children[0].style.position = 'absoulute';
+          // item.children[0].style.transform = 'scale(2)';
+
+          // item.style.fontSize = '2.2rem';
         }
-        setTimeout(function () {
-          item.style.background = 'blue';
+        setTimeout(() => {
+          item.style.background = constants.squareColor;
+          // item.children[0].style.transform = 'scale(0)';
+          // item.style.fontSize = '1rem';
         }, 1);
       });
     }
   };
 
-  console.log(ships);
+  const onDragStartHandler = id => {
+    let updateShips = [...ships];
+    updateShips.map(ship => {
+      if (ship.id === id) {
+        ship.hide = false;
+      } else {
+        ship.hide = true;
+      }
+    });
+
+    setShips(updateShips);
+    setIsDragging(true);
+  };
 
   return (
-    <>
+    <div className={styles.container}>
       <div className={styles.privateBoard}>
         {board &&
           board.map((item, i) => {
             return item.map((itemItem, ii) => {
               return (
                 <div
+                  className={styles.square}
                   key={`${i}${ii}`}
-                  style={{
-                    background: 'blue',
-                  }}
                   ref={el => (refs[i][ii].current = el)}
                   data-pos={[i, ii]}
+                  style={{
+                    background: constants.squareColor,
+                  }}
                 >
-                  {i}
-                  {ii}
+                  <div className={`${styles.square__item}`}></div>
                 </div>
               );
             });
           })}
       </div>
-      <button>reset</button>
-      {ships.map((ship, i) => {
-        return (
-          <Ship
-            onDragEnd={onDragEndHandler}
-            onDrag={onDragHandler}
-            ship={ship}
-          />
-        );
-      })}
-    </>
+      <button onClick={resetBoard}>reset</button>
+      {allShipsDropped && <button>rady up</button>}
+
+      {!allShipsDropped && (
+        <div className={styles.shipContainer}>
+          {ships &&
+            ships.map((ship, i) => {
+              return (
+                !ship.hide && (
+                  <Ship
+                    key={ship.id}
+                    onDragEnd={onDragEndHandler}
+                    onDragStart={() => onDragStartHandler(ship.id)}
+                    onDrag={onDragHandler}
+                    ship={ship}
+                    onTap={() => setReset(false)}
+                    reset={reset}
+                    isDragging={isDragging}
+                  />
+                )
+              );
+            })}
+        </div>
+      )}
+    </div>
   );
 };
