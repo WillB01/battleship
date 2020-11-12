@@ -1,33 +1,14 @@
 import { gameActionTypes } from '../actions/actions';
-import { boardBlueprint } from '../services/boardBlueprint';
+import { boardBlueprint, privateBoardTemp } from '../services/boardBlueprint';
 import { updateShipLocation } from '../database/crud';
-
-// export const initialState = {
-//   status: '',
-//   roomId: '',
-//   board: boardBlueprint,
-//   game: {
-//     name: '',
-//     playerTurn: 'PLAYER-ONE',
-//     playerOne: {
-//       id: '',
-//       name: '',
-//       attackLocation: [],
-//       shipLocation: [{ x: '', y: '' }],
-//     },
-//     playerTwo: {
-//       id: '',
-//       name: '',
-//       attackLocation: [{ x: '', y: '' }],
-//       shipLocation: [{ x: '', y: '' }],
-//     },
-//   },
-// };
 
 export const initialState = {
   connectedUsers: [],
   games: [],
   currentGame: { status: 'INACTIVE' },
+  privateBoard: {
+    isAllDropped: false,
+  },
 };
 
 export const gameReducer = (state, action) => {
@@ -52,7 +33,7 @@ export const gameReducer = (state, action) => {
         ...state,
         currentGame: {
           ...state.currentGame,
-          game: action.payload.game,
+          game: action.payload,
         },
       };
     }
@@ -63,15 +44,46 @@ export const gameReducer = (state, action) => {
       };
     }
 
+    ///////////////////////
+    // PRIVATE BOARD /////
+    /////////////////////
+
     case 'ADD-SHIP-LOCATION': {
       const { currentGame, shipLocation, player } = action.payload;
 
       const updateCurrentGame = { ...currentGame };
       updateCurrentGame.game[player].shipLocation.push(shipLocation);
 
+      if (updateCurrentGame.game[player].shipLocation.length === 6) {
+        updateCurrentGame.game[player].shipLocation.shift();
+      }
+
       return {
         ...state,
         currentGame: currentGame,
+      };
+    }
+
+    case 'SET-ALL-SHIPS-IS-DROPPED': {
+      return {
+        ...state,
+        privateBoard: {
+          isAllDropped: action.payload,
+        },
+      };
+    }
+    ///////////////////////
+    // PRIVATE BOARD /////
+    /////////////////////
+
+    case 'PLAYER-IS-READY-TO-START': {
+      const player = action.payload;
+      const updateCurrentGame = { ...state.currentGame };
+      updateCurrentGame.game[player].ready = true;
+
+      return {
+        ...state,
+        currentGame: updateCurrentGame,
       };
     }
     default:

@@ -12,7 +12,7 @@ const WaitingForPlayer = ({ playerJoining }) => {
       </video>
       <div className="center heading--1">
         <Loading>
-          {playerJoining ? 'player is joinging' : 'waiting player two'}{' '}
+          {playerJoining ? 'player is joinging' : 'waiting player two'}
         </Loading>
       </div>
     </div>

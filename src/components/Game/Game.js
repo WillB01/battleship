@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, Children } from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  Children,
+  useRef,
+} from 'react';
 
 import socketActions from '../../services/socketActions';
 
@@ -11,18 +17,31 @@ import styles from './Game.module.scss';
 
 const Game = ({ socket, index }) => {
   const {
-    state: { currentGame },
+    state: { currentGame, privateBoard },
     dispatch,
   } = useContext(GameContext);
 
+  const playerRef = useRef();
+
+  useEffect(() => {
+    playerRef.current =
+      currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
+  }, []);
+
+  useEffect(() => {
+    socket.on('PLAYER-IS-READY-TO-START-HANDLER', player => {
+      dispatch({
+        type: 'PLAYER-IS-READY-TO-START',
+        payload: player,
+      });
+    });
+  }, []);
+
   useEffect(() => {
     socket.on(socketActions.ATTACK_SHIP_HANDLER, game => {
-      console.log(game);
       dispatch({
         type: 'ATTACK-PLAYER',
-        payload: {
-          game,
-        },
+        payload: game,
       });
     });
   }, []);
@@ -43,11 +62,25 @@ const Game = ({ socket, index }) => {
     });
   };
 
-  console.log('GAME STATE', currentGame);
+  const readyButtonHandler = () => {
+    socket.emit('PLAYER-IS-READY-TO-START', {
+      player: playerRef.current,
+      id: currentGame.id,
+    });
+  };
+
+  const isBothReady =
+    currentGame.game.playerOne.ready && currentGame.game.playerTwo.ready;
 
   return (
     <div>
-      <Board onClick={boardClickHandler} socket={socket} />
+      {isBothReady && <Board onClick={boardClickHandler} socket={socket} />}
+
+      {playerRef.current &&
+        !currentGame.game[playerRef.current].ready &&
+        privateBoard.isAllDropped && (
+          <button onClick={readyButtonHandler}>ready up</button>
+        )}
       <PrivateBoard socket={socket} />
     </div>
   );

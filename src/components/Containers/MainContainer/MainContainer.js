@@ -14,6 +14,8 @@ const MainContainer = ({ socket }) => {
     state: { currentGame },
   } = useContext(GameContext);
 
+  console.log(currentGame);
+
   return (
     <>
       {currentGame.status === 'INACTIVE' && <HostContainer socket={socket} />}

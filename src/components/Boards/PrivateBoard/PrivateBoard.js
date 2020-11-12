@@ -31,9 +31,17 @@ import {
 } from '../../../services/boardBlueprint';
 
 const PrivateBoard = ({ socket }) => {
-  const { state, dispatch } = useContext(GameContext);
-  const { currentGame } = state;
-  const [gameIndex, setState] = useState();
+  const {
+    state: { currentGame, privateBoard },
+    dispatch,
+  } = useContext(GameContext);
+
+  const playerRef = useRef();
+
+  useEffect(() => {
+    playerRef.current =
+      currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
+  }, []);
 
   const addShipLocation = ships => {
     const player =
@@ -52,26 +60,42 @@ const PrivateBoard = ({ socket }) => {
       }
     });
 
-    socket.emit('ADD-SHIP-LOCATION', { currentGame, shipLocation, player });
+    if (currentGame.game[player].shipLocation.length === 5) {
+      dispatch({ type: 'SET-ALL-SHIPS-IS-DROPPED', payload: true });
+    }
+
+    socket.emit('ADD-SHIP-LOCATION', {
+      currentGame,
+      shipLocation,
+      player,
+    });
   };
 
   return (
     <>
-      <RenderBoard socket={socket} addShipLocation={addShipLocation} />
+      <RenderBoard
+        socket={socket}
+        addShipLocation={addShipLocation}
+        playerRef={playerRef}
+      />
     </>
   );
 };
 
 export default PrivateBoard;
 
-const RenderBoard = ({ addShipLocation }) => {
+const RenderBoard = ({ addShipLocation, playerRef }) => {
+  const {
+    state: { currentGame, privateBoard: boardState },
+    dispatch,
+  } = useContext(GameContext);
+
   const [board, setBoard] = useState([]);
   const [ships, setShips] = useState([]);
   const [reset, setReset] = useState(false);
   const [allShipsDropped, setAllShipsAllDropped] = useState(false);
 
   const [isDragging, setIsDragging] = useState(false);
-  const [draggingId, setDraggingId] = useState(false);
 
   let refs = useMemo(() => Array.from({ length: 10 }).map(() => ''), []);
   refs = refs.map(item => {
@@ -101,10 +125,9 @@ const RenderBoard = ({ addShipLocation }) => {
   }, [reset]);
 
   useEffect(() => {
-    const isAllDropped = ships.every(ship => ship.dropped === true);
-
-    setAllShipsAllDropped(isAllDropped);
-  }, [ships, reset]);
+    if (boardState.reset === true) {
+    }
+  }, [boardState.reset]);
 
   const resetBoard = () => {
     const updateShips = [];
@@ -121,7 +144,8 @@ const RenderBoard = ({ addShipLocation }) => {
     setShips(ships);
     setReset(true);
     setIsDragging(false);
-    setDraggingId('');
+
+    dispatch({ type: 'SET-ALL-SHIPS-IS-DROPPED', payload: false });
   };
 
   //TODO Refactor and fix better drop validation then background color!!!!!!////
@@ -293,6 +317,8 @@ const RenderBoard = ({ addShipLocation }) => {
     setIsDragging(true);
   };
 
+  console.log('PLAYER REF', playerRef);
+
   return (
     <div className={styles.container} ref={boardRef}>
       <div className={styles.privateBoard}>
@@ -329,8 +355,10 @@ const RenderBoard = ({ addShipLocation }) => {
             });
           })}
       </div>
-      <button onClick={resetBoard}>reset</button>
-      {allShipsDropped && <button>rady up</button>}
+
+      {playerRef.current && !currentGame.game[playerRef.current].ready && (
+        <button onClick={resetBoard}>reset</button>
+      )}
 
       {!allShipsDropped && (
         <div className={styles.shipContainer}>

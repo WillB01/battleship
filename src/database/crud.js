@@ -27,12 +27,14 @@ export const createGame = (
           name: playerOneName,
           attackLocation: [{ x: '', y: '', type: '' }],
           shipLocation: [{ x: '', y: '', id: '', size: '' }],
+          ready: false,
         },
         playerTwo: {
           id: playerTwoId,
           name: playerTwoName,
           attackLocation: [{ x: '', y: '' }],
           shipLocation: [{ x: '', y: '', id: '', size: '' }],
+          ready: false,
         },
       },
     });

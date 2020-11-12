@@ -31,9 +31,14 @@ io.on('connection', socket => {
   //ADD SHIP LOCATION
   /////////////////////////////
   socket.on('ADD-SHIP-LOCATION', game => {
-    console.log(game);
     io.to(game.currentGame.id).emit('ADD-SHIP-LOCATION-HANDLER', game);
   });
+
+  socket.on('PLAYER-IS-READY-TO-START', game => {
+    console.log(game);
+    io.to(game.id).emit('PLAYER-IS-READY-TO-START-HANDLER', game.player);
+  });
+
   /////////////////////////////////
   /////////////////////////////////
 
