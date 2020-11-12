@@ -26,9 +26,6 @@ function getArraysIntersection(a1, a2) {
 }
 
 export const isOccupied = (board, clickPosition, shipSize, id) => {
-  console.log(board);
-  console.log(clickPosition);
-
   let tempStart = clickPosition.x;
 
   let start = clickPosition.x;

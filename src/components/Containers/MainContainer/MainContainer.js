@@ -11,10 +11,8 @@ import { GameContext } from '../../../context/storeContext';
 
 const MainContainer = ({ socket }) => {
   const {
-    state: { currentGame },
+    state: { currentGame, games },
   } = useContext(GameContext);
-
-  console.log(currentGame);
 
   return (
     <>
@@ -24,6 +22,8 @@ const MainContainer = ({ socket }) => {
         currentGame.status === 'PLAYER-TWO-JOINING') && (
         <WaitingForPlayer
           playerJoining={currentGame.status === 'PLAYER-TWO-JOINING'}
+          games={games}
+          socket={socket}
         />
       )}
 

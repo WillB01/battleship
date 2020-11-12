@@ -12,13 +12,13 @@ app.use(express.static(__dirname + '/../../build'));
 io.on('connect', socket => {
   const sockets = Object.keys(io.sockets.sockets);
   socket.join(MAIN_ROOM);
-  io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
+  io.to(MAIN_ROOM).emit('USER-CONNECTS', sockets);
 });
 
 io.on('connection', socket => {
   socket.on('disconnect', socket => {
     const sockets = Object.keys(io.sockets.sockets);
-    io.to(MAIN_ROOM).emit('getConnectedSockets', sockets);
+    io.to(MAIN_ROOM).emit('USER-DISCONNECTS', sockets);
   });
 
   //JOIN PRIVATE GAME ROOM

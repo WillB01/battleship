@@ -1,5 +1,9 @@
 import { gameActionTypes } from '../actions/actions';
-import { boardBlueprint, privateBoardTemp } from '../services/boardBlueprint';
+import {
+  boardBlueprint,
+  privateBoardTemp,
+  shipSizes,
+} from '../services/boardBlueprint';
 import { updateShipLocation } from '../database/crud';
 
 export const initialState = {
@@ -7,6 +11,8 @@ export const initialState = {
   games: [],
   currentGame: { status: 'INACTIVE' },
   privateBoard: {
+    board: [...privateBoardTemp],
+    ships: [],
     isAllDropped: false,
   },
 };
@@ -68,10 +74,73 @@ export const gameReducer = (state, action) => {
       return {
         ...state,
         privateBoard: {
-          isAllDropped: action.payload,
+          ...state.privateBoard,
+          isAllDropped: true,
         },
       };
     }
+
+    case 'RESET-PRIVATE-BOARD': {
+      const updateCurrentGame = { ...state.currentGame };
+      updateCurrentGame.game[action.payload].shipLocation = [
+        { x: '', y: '', id: '', size: '' },
+      ];
+
+      const updateShips = [];
+      shipSizes.map((size, i) => {
+        updateShips.push({
+          id: i,
+          size: size,
+          dropped: false,
+          hide: false,
+          x: undefined,
+          y: undefined,
+        });
+      });
+
+      return {
+        ...state,
+        currentGame: updateCurrentGame,
+        privateBoard: {
+          ...state.privateBoard,
+          isAllDropped: false,
+          ships: updateShips,
+        },
+      };
+    }
+
+    case 'SET-SHIPS': {
+      const updateShips = [];
+      shipSizes.map((size, i) => {
+        updateShips.push({
+          id: i,
+          size: size,
+          dropped: false,
+          hide: false,
+          x: undefined,
+          y: undefined,
+        });
+      });
+
+      return {
+        ...state,
+        privateBoard: {
+          ...state.privateBoard,
+          ships: updateShips,
+        },
+      };
+    }
+
+    case 'UPDATE-SHIPS': {
+      return {
+        ...state,
+        privateBoard: {
+          ...state.privateBoard,
+          ships: action.payload,
+        },
+      };
+    }
+
     ///////////////////////
     // PRIVATE BOARD /////
     /////////////////////

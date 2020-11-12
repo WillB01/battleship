@@ -95,6 +95,6 @@ export const updateShipLocation = (gameId, shipLocation, player) => {
 ////////////////////////////////
 ///SOCKETS/////////////////////
 //////////////////////////////
-export const updateSockets = sockets => {
+export const setSockets = sockets => {
   firebase.database().ref('/').child('/sockets').set(sockets);
 };

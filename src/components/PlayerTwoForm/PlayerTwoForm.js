@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styles from './PlayerTwoForm.module.scss';
 
 import useInput from '../hooks/useInput/useInput';
@@ -24,7 +24,6 @@ const PlayerTwoForm = ({ socket, gameId }) => {
       };
 
       dispatch({ type: 'SET-CURRENT-GAME', payload: game });
-      socket.emit('JOIN-GAME', game.id);
     });
   };
 

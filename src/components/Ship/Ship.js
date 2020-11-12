@@ -1,15 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Ship.module.scss';
 
-import { isEventInElement } from '../../services/helpers';
-
-import {
-  motion,
-  transform,
-  useDragControls,
-  useMotionValue,
-  useTransform,
-} from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const Ship = ({
   onDragEnd,
@@ -17,15 +9,12 @@ const Ship = ({
   onDrag,
   ship,
   onTap,
-  reset,
   isDragging,
-  boardRef,
+  ships,
 }) => {
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
   const [isSelected, setIsSelected] = useState(false);
-  // const [isRotate, setIsRotate] = useState(false);
-  const [startDrag, setStartDrag] = useState(true);
 
   const elementRef = useRef(null);
   const shipClickIndex = useRef('');
@@ -33,12 +22,7 @@ const Ship = ({
   useEffect(() => {
     const blocks = crateBlocks(ship.size);
     setBlocks(blocks);
-  }, [isSelected, reset]);
-
-  // useEffect(() => {
-  //   // setIsRotate('row');
-  //   setIsSelected(false);
-  // }, [reset]);
+  }, []);
 
   const rotateHandler = () => {
     setDirection(direction === 'row' ? 'column' : 'row');
@@ -46,7 +30,7 @@ const Ship = ({
 
   const onTapHandler = i => {
     shipClickIndex.current = i;
-    onTap();
+    setIsSelected(true);
   };
 
   const onDragStartHandler = () => {
@@ -59,13 +43,6 @@ const Ship = ({
   };
 
   const onDragHandler = e => {
-    // if (!isEventInElement(e, boardRef)) {
-    //   setStartDrag(false);
-    //   setIsSelected(false);
-    //   setStartDrag(false);
-    //   elementRef.current.style.transform = 'translate3d(0x, 0px, 0px)';
-    //   return;
-    // }
     onDrag(e, elementRef.current, ship, direction, shipClickIndex.current);
   };
 
@@ -74,11 +51,7 @@ const Ship = ({
     for (let i = 0; i < length; i++) {
       blocks.push(
         <motion.div
-          onTapStart={() => {
-            onTapHandler(i);
-            setIsSelected(true);
-            setStartDrag(true);
-          }}
+          onTapStart={() => onTapHandler(i)}
           onClick={() => setIsSelected(false)}
           animate={{}}
           className={styles.ship__square}
@@ -92,16 +65,14 @@ const Ship = ({
   return (
     <div className={styles.container}>
       <motion.div
-        // initial={{ background: 'red' }}
-        // animate={{ background: 'blue', position: 'relative' }}
         style={{
           display: 'flex',
           flexDirection: direction,
           visibility: !ship.dropped ? 'visible' : 'hidden',
-          position: reset ? 'relative' : 'absolute',
           zIndex: direction === 'column' ? 10 : 1,
           cursor: isSelected ? 'grabbing' : 'grab',
         }}
+        animate={{ position: 'absolute' }}
         ref={elementRef}
         drag
         dragMomentum={false}
@@ -115,7 +86,7 @@ const Ship = ({
       <div
         className={styles.rotateBtn}
         style={{
-          visibility: !ship.dropped && !isDragging ? 'visible' : 'hidden',
+          visibility: !ship.dropped ? 'visible' : 'hidden',
         }}
         onClick={rotateHandler}
       >

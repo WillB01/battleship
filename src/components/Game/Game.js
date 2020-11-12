@@ -24,6 +24,10 @@ const Game = ({ socket, index }) => {
   const playerRef = useRef();
 
   useEffect(() => {
+    socket.emit('JOIN-GAME', currentGame.id);
+  }, []);
+
+  useEffect(() => {
     playerRef.current =
       currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
   }, []);

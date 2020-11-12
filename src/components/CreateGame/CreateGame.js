@@ -35,7 +35,6 @@ const CreateGame = ({ socket }) => {
         id: key,
       };
 
-      socket.emit('JOIN-GAME', game.id);
       dispatch({ type: 'SET-CURRENT-GAME', payload: game });
     });
   };

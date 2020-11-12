@@ -61,7 +61,7 @@ const PrivateBoard = ({ socket }) => {
     });
 
     if (currentGame.game[player].shipLocation.length === 5) {
-      dispatch({ type: 'SET-ALL-SHIPS-IS-DROPPED', payload: true });
+      dispatch({ type: 'SET-ALL-SHIPS-IS-DROPPED' });
     }
 
     socket.emit('ADD-SHIP-LOCATION', {
@@ -90,62 +90,27 @@ const RenderBoard = ({ addShipLocation, playerRef }) => {
     dispatch,
   } = useContext(GameContext);
 
-  const [board, setBoard] = useState([]);
-  const [ships, setShips] = useState([]);
-  const [reset, setReset] = useState(false);
-  const [allShipsDropped, setAllShipsAllDropped] = useState(false);
-
+  const { board, ships } = boardState;
   const [isDragging, setIsDragging] = useState(false);
 
   let refs = useMemo(() => Array.from({ length: 10 }).map(() => ''), []);
   refs = refs.map(item => {
     return (item = Array.from({ length: 10 }).map(() => createRef()));
   });
-  const boardRef = useRef();
 
   useEffect(() => {
-    const board = [...privateBoardTemp];
-    setBoard(board);
-  }, [reset]);
-
-  useEffect(() => {
-    const updateShips = [];
-    shipSizes.map((size, i) => {
-      updateShips.push({
-        id: i,
-        size: size,
-        dropped: false,
-        hide: false,
-        x: undefined,
-        y: undefined,
-      });
-    });
-
-    setShips(updateShips);
-  }, [reset]);
-
-  useEffect(() => {
-    if (boardState.reset === true) {
-    }
-  }, [boardState.reset]);
+    dispatch({ type: 'SET-SHIPS' });
+  }, []);
 
   const resetBoard = () => {
-    const updateShips = [];
-    shipSizes.map((size, i) => {
-      updateShips.push({ id: i, size: size, dropped: false });
-    });
-
     refs.map((board, i) => {
       board.map((square, ii) => {
         square.current.style.background = constants.squareColor;
       });
     });
 
-    setShips(ships);
-    setReset(true);
     setIsDragging(false);
-
-    dispatch({ type: 'SET-ALL-SHIPS-IS-DROPPED', payload: false });
+    dispatch({ type: 'RESET-PRIVATE-BOARD', payload: playerRef.current });
   };
 
   //TODO Refactor and fix better drop validation then background color!!!!!!////
@@ -159,7 +124,6 @@ const RenderBoard = ({ addShipLocation, playerRef }) => {
     shipClickIndex
   ) => {
     const blocksToHover = [];
-    const blocksToAddBoard = [];
 
     let error = false;
     try {
@@ -228,12 +192,10 @@ const RenderBoard = ({ addShipLocation, playerRef }) => {
       });
 
       blocksToHover.map(block => {
-        // setTimeout(() => {
         block.element.style.background = constants.shipDropColor;
-        // }, 5);
       });
 
-      setShips(updateShips);
+      dispatch({ type: 'UPDATE-SHIPS', payload: updateShips });
       setIsDragging(false);
       addShipLocation(blocksToHover);
     }
@@ -313,14 +275,12 @@ const RenderBoard = ({ addShipLocation, playerRef }) => {
       }
     });
 
-    setShips(updateShips);
+    dispatch({ type: 'UPDATE-SHIPS', payload: updateShips });
     setIsDragging(true);
   };
 
-  console.log('PLAYER REF', playerRef);
-
   return (
-    <div className={styles.container} ref={boardRef}>
+    <div className={styles.container}>
       <div className={styles.privateBoard}>
         {headingTop.map((item, i) => {
           return (
@@ -360,26 +320,22 @@ const RenderBoard = ({ addShipLocation, playerRef }) => {
         <button onClick={resetBoard}>reset</button>
       )}
 
-      {!allShipsDropped && (
-        <div className={styles.shipContainer}>
-          {ships &&
-            ships.map((ship, i) => {
-              return (
-                <Ship
-                  key={ship.id}
-                  onDragEnd={onDragEndHandler}
-                  onDragStart={() => onDragStartHandler(ship.id)}
-                  onDrag={onDragHandler}
-                  ship={ship}
-                  onTap={() => setReset(false)}
-                  reset={reset}
-                  isDragging={isDragging}
-                  boardRef={boardRef.current}
-                />
-              );
-            })}
-        </div>
-      )}
+      <div className={styles.shipContainer}>
+        {ships &&
+          ships.map((ship, i) => {
+            return (
+              <Ship
+                key={ship.id}
+                onDragEnd={onDragEndHandler}
+                onDragStart={() => onDragStartHandler(ship.id)}
+                onDrag={onDragHandler}
+                ship={ship}
+                isDragging={isDragging}
+                ships={ships}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 };

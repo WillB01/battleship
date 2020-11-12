@@ -11,7 +11,7 @@ import {
   getGameById,
   setGameStatus,
   getAllGames,
-  updateSockets,
+  setSockets,
 } from '../../../database/crud';
 import { isUserOnline } from '../../../services/helpers';
 import { HiOutlineUsers } from 'react-icons/hi';
@@ -47,14 +47,20 @@ const HostContainer = ({ socket }) => {
   }, []);
 
   useEffect(() => {
-    socket.on('getConnectedSockets', sockets => {
-      updateSockets(sockets);
+    socket.on('USER-DISCONNECTS', sockets => {
       dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
     });
+
+    socket.on(
+      'USER-CONNECTS',
+      sockets => {
+        dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
+      },
+      []
+    );
   }, []);
 
   const onClickDisplayGamesHandler = (gameId, gameIndex) => {
-    console.log('hello');
     setGameStatus(gameId, 'PLAYER-TWO-JOINING');
     setCurrentGameId(gameId);
     setShowPlayerTwoForm(true);
