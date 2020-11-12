@@ -47,12 +47,6 @@ export const gameReducer = (state, action) => {
       };
     }
 
-    case 'START-GAME': {
-      return {
-        ...state,
-        games: action.payload,
-      };
-    }
     case 'ATTACK-PLAYER': {
       games[action.payload.index].game = action.payload.game;
 
@@ -73,6 +67,8 @@ export const gameReducer = (state, action) => {
 
       const updateCurrentGame = { ...currentGame };
       updateCurrentGame.game[player].shipLocation.push(shipLocation);
+
+      console.log(updateCurrentGame);
 
       return {
         ...state,

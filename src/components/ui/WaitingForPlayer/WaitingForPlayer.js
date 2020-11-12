@@ -4,14 +4,16 @@ import video from '../../../assets/video/coverr-drone-shot-in-tierra-del-fuego-a
 
 import Loading from '../Loading/Loading';
 
-const WaitingForPlayer = () => {
+const WaitingForPlayer = ({ playerJoining }) => {
   return (
     <div className={styles.waitingForPlayer}>
       <video autoPlay muted loop id="myVideo">
         <source src={video} type="video/mp4"></source>
       </video>
       <div className="center heading--1">
-        <Loading> waiting player two</Loading>
+        <Loading>
+          {playerJoining ? 'player is joinging' : 'waiting player two'}{' '}
+        </Loading>
       </div>
     </div>
   );

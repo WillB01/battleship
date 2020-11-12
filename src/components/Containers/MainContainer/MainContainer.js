@@ -5,43 +5,27 @@ import HostContainer from '../HostContainer/HostContainer';
 import Game from '../../Game/Game';
 import Chat from '../../Chat/Chat';
 import GameDetails from '../../ui/GameDetails/GameDetails';
+import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
 
 import { GameContext } from '../../../context/storeContext';
-import {
-  getAllGames,
-  updateSockets,
-  getGameById,
-} from '../../../database/crud';
-
-import PrivateBoard from '../../Boards/PrivateBoard/PrivateBoard';
 
 const MainContainer = ({ socket }) => {
   const {
     state: { currentGame },
-    dispatch,
   } = useContext(GameContext);
-  const [gameIndex, setGameIndex] = useState('');
 
-  useEffect(() => {
-    socket.on('getConnectedSockets', sockets => {
-      updateSockets(sockets);
-      dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
-    });
-  }, []);
-
-  useEffect(() => {
-    getAllGames(games => {
-      if (!games) {
-        return;
-      }
-      dispatch({ type: 'SET-GAMES', payload: games });
-    });
-  }, []);
-
+  console.log('MIAN', currentGame);
   return (
     <>
-      {(currentGame.status === 'INACTIVE' ||
-        currentGame.status === 'HOSTED') && <HostContainer socket={socket} />}
+      {currentGame.status === 'INACTIVE' && <HostContainer socket={socket} />}
+
+      {(currentGame.status === 'HOSTED' ||
+        currentGame.status === 'PLAYER-TWO-JOINING') && (
+        <WaitingForPlayer
+          playerJoining={currentGame.status === 'PLAYER-TWO-JOINING'}
+        />
+      )}
+
       {currentGame.status === 'ACTIVE' &&
         (socket.id === currentGame.game.playerOne.id ||
           socket.id === currentGame.game.playerTwo.id) && (

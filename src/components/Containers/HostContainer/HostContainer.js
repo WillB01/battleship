@@ -4,16 +4,22 @@ import styles from './HostContainer.module.scss';
 import CreateGame from '../../CreateGame/CreateGame';
 import GamesList from '../../GamesList/GameList';
 import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
-import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
 
 import { GameContext } from '../../../context/storeContext';
-import { deleteGame, getGameById, setGameStatus } from '../../../database/crud';
+import {
+  deleteGame,
+  getGameById,
+  setGameStatus,
+  getAllGames,
+  updateSockets,
+} from '../../../database/crud';
 import { isUserOnline } from '../../../services/helpers';
 import { HiOutlineUsers } from 'react-icons/hi';
 
 const HostContainer = ({ socket }) => {
   const {
     state: { currentGame, games, connectedUsers },
+    dispatch,
   } = useContext(GameContext);
 
   const [currentGameId, setCurrentGameId] = useState('');
@@ -30,6 +36,22 @@ const HostContainer = ({ socket }) => {
       }
     });
   }, [connectedUsers]);
+
+  useEffect(() => {
+    getAllGames(games => {
+      if (!games) {
+        return;
+      }
+      dispatch({ type: 'SET-GAMES', payload: games });
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('getConnectedSockets', sockets => {
+      updateSockets(sockets);
+      dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
+    });
+  }, []);
 
   const onClickDisplayGamesHandler = (gameId, gameIndex) => {
     console.log('hello');
@@ -55,7 +77,6 @@ const HostContainer = ({ socket }) => {
           <GamesList socket={socket} onClick={onClickDisplayGamesHandler} />
         </>
       )}
-      {currentGame.status === 'HOSTED' && <WaitingForPlayer />}
       {showPlayerTwoForm && (
         <PlayerTwoForm socket={socket} gameId={currentGameId} />
       )}
