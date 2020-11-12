@@ -40,8 +40,8 @@ const Game = ({ socket, index }) => {
 
   return (
     <div>
-      <PrivateBoard socket={socket.id} index={index} />
-      {/* <Board onClick={boardClickHandler} socket={socket} index={index} /> */}
+      <PrivateBoard socket={socket} />
+      <Board onClick={boardClickHandler} socket={socket} />
     </div>
   );
 };

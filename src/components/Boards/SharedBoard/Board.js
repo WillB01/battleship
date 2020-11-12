@@ -4,10 +4,10 @@ import { headingTop, headingSide } from '../../../services/boardBlueprint';
 import styles from './Board.module.scss';
 import socketActions from '../../../services/socketActions';
 
-const Board = ({ onClick, index }) => {
+const Board = ({ onClick }) => {
   const { state, dispatch } = useContext(GameContext);
 
-  const { board } = state.games[index].game;
+  const { board } = state.currentGame.game;
 
   return (
     <>

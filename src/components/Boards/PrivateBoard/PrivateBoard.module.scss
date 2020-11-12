@@ -3,15 +3,17 @@
 .container {
   max-width: 70rem;
   margin: 0 auto;
+  background: palegoldenrod;
+  padding: 1rem;
 }
 
 .privateBoard {
   max-width: 70rem;
 
   display: grid;
-  grid-template-columns: repeat(10, minmax(2rem, 1fr));
-  grid-template-rows: repeat(10, minmax(4rem, 1fr));
-  gap: 0.2rem;
+  grid-template-columns: repeat(11, minmax(2rem, 1fr));
+  grid-template-rows: repeat(11, minmax(4rem, 1fr));
+  gap: 0.1rem;
 }
 
 .square {
@@ -42,11 +44,11 @@
   width: 100%;
 
   @media screen and (max-width: $bp-m) {
-    top: 5rem;
+    // top: 5rem;
 
-    position: absolute;
+    // position: absolute;
 
-    padding: 0;
+    // padding: 0;
   }
 }
 

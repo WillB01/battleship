@@ -26,6 +26,7 @@ import { boardBlueprint } from '../services/boardBlueprint';
 export const initialState = {
   connectedUsers: [],
   games: [],
+  currentGame: { status: 'INACTIVE' },
 };
 
 export const gameReducer = (state, action) => {
@@ -57,6 +58,12 @@ export const gameReducer = (state, action) => {
       return {
         ...state,
         games: games,
+      };
+    }
+    case 'SET-CURRENT-GAME': {
+      return {
+        ...state,
+        currentGame: action.payload,
       };
     }
     default:

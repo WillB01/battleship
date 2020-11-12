@@ -4,24 +4,26 @@ import styles from './GameDetails.module.scss';
 
 import { GameContext } from '../../../context/storeContext';
 
-const GameDetails = ({ index }) => {
+const GameDetails = () => {
   const { state } = useContext(GameContext);
-  const currentGame = state.games[index];
+
+  console.log(state);
+  console.log('game details', state);
   return (
     <div className={styles.gameDetails}>
       <div className={`${styles.item} ${styles.item__1}`}>
-        game: {currentGame.name}
+        game: {state.currentGame.name}
       </div>
       <div className={`${styles.item} ${styles.item__2}`}>
-        <div>player one: {currentGame.game.playerOne.name}</div>
+        <div>player one: {state.currentGame.game.playerOne.name}</div>
         <div>
-          {currentGame.game.playerTurn === 'PLAYER-ONE' && <p>my turn</p>}
+          {state.currentGame.playerTurn === 'PLAYER-ONE' && <p>my turn</p>}
         </div>
       </div>
       <div className={`${styles.item} ${styles.item__3}`}>
-        <div>player two: {currentGame.game.playerTwo.name}</div>
+        <div>player two: {state.currentGame.game.playerTwo.name}</div>
         <div>
-          {currentGame.game.playerTurn === 'PLAYER-TWO' && <p>my turn</p>}
+          {state.currentGame.playerTurn === 'PLAYER-TWO' && <p>my turn</p>}
         </div>
       </div>
     </div>

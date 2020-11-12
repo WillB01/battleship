@@ -4,11 +4,11 @@ import styles from './PlayerTwoForm.module.scss';
 import useInput from '../hooks/useInput/useInput';
 
 import { GameContext } from '../../context/storeContext';
-import { setGameActive } from '../../database/crud';
+import { setGameActive, getGameById } from '../../database/crud';
 import { GiShipWheel } from 'react-icons/gi';
 
-const PlayerTwoForm = ({ socket, gameId, gameName }) => {
-  const { state } = useContext(GameContext);
+const PlayerTwoForm = ({ socket, gameId }) => {
+  const { state, dispatch } = useContext(GameContext);
   const [playerTwoName, setPlayerTwoName] = useState('');
 
   const onChangeHandler = value => {
@@ -16,8 +16,16 @@ const PlayerTwoForm = ({ socket, gameId, gameName }) => {
   };
 
   const onClickHandler = () => {
-    socket.emit('JOIN-GAME', gameName);
     setGameActive(gameId, socket.id, playerTwoName);
+    getGameById(gameId, (game, key) => {
+      game = {
+        ...game,
+        id: key,
+      };
+
+      dispatch({ type: 'SET-CURRENT-GAME', payload: game });
+      socket.emit('JOIN-GAME', game.name);
+    });
   };
 
   const useNameInput = useInput(

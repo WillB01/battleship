@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useReducer } from 'react';
 import styles from './CreateGame.module.scss';
 
 import { GiShipWheel } from 'react-icons/gi';
-import { createGame } from '../../database/crud';
+import { createGame, getGameById } from '../../database/crud';
 import { GameContext } from '../../context/storeContext';
 import socketActions from '../../services/socketActions';
 import useInput from '../hooks/useInput/useInput';
@@ -12,11 +12,7 @@ const CreateGame = ({ socket }) => {
   const [playerOneName, setPlayerOneName] = useState('');
   const [showSelf, setShowSelf] = useState(true);
 
-  useEffect(() => {
-    socket.on(socketActions.WAITING_FOR_PLAYER_TWO, () => {
-      setShowSelf(false);
-    });
-  }, []);
+  const { state, dispatch } = useContext(GameContext);
 
   const onClickHandler = () => {
     // TODO validation
@@ -24,7 +20,7 @@ const CreateGame = ({ socket }) => {
       return;
     }
 
-    createGame({
+    const id = createGame({
       status: 'HOSTED',
       gameName: gameName,
       playerOneId: socket.id,
@@ -32,8 +28,16 @@ const CreateGame = ({ socket }) => {
       playerTwoId: '',
       playerTwoName: '',
     });
-    setShowSelf(false);
-    socket.emit('JOIN-GAME', gameName);
+
+    getGameById(id, (game, key) => {
+      game = {
+        ...game,
+        id: key,
+      };
+
+      dispatch({ type: 'SET-CURRENT-GAME', payload: game });
+      socket.emit('JOIN-GAME', gameName);
+    });
   };
 
   const onChangeHandler = (value, labelIndex) => {
@@ -64,31 +68,18 @@ const CreateGame = ({ socket }) => {
   );
 
   return (
-    <>
-      {showSelf && (
-        <div className={`${styles.createRoom}`}>
-          <div className={`${styles.item} ${styles.item__icon}`}>
-            {/* <GiShipWheel /> */}
-            heading
-          </div>
-          {/* <div className={`${styles.line}`}></div> */}
+    <div className={`${styles.createRoom}`}>
+      <div className={`${styles.item} ${styles.item__icon}`}>heading</div>
 
-          <div className={`${styles.item} ${styles.item__1}`}>
-            {useGameInput}
-          </div>
-          <div className={`${styles.item} ${styles.item__2}`}>
-            {useNameInput}
-          </div>
-          {/* <div className={`${styles.line__right}`}></div> */}
-          <button
-            className={`${styles.item} ${styles.item__btn}`}
-            onClick={onClickHandler}
-          >
-            Host game
-          </button>
-        </div>
-      )}
-    </>
+      <div className={`${styles.item} ${styles.item__1}`}>{useGameInput}</div>
+      <div className={`${styles.item} ${styles.item__2}`}>{useNameInput}</div>
+      <button
+        className={`${styles.item} ${styles.item__btn}`}
+        onClick={onClickHandler}
+      >
+        Host game
+      </button>
+    </div>
   );
 };
 

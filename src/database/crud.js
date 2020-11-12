@@ -26,13 +26,13 @@ export const createGame = (
           id: playerOneId,
           name: playerOneName,
           attackLocation: [{ x: '', y: '', type: '' }],
-          shipLocation: [{ x: '', y: '' }],
+          shipLocation: [],
         },
         playerTwo: {
           id: playerTwoId,
           name: playerTwoName,
           attackLocation: [{ x: '', y: '' }],
-          shipLocation: [{ x: '', y: '' }],
+          shipLocation: [],
         },
       },
     });
@@ -53,7 +53,7 @@ export const getAllGames = cb => {
 
 export const getGameById = (id, cb) => {
   const ref = firebase.database().ref(`/games/${id}`);
-  ref.on('value', snapshot => cb({ ...snapshot.val() }));
+  ref.on('value', snapshot => cb({ ...snapshot.val() }, snapshot.key));
 };
 
 export const setGameStatus = (id, status) => {
@@ -77,6 +77,27 @@ export const setGameActive = (gameId, playerTwoId, playerTwoName) => {
     const ref = firebase.database().ref(`/games/${gameId}`);
     ref.update(game);
   });
+};
+
+export const updateShipLocation = (gameId, shipLocation, player) => {
+  const ref = firebase.database().ref(`/games/${gameId}`);
+  const shipLocationRef = ref.child(`game/${player}/shipLocation`);
+
+  console.log('CRUD', shipLocationRef);
+
+  shipLocationRef.push(shipLocation);
+
+  // playerRef.getGameById(gameId, game => {
+  //   console.log('crud game', game);
+  //   game.game[player] = {
+  //     ...game.game[player],
+  //     shipLocation: {
+  //       ...shipLocation,
+  //     },
+  //   };
+  //   const ref = firebase.database().ref(`/games/${gameId}`);
+  //   ref.update(game);
+  // });
 };
 
 ////////////////////////////////

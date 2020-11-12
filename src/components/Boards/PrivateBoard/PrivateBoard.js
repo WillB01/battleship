@@ -10,12 +10,16 @@ import React, {
 import styles from '../PrivateBoard/PrivateBoard.module.scss';
 import boardStyles from '../SharedBoard/Board.module.scss';
 
-import { isOccupied, isEventInElement } from '../../../services/helpers';
+import { motion, AnimateSharedLayout, createBatcher } from 'framer-motion';
+import { HiOutlineReceiptRefund } from 'react-icons/hi';
+
+import { updateShipLocation } from '../../../database/crud';
+
+import { isEventInElement } from '../../../services/helpers';
 
 import * as constants from './privateBoardConstants';
 
 import Ship from '../../Ship/Ship';
-import { motion, AnimateSharedLayout, createBatcher } from 'framer-motion';
 
 import { GameContext } from '../../../context/storeContext';
 import {
@@ -25,19 +29,42 @@ import {
   privateBoardTemp,
   shipSizes,
 } from '../../../services/boardBlueprint';
-import { HiOutlineReceiptRefund } from 'react-icons/hi';
 
-const PrivateBoard = ({ socket, index }) => {
+const PrivateBoard = ({ socket }) => {
+  const { state, dispatch } = useContext(GameContext);
+  const { currentGame } = state;
+  const [gameIndex, setState] = useState();
+
+  const addShipLocation = ships => {
+    const player =
+      currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
+
+    const shipLocations = [];
+
+    ships.map(ship => {
+      if (currentGame.game[player].id === socket.id) {
+        shipLocations.push({
+          x: ship.shipLocation.x,
+          y: ship.shipLocation.y,
+          id: ship.shipLocation.id,
+          size: ship.shipLocation.size,
+        });
+      }
+    });
+
+    updateShipLocation(currentGame.id, shipLocations, player);
+  };
+
   return (
     <>
-      <RenderBoard />
+      <RenderBoard socket={socket} addShipLocation={addShipLocation} />
     </>
   );
 };
 
 export default PrivateBoard;
 
-const RenderBoard = () => {
+const RenderBoard = ({ addShipLocation }) => {
   const [board, setBoard] = useState([]);
   const [ships, setShips] = useState([]);
   const [reset, setReset] = useState(false);
@@ -50,6 +77,7 @@ const RenderBoard = () => {
   refs = refs.map(item => {
     return (item = Array.from({ length: 10 }).map(() => createRef()));
   });
+  const boardRef = useRef();
 
   useEffect(() => {
     const board = [...privateBoardTemp];
@@ -59,7 +87,14 @@ const RenderBoard = () => {
   useEffect(() => {
     const updateShips = [];
     shipSizes.map((size, i) => {
-      updateShips.push({ id: i, size: size, dropped: false, hide: false });
+      updateShips.push({
+        id: i,
+        size: size,
+        dropped: false,
+        hide: false,
+        x: undefined,
+        y: undefined,
+      });
     });
 
     setShips(updateShips);
@@ -67,8 +102,9 @@ const RenderBoard = () => {
 
   useEffect(() => {
     const isAllDropped = ships.every(ship => ship.dropped === true);
+
     setAllShipsAllDropped(isAllDropped);
-  }, [ships]);
+  }, [ships, reset]);
 
   const resetBoard = () => {
     const updateShips = [];
@@ -100,6 +136,7 @@ const RenderBoard = () => {
   ) => {
     const blocksToHover = [];
     const blocksToAddBoard = [];
+
     let error = false;
     try {
       refs.map((board, i) => {
@@ -121,7 +158,12 @@ const RenderBoard = () => {
                 ) {
                   blocksToHover.push({
                     element: board[indexX + i].current,
-                    shipLocation: { x: originalX, y: originalY },
+                    shipLocation: {
+                      x: indexX + i,
+                      y: originalY,
+                      id: ship.id,
+                      size: ship.size,
+                    },
                   });
                 }
               }
@@ -132,7 +174,12 @@ const RenderBoard = () => {
                 ) {
                   blocksToHover.push({
                     element: refs[indexY + i][originalX].current,
-                    shipLocation: { x: originalX, y: originalY },
+                    shipLocation: {
+                      x: originalX,
+                      y: indexY + i,
+                      id: ship.id,
+                      size: ship.size,
+                    },
                   });
                 }
               }
@@ -153,11 +200,8 @@ const RenderBoard = () => {
         } else {
           s.hide = false;
         }
-
         return s;
       });
-
-      console.log(updateShips);
 
       blocksToHover.map(block => {
         // setTimeout(() => {
@@ -167,10 +211,7 @@ const RenderBoard = () => {
 
       setShips(updateShips);
       setIsDragging(false);
-
-      //temp change to playership location later
-      ////////////////////////////////////////
-      const updatedBoard = [...board];
+      addShipLocation(blocksToHover);
     }
   };
 
@@ -253,8 +294,22 @@ const RenderBoard = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={boardRef}>
       <div className={styles.privateBoard}>
+        {headingTop.map((item, i) => {
+          return (
+            <div key={i} style={{ gridColumn: `${i + 2} / span 1` }}>
+              {item}
+            </div>
+          );
+        })}
+        {headingSide.map((item, i) => {
+          return (
+            <div key={i} style={{ gridRow: `${i + 2} / span 1` }}>
+              {item}
+            </div>
+          );
+        })}
         {board &&
           board.map((item, i) => {
             return item.map((itemItem, ii) => {
@@ -282,18 +337,17 @@ const RenderBoard = () => {
           {ships &&
             ships.map((ship, i) => {
               return (
-                !ship.hide && (
-                  <Ship
-                    key={ship.id}
-                    onDragEnd={onDragEndHandler}
-                    onDragStart={() => onDragStartHandler(ship.id)}
-                    onDrag={onDragHandler}
-                    ship={ship}
-                    onTap={() => setReset(false)}
-                    reset={reset}
-                    isDragging={isDragging}
-                  />
-                )
+                <Ship
+                  key={ship.id}
+                  onDragEnd={onDragEndHandler}
+                  onDragStart={() => onDragStartHandler(ship.id)}
+                  onDrag={onDragHandler}
+                  ship={ship}
+                  onTap={() => setReset(false)}
+                  reset={reset}
+                  isDragging={isDragging}
+                  boardRef={boardRef.current}
+                />
               );
             })}
         </div>

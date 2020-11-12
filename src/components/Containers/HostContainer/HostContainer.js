@@ -7,51 +7,42 @@ import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
 import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
 
 import { GameContext } from '../../../context/storeContext';
-import { deleteGame, setGameStatus } from '../../../database/crud';
+import { deleteGame, getGameById, setGameStatus } from '../../../database/crud';
 import { isUserOnline } from '../../../services/helpers';
 import { HiOutlineUsers } from 'react-icons/hi';
 
 const HostContainer = ({ socket }) => {
-  const { state } = useContext(GameContext);
+  const {
+    state: { currentGame, games, connectedUsers },
+  } = useContext(GameContext);
 
-  const [hideHostDetails, setHideHostDetails] = useState([false, false]);
-  const [currentGameIndex, setCurrentGameIndex] = useState('');
   const [currentGameId, setCurrentGameId] = useState('');
-
-  // logic to show hosting details
-  useEffect(() => {
-    if (!state.games && socket.id) {
-      return;
-    }
-
-    state.games.forEach(({ game }) => {
-      if (game.playerOne.id === socket.id) {
-        setHideHostDetails([true, false]);
-      }
-    });
-  }, [state, socket.id]);
+  const [showPlayerTwoForm, setShowPlayerTwoForm] = useState(false);
 
   // delete games that has ofline hosts
   useEffect(() => {
-    if (state.games.length === 0) {
+    if (games.length === 0) {
       return;
     }
-    state.games.map(game => {
-      if (!isUserOnline(game.game.playerOne.id, state.connectedUsers)) {
+    games.map(game => {
+      if (!isUserOnline(game.game.playerOne.id, connectedUsers)) {
         deleteGame(game.id);
       }
     });
-  }, [state.connectedUsers]);
+  }, [connectedUsers]);
 
   const onClickDisplayGamesHandler = (gameId, gameIndex) => {
+    console.log('hello');
     setGameStatus(gameId, 'PLAYER-TWO-JOINING');
-    setCurrentGameIndex(gameIndex);
     setCurrentGameId(gameId);
-    setHideHostDetails([false, true]);
+    setShowPlayerTwoForm(true);
   };
+
+  console.log(showPlayerTwoForm);
+
   return (
     <div className={styles.hostContainer}>
-      {!hideHostDetails[0] && !hideHostDetails[1] && (
+      {currentGame.status === 'INACTIVE' && !showPlayerTwoForm && (
         <>
           <div className={styles.information}>
             <div className={`${styles.information__heading} heading--1`}>
@@ -59,20 +50,16 @@ const HostContainer = ({ socket }) => {
             </div>
             <div className={styles.information__users}>
               <HiOutlineUsers />
-              <p>{state.connectedUsers.length}</p>
+              <p>{connectedUsers.length}</p>
             </div>
           </div>
           <CreateGame socket={socket} />
           <GamesList socket={socket} onClick={onClickDisplayGamesHandler} />
         </>
       )}
-      {hideHostDetails[0] && <WaitingForPlayer />}
-      {hideHostDetails[1] && (
-        <PlayerTwoForm
-          socket={socket}
-          gameId={currentGameId}
-          gameName={state.games[currentGameIndex].name}
-        />
+      {currentGame.status === 'HOSTED' && <WaitingForPlayer />}
+      {showPlayerTwoForm && (
+        <PlayerTwoForm socket={socket} gameId={currentGameId} />
       )}
     </div>
   );

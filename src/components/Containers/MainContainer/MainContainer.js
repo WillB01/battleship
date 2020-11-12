@@ -7,7 +7,11 @@ import Chat from '../../Chat/Chat';
 import GameDetails from '../../ui/GameDetails/GameDetails';
 
 import { GameContext } from '../../../context/storeContext';
-import { getAllGames, updateSockets } from '../../../database/crud';
+import {
+  getAllGames,
+  updateSockets,
+  getGameById,
+} from '../../../database/crud';
 
 import PrivateBoard from '../../Boards/PrivateBoard/PrivateBoard';
 
@@ -31,31 +35,28 @@ const MainContainer = ({ socket }) => {
     });
   }, []);
 
-  useEffect(() => {
-    state.games.map((game, i) => {
-      if (
-        game.status === 'ACTIVE' &&
-        (game.game.playerOne.id === socket.id ||
-          game.game.playerTwo.id === socket.id)
-      ) {
-        return setGameIndex(i);
-      }
-    });
-  }, [state.games]);
+  console.log('IN GAME RENDER DAMP', state.currentGame);
 
   return (
     <>
-      <PrivateBoard socket={socket.id} index={0} />
+      {/* <PrivateBoard socket={socket.id} index={0} /> */}
 
-      {gameIndex === '' && <HostContainer socket={socket} />}
-      {gameIndex !== '' && (
+      {(state.currentGame.status === 'INACTIVE' ||
+        state.currentGame.status === 'HOSTED') && (
+        <HostContainer socket={socket} />
+      )}
+      {state.currentGame.status === 'ACTIVE' && (
         <div className={styles.gameContainer}>
-          <GameDetails index={gameIndex} />
-          <Game socket={socket} index={gameIndex} />
+          <GameDetails />
+          <Game
+            socket={socket}
+            index={gameIndex}
+            currentGame={state.currentGame}
+          />
           <Chat
             socket={socket}
             type={'private'}
-            gameName={state.games[gameIndex].name}
+            gameName={state.currentGame.name}
           />
         </div>
       )}
