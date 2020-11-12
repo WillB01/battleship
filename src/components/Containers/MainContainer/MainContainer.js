@@ -16,7 +16,10 @@ import {
 import PrivateBoard from '../../Boards/PrivateBoard/PrivateBoard';
 
 const MainContainer = ({ socket }) => {
-  const { state, dispatch } = useContext(GameContext);
+  const {
+    state: { currentGame },
+    dispatch,
+  } = useContext(GameContext);
   const [gameIndex, setGameIndex] = useState('');
 
   useEffect(() => {
@@ -35,31 +38,19 @@ const MainContainer = ({ socket }) => {
     });
   }, []);
 
-  console.log('IN GAME RENDER DAMP', state.currentGame);
-
   return (
     <>
-      {/* <PrivateBoard socket={socket.id} index={0} /> */}
-
-      {(state.currentGame.status === 'INACTIVE' ||
-        state.currentGame.status === 'HOSTED') && (
-        <HostContainer socket={socket} />
-      )}
-      {state.currentGame.status === 'ACTIVE' && (
-        <div className={styles.gameContainer}>
-          <GameDetails />
-          <Game
-            socket={socket}
-            index={gameIndex}
-            currentGame={state.currentGame}
-          />
-          <Chat
-            socket={socket}
-            type={'private'}
-            gameName={state.currentGame.name}
-          />
-        </div>
-      )}
+      {(currentGame.status === 'INACTIVE' ||
+        currentGame.status === 'HOSTED') && <HostContainer socket={socket} />}
+      {currentGame.status === 'ACTIVE' &&
+        (socket.id === currentGame.game.playerOne.id ||
+          socket.id === currentGame.game.playerTwo.id) && (
+          <div className={styles.gameContainer}>
+            <GameDetails />
+            <Game socket={socket} currentGame={currentGame} />
+            <Chat socket={socket} type={'private'} gameId={currentGame.id} />
+          </div>
+        )}
     </>
   );
 };

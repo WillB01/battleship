@@ -22,10 +22,20 @@ io.on('connection', socket => {
   });
 
   //JOIN PRIVATE GAME ROOM
-  socket.on('JOIN-GAME', gameName => {
-    socket.join(gameName);
+  socket.on('JOIN-GAME', gameId => {
+    socket.join(gameId);
     socket.leave(MAIN_ROOM);
   });
+
+  ///////////////////////////////
+  //ADD SHIP LOCATION
+  /////////////////////////////
+  socket.on('ADD-SHIP-LOCATION', game => {
+    console.log(game);
+    io.to(game.currentGame.id).emit('ADD-SHIP-LOCATION-HANDLER', game);
+  });
+  /////////////////////////////////
+  /////////////////////////////////
 
   ///////////////////////////////
   // Board click
@@ -100,7 +110,7 @@ io.on('connection', socket => {
     if (data.type === 'private') {
       console.log('DATAAAAA', data);
 
-      io.to(data.gameName).emit('sendMessageHandler', data);
+      io.to(data.gameId).emit('sendMessageHandler', data);
     }
     if (data.type === 'public') {
       io.to(MAIN_ROOM).emit('sendMessageHandler', data);

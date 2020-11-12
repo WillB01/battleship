@@ -39,11 +39,11 @@ const PrivateBoard = ({ socket }) => {
     const player =
       currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
 
-    const shipLocations = [];
+    const shipLocation = [];
 
     ships.map(ship => {
       if (currentGame.game[player].id === socket.id) {
-        shipLocations.push({
+        shipLocation.push({
           x: ship.shipLocation.x,
           y: ship.shipLocation.y,
           id: ship.shipLocation.id,
@@ -52,7 +52,7 @@ const PrivateBoard = ({ socket }) => {
       }
     });
 
-    updateShipLocation(currentGame.id, shipLocations, player);
+    socket.emit('ADD-SHIP-LOCATION', { currentGame, shipLocation, player });
   };
 
   return (

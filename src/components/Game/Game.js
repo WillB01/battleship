@@ -11,7 +11,10 @@ import { getGameById } from '../../database/crud';
 import styles from './Game.module.scss';
 
 const Game = ({ socket, index }) => {
-  const { state, dispatch } = useContext(GameContext);
+  const {
+    state: { currentGame },
+    dispatch,
+  } = useContext(GameContext);
 
   useEffect(() => {
     //clean up later
@@ -26,17 +29,23 @@ const Game = ({ socket, index }) => {
     });
   }, []);
 
+  useEffect(() => {
+    socket.on('ADD-SHIP-LOCATION-HANDLER', data => {
+      dispatch({ type: 'ADD-SHIP-LOCATION', payload: { ...data } });
+    });
+  }, []);
+
   const boardClickHandler = (x, y, boardType) => {
     socket.emit(socketActions.ATTACK_SHIP, {
       boardType: boardType,
       x: x,
       y: y,
-      gameName: state.games[index].name,
-      game: state.games[index].game,
+      gameName: currentGame.name,
+      game: currentGame.game,
     });
   };
 
-  console.log('game render state', state);
+  console.log('GAME STATE', currentGame);
 
   return (
     <div>

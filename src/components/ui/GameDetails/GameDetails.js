@@ -7,8 +7,6 @@ import { GameContext } from '../../../context/storeContext';
 const GameDetails = () => {
   const { state } = useContext(GameContext);
 
-  console.log(state);
-  console.log('game details', state);
   return (
     <div className={styles.gameDetails}>
       <div className={`${styles.item} ${styles.item__1}`}>

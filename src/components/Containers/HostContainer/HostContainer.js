@@ -38,8 +38,6 @@ const HostContainer = ({ socket }) => {
     setShowPlayerTwoForm(true);
   };
 
-  console.log(showPlayerTwoForm);
-
   return (
     <div className={styles.hostContainer}>
       {currentGame.status === 'INACTIVE' && !showPlayerTwoForm && (

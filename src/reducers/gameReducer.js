@@ -1,5 +1,6 @@
 import { gameActionTypes } from '../actions/actions';
 import { boardBlueprint } from '../services/boardBlueprint';
+import { updateShipLocation } from '../database/crud';
 
 // export const initialState = {
 //   status: '',
@@ -64,6 +65,18 @@ export const gameReducer = (state, action) => {
       return {
         ...state,
         currentGame: action.payload,
+      };
+    }
+
+    case 'ADD-SHIP-LOCATION': {
+      const { currentGame, shipLocation, player } = action.payload;
+
+      const updateCurrentGame = { ...currentGame };
+      updateCurrentGame.game[player].shipLocation.push(shipLocation);
+
+      return {
+        ...state,
+        currentGame: currentGame,
       };
     }
     default:

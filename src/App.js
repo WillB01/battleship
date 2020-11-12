@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import './App.scss';
 import { GameContext } from './context/storeContext';
 import { gameReducer, initialState } from './reducers/gameReducer';
+import { updateSockets } from './database/crud';
 
 import MainContainer from './components/Containers/MainContainer/MainContainer';
 

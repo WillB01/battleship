@@ -24,7 +24,7 @@ const PlayerTwoForm = ({ socket, gameId }) => {
       };
 
       dispatch({ type: 'SET-CURRENT-GAME', payload: game });
-      socket.emit('JOIN-GAME', game.name);
+      socket.emit('JOIN-GAME', game.id);
     });
   };
 

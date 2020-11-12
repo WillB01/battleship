@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import useInput from '../hooks/useInput/useInput';
 import styles from './Chat.module.scss';
 
-const Chat = ({ socket, type, gameName }) => {
+const Chat = ({ socket, type, gameId }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([{}]);
 
@@ -30,7 +30,7 @@ const Chat = ({ socket, type, gameName }) => {
       id: socket.id,
       type,
       messages: messages,
-      gameName,
+      gameId,
     });
   };
   return (
