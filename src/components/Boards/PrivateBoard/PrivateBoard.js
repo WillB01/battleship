@@ -52,8 +52,6 @@ const PrivateBoard = ({ socket }) => {
       }
     });
 
-    updateShipLocation(currentGame.id, shipLocation, player);
-
     socket.emit('ADD-SHIP-LOCATION', { currentGame, shipLocation, player });
   };
 

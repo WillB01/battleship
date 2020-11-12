@@ -44,7 +44,7 @@ io.on('connection', socket => {
     //TODO REFACTOR
     // PLAYER ONE //////////////
 
-    const { boardType, game, gameName } = data;
+    const { boardType, game, gameId } = data;
 
     const p1 = 'p1';
     const p1Ship = 'p1-ship';
@@ -72,7 +72,7 @@ io.on('connection', socket => {
         type: data.boardType,
       });
 
-      return io.to(gameName).emit(actions.ATTACK_SHIP_HANDLER, game);
+      return io.to(gameId).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
 
     // PLAYER TWO //////////////
@@ -97,7 +97,7 @@ io.on('connection', socket => {
         type: data.boardType,
       });
 
-      return io.to(gameName).emit(actions.ATTACK_SHIP_HANDLER, game);
+      return io.to(gameId).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
   });
   /////////////////////////////////

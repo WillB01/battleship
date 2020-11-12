@@ -6,7 +6,6 @@ import Board from '../Boards/SharedBoard/Board';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
 
 import { GameContext } from '../../context/storeContext';
-import { getGameById } from '../../database/crud';
 
 import styles from './Game.module.scss';
 
@@ -17,12 +16,11 @@ const Game = ({ socket, index }) => {
   } = useContext(GameContext);
 
   useEffect(() => {
-    //clean up later
     socket.on(socketActions.ATTACK_SHIP_HANDLER, game => {
+      console.log(game);
       dispatch({
         type: 'ATTACK-PLAYER',
         payload: {
-          index,
           game,
         },
       });
@@ -40,7 +38,7 @@ const Game = ({ socket, index }) => {
       boardType: boardType,
       x: x,
       y: y,
-      gameName: currentGame.name,
+      gameId: currentGame.id,
       game: currentGame.game,
     });
   };
@@ -49,8 +47,8 @@ const Game = ({ socket, index }) => {
 
   return (
     <div>
-      <PrivateBoard socket={socket} />
       <Board onClick={boardClickHandler} socket={socket} />
+      <PrivateBoard socket={socket} />
     </div>
   );
 };
