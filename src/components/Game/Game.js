@@ -6,12 +6,11 @@ import React, {
   useRef,
 } from 'react';
 
-import socketActions from '../../services/socketActions';
+import { GameContext } from '../../context/storeContext';
 
+import socketActions from '../../services/socketActions';
 import Board from '../Boards/SharedBoard/Board';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
-
-import { GameContext } from '../../context/storeContext';
 
 import styles from './Game.module.scss';
 
@@ -22,6 +21,10 @@ const Game = ({ socket, index }) => {
   } = useContext(GameContext);
 
   const playerRef = useRef();
+
+  useEffect(() => {
+    dispatch({ type: 'SET-USER-STATUS', paylaod: 'ACTIVE' });
+  }, []);
 
   useEffect(() => {
     socket.emit('JOIN-GAME', currentGame.id);

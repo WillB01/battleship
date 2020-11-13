@@ -4,11 +4,15 @@ import styles from './PlayerTwoForm.module.scss';
 import useInput from '../hooks/useInput/useInput';
 
 import { GameContext } from '../../context/storeContext';
-import { setGameActive, getGameById } from '../../database/crud';
+import { setGameActive, getGameById, gameRef } from '../../database/crud';
 import { GiShipWheel } from 'react-icons/gi';
+// import { deleteGame, gamesRef } from '../../../database/crud';
 
 const PlayerTwoForm = ({ socket, gameId }) => {
-  const { state, dispatch } = useContext(GameContext);
+  const {
+    state: { currentGame },
+    dispatch,
+  } = useContext(GameContext);
   const [playerTwoName, setPlayerTwoName] = useState('');
 
   const onChangeHandler = value => {
@@ -16,15 +20,32 @@ const PlayerTwoForm = ({ socket, gameId }) => {
   };
 
   const onClickHandler = () => {
-    setGameActive(gameId, socket.id, playerTwoName);
-    getGameById(gameId, (game, key) => {
-      game = {
-        ...game,
-        id: key,
-      };
+    console.log(currentGame);
 
-      dispatch({ type: 'SET-CURRENT-GAME', payload: game });
-    });
+    // const gameRef = gamesRef.child(`${game.id}`);
+    // gamesRef.up
+    //   .update({
+    //     status: 'HOSTED',
+    //     'game/playerTwo': {
+    //       id: '',
+    //     },
+    //   })
+    //   .then(() => ref.once('value'))
+    //   .then(snapshot => {
+    //     console.log(snapshot.val());
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+    // setGameActive(currentGame.id, socket.id, playerTwoName);
+    // getGameById(currentGame.id, (game, key) => {
+    //   game = {
+    //     ...game,
+    //     id: key,
+    //   };
+    //   dispatch({ type: 'SET-CURRENT-GAME', payload: game });
+    //   dispatch({ type: 'SET-USER-STATUS', payload: 'ACTIVE' });
+    // });
   };
 
   const useNameInput = useInput(

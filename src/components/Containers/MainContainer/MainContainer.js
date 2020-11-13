@@ -6,26 +6,25 @@ import Game from '../../Game/Game';
 import Chat from '../../Chat/Chat';
 import GameDetails from '../../ui/GameDetails/GameDetails';
 import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
+import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
+import GamesList from '../../GamesList/GameList';
 
 import { GameContext } from '../../../context/storeContext';
 
 const MainContainer = ({ socket }) => {
   const {
-    state: { currentGame, games },
+    state: { currentGame, games, userStatus },
   } = useContext(GameContext);
 
   return (
     <>
-      {currentGame.status === 'INACTIVE' && <HostContainer socket={socket} />}
+      {userStatus === 'INACTIVE' && <HostContainer socket={socket} />}
 
-      {(currentGame.status === 'HOSTED' ||
-        currentGame.status === 'PLAYER-TWO-JOINING') && (
-        <WaitingForPlayer
-          playerJoining={currentGame.status === 'PLAYER-TWO-JOINING'}
-          games={games}
-          socket={socket}
-        />
-      )}
+      {userStatus === 'INACTIVE' && <GamesList socket={socket} />}
+
+      {userStatus === 'HOSTED' && <WaitingForPlayer socket={socket} />}
+
+      {userStatus === 'JOINING' && <PlayerTwoForm socket={socket} />}
 
       {currentGame.status === 'ACTIVE' &&
         (socket.id === currentGame.game.playerOne.id ||

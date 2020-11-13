@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useContext, useState } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 
 import { isUserOnline } from '../../../services/helpers';
 import { GameContext } from '../../../context/storeContext';
+import { gamesRef } from '../../../database/crud';
 
 import styles from './WaitingForPlayer.module.scss';
 import video from '../../../assets/video/coverr-drone-shot-in-tierra-del-fuego-argentina-18-5280.mp4';
 
-import Loading from '../Loading/Loading';
+import { GameLoading } from '../Loading/Loading';
 
-const WaitingForPlayer = ({ playerJoining, socket, games }) => {
+const WaitingForPlayer = ({ socket }) => {
   const {
     state: { currentGame },
   } = useContext(GameContext);
@@ -16,18 +17,44 @@ const WaitingForPlayer = ({ playerJoining, socket, games }) => {
   const statusRef = useRef('waiting for player');
 
   useEffect(() => {
-    if (playerJoining) {
+    socket.on('JOIN-HOST-HANDLER', () => {
       statusRef.current = 'player is joining';
-    }
-  }, [playerJoining]);
+    });
+  }, [socket.on]);
 
   useEffect(() => {
     socket.on('USER-DISCONNECTS', sockets => {
-      if (!isUserOnline(currentGame.game.playerTwo.id, sockets)) {
-        statusRef.current = 'waiting for player';
-      }
+      gamesRef
+        .child(`${currentGame.id}`)
+        .once('value')
+        .then(snapshot => {
+          const playerTwoId = snapshot.val().game.playerTwo.id;
+
+          if (!playerTwoId) {
+            return;
+          }
+
+          if (!isUserOnline(playerTwoId, sockets)) {
+            statusRef.current = 'waiting for player';
+            const ref = gamesRef
+              .child(`${currentGame.id}`)
+              .update({
+                status: 'HOSTED',
+                'game/playerTwo': {
+                  id: '',
+                },
+              })
+              .then(() => {
+                statusRef.current = 'waiting for super player';
+                socket.emit('UPDATE-GAME-LIST');
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          }
+        });
     });
-  }, []);
+  }, [socket.on]);
 
   return (
     <div className={styles.waitingForPlayer}>
@@ -35,7 +62,7 @@ const WaitingForPlayer = ({ playerJoining, socket, games }) => {
         <source src={video} type="video/mp4"></source>
       </video>
       <div className="center heading--1">
-        <Loading>{statusRef.current}</Loading>
+        <GameLoading>{statusRef.current}</GameLoading>
       </div>
     </div>
   );

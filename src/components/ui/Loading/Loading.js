@@ -3,7 +3,7 @@ import styles from './Loading.module.scss';
 
 import { GiShipWheel } from 'react-icons/gi';
 
-const Loading = ({ children }) => {
+export const GameLoading = ({ children }) => {
   return (
     <div className={styles.loading}>
       {children}
@@ -12,4 +12,16 @@ const Loading = ({ children }) => {
   );
 };
 
-export default Loading;
+export const Loading = ({ children }) => {
+  return (
+    <div className={styles.container}>
+      {children}
+      <div className={styles.lds}>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  );
+};

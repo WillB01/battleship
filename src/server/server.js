@@ -21,12 +21,26 @@ io.on('connection', socket => {
     io.to(MAIN_ROOM).emit('USER-DISCONNECTS', sockets);
   });
 
+  socket.on('GAME-HOSTED', game => {
+    io.to(MAIN_ROOM).emit('GAME-HOSTED-HANDLER', game);
+  });
+
   //JOIN PRIVATE GAME ROOM
   socket.on('JOIN-GAME', gameId => {
     socket.join(gameId);
     socket.leave(MAIN_ROOM);
   });
 
+  // UPDATE GAME STATUS AND RERENDER
+  socket.on('UPDATE-GAME-LIST', () => {
+    io.to(MAIN_ROOM).emit('UPDATE-GAME-LIST-HANDLER');
+  });
+
+  //USER JOINS HOSTED GAME
+  socket.on('JOIN-HOST', playerOneId => {
+    io.to(playerOneId).emit('JOIN-HOST-HANDLER');
+    io.to(MAIN_ROOM).emit('UPDATE-GAME-LIST-HANDLER');
+  });
   ///////////////////////////////
   //ADD SHIP LOCATION
   /////////////////////////////

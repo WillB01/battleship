@@ -41,17 +41,12 @@ export const createGame = (
   return ref.key;
 };
 
-export const getAllGames = cb => {
-  const db = firebase.database().ref('/games');
-
-  return db.on('value', snapshot => {
-    const data = [];
-    snapshot.forEach((child, i) => {
-      data.push({ ...child.val(), id: child.key });
-    });
-    cb(data);
-  });
-};
+export const gamesRef = firebase.database().ref('/games');
+export const fetchGames = () =>
+  firebase
+    .database()
+    .ref('/games')
+    .once('value', snapshot => snapshot);
 
 export const getGameById = (id, cb) => {
   const ref = firebase.database().ref(`/games/${id}`);
@@ -63,29 +58,21 @@ export const setGameStatus = (id, status) => {
   ref.update({ status: status });
 };
 
-export const deleteGame = gameId => {
-  const ref = firebase.database().ref(`/games/${gameId}`);
-  ref.set(null);
-};
-
-export const setGameActive = (gameId, playerTwoId, playerTwoName) => {
-  getGameById(gameId, game => {
-    game.status = 'ACTIVE';
-    game.game.playerTwo = {
-      ...game.game.playerTwo,
-      id: playerTwoId,
-      name: playerTwoName,
-    };
-    const ref = firebase.database().ref(`/games/${gameId}`);
-    ref.update(game);
-  });
-};
-
 export const updateShipLocation = (gameId, shipLocation, player) => {
   const ref = firebase.database().ref(`/games/${gameId}`);
   const shipLocationRef = ref.child(`game/${player}/shipLocation`);
 
   shipLocationRef.push(shipLocation);
+};
+
+export const addPlayerTwo = (gameId, playerTwoId) => {
+  const ref = firebase.database().ref(`/games/${gameId}/game/playerTwo`);
+  ref.update({ id: playerTwoId });
+};
+
+export const removePlayerTwo = (gameId, playerTwoId) => {
+  const ref = firebase.database().ref(`/games/${gameId}/game/playerTwo`);
+  ref.update({ id: '' });
 };
 
 ////////////////////////////////
