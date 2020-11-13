@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useReducer } from 'react';
 import styles from './CreateGame.module.scss';
 
 import { GiShipWheel } from 'react-icons/gi';
-import { createGame, getGameById, gamesRef } from '../../database/crud';
+import { gamesRef } from '../../database/crud';
 import { GameContext } from '../../context/storeContext';
 import { boardBlueprint } from '../../services/boardBlueprint';
 

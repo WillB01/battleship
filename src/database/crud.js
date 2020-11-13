@@ -42,16 +42,13 @@ export const createGame = (
 };
 
 export const gamesRef = firebase.database().ref('/games');
-export const fetchGames = () =>
-  firebase
-    .database()
-    .ref('/games')
-    .once('value', snapshot => snapshot);
 
-export const getGameById = (id, cb) => {
-  const ref = firebase.database().ref(`/games/${id}`);
-  ref.on('value', snapshot => cb({ ...snapshot.val() }, snapshot.key));
-};
+export const fetchGames = () => gamesRef.once('value', snapshot => snapshot);
+
+export const fetchGameById = gameId =>
+  gamesRef.child(`${gameId}`).once('value', snapshot => snapshot);
+
+export const removeGameById = gameId => gamesRef.child(`${gameId}`).remove();
 
 export const setGameStatus = (id, status) => {
   const ref = firebase.database().ref(`/games/${id}`);

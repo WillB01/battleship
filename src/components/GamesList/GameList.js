@@ -4,7 +4,12 @@ import styles from './GameList.module.scss';
 import { GiBattleship } from 'react-icons/gi';
 import { DiYeoman } from 'react-icons/di';
 
-import { deleteGame, gamesRef, fetchGames } from '../../database/crud';
+import {
+  removeGameById,
+  gamesRef,
+  fetchGames,
+  fetchGameById,
+} from '../../database/crud';
 import { isUserOnline } from '../../services/helpers';
 import { GameContext } from '../../context/storeContext';
 
@@ -26,26 +31,26 @@ const GamesList = ({ socket }) => {
     }
     games.map((game, i) => {
       if (!isUserOnline(game.game.playerOne.id, connectedUsers)) {
-        const gameRef = gamesRef.child(`${game.id}`);
-        gameRef
-          .remove()
+        removeGameById(game.id)
           .then(() => {
             dispatch({ type: 'REMOVE-GAME', payload: i });
           })
           .catch(err => {
-            console.log('ERROR');
+            console.log(err);
           });
       }
     });
     return () => gamesRef.off('child_removed');
   }, [connectedUsers]);
 
+  // Game hosted / created
   useEffect(() => {
     socket.on('GAME-HOSTED-HANDLER', game => {
       dispatch({ type: 'ADD-TO-GAMES', payload: game });
     });
   }, [socket.on]);
 
+  // initaial setstate for gamelist
   useEffect(() => {
     setIsLoading(true);
     fetchGames()
@@ -63,6 +68,7 @@ const GamesList = ({ socket }) => {
       });
   }, []);
 
+  // uppdate games if player two disconnects from player two from / awaiting player
   useEffect(() => {
     socket.on('UPDATE-GAME-LIST-HANDLER', () => {
       fetchGames()
@@ -81,24 +87,32 @@ const GamesList = ({ socket }) => {
     return () => gamesRef.off('value');
   }, [socket.on]);
 
+  // join game and up date db with socket id to player two
   const onCLickHandler = (gameId, playerOneId) => {
-    gamesRef
-      .child(`${gameId}`)
-      .update({
-        status: 'PLAYER-TWO-JOINING',
-        'game/playerTwo': {
-          id: socket.id,
-        },
-      })
-      .then(() => {
-        dispatch({ type: 'SET-USER-STATUS', payload: 'JOINING' });
-        socket.emit('JOIN-HOST', playerOneId);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    setIsLoading(true);
 
-    gamesRef.off('child_changed');
+    fetchGameById(gameId)
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          console.log('error');
+          setIsLoading(false);
+          return;
+        }
+        snapshot.ref.update(
+          {
+            status: 'PLAYER-TWO-JOINING',
+            'game/playerTwo': {
+              id: socket.id,
+            },
+          },
+          onComplate => {
+            dispatch({ type: 'SET-USER-STATUS', payload: 'JOINING' });
+            socket.emit('JOIN-HOST', playerOneId);
+            setIsLoading(false);
+          }
+        );
+      })
+      .catch(err => console.log(err));
   };
 
   const addStyle = (status, playerOneId) => {

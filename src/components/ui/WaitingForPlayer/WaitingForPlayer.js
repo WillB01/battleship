@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useContext } from 'react';
 
 import { isUserOnline } from '../../../services/helpers';
 import { GameContext } from '../../../context/storeContext';
-import { gamesRef } from '../../../database/crud';
+import { gamesRef, fetchGameById } from '../../../database/crud';
 
 import styles from './WaitingForPlayer.module.scss';
 import video from '../../../assets/video/coverr-drone-shot-in-tierra-del-fuego-argentina-18-5280.mp4';
@@ -24,9 +24,7 @@ const WaitingForPlayer = ({ socket }) => {
 
   useEffect(() => {
     socket.on('USER-DISCONNECTS', sockets => {
-      gamesRef
-        .child(`${currentGame.id}`)
-        .once('value')
+      fetchGameById(currentGame.id)
         .then(snapshot => {
           const playerTwoId = snapshot.val().game.playerTwo.id;
 
@@ -35,23 +33,26 @@ const WaitingForPlayer = ({ socket }) => {
           }
 
           if (!isUserOnline(playerTwoId, sockets)) {
-            statusRef.current = 'waiting for player';
-            const ref = gamesRef
-              .child(`${currentGame.id}`)
-              .update({
+            if (!snapshot.exists()) {
+              console.log('error');
+              return;
+            }
+            snapshot.ref.update(
+              {
                 status: 'HOSTED',
                 'game/playerTwo': {
                   id: '',
                 },
-              })
-              .then(() => {
+              },
+              onComplate => {
                 statusRef.current = 'waiting for super player';
                 socket.emit('UPDATE-GAME-LIST');
-              })
-              .catch(error => {
-                console.log(error);
-              });
+              }
+            );
           }
+        })
+        .catch(err => {
+          console.log(err);
         });
     });
   }, [socket.on]);
