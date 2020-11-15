@@ -21,19 +21,15 @@ io.on('connection', socket => {
     io.to(MAIN_ROOM).emit('USER-DISCONNECTS', sockets);
   });
 
-  socket.on('GAME-HOSTED', game => {
-    io.to(MAIN_ROOM).emit('GAME-HOSTED-HANDLER', game);
-  });
-
-  //JOIN PRIVATE GAME ROOM
-  socket.on('JOIN-GAME', gameId => {
-    socket.join(gameId);
-    socket.leave(MAIN_ROOM);
-  });
+  /////////////////////////////
+  // OUTSIDE OF PLAYING GAME//
+  ///////////////////////////
 
   // UPDATE GAME STATUS AND RERENDER
-  socket.on('UPDATE-GAME-LIST', () => {
-    io.to(MAIN_ROOM).emit('UPDATE-GAME-LIST-HANDLER');
+  socket.on('UPDATE-GAME-LIST', (gameId, socketId) => {
+    socket.broadcast
+      .to(MAIN_ROOM)
+      .emit('UPDATE-GAME-LIST-HANDLER', gameId, socketId);
   });
 
   //USER JOINS HOSTED GAME
@@ -41,6 +37,12 @@ io.on('connection', socket => {
     io.to(playerOneId).emit('JOIN-HOST-HANDLER');
     io.to(MAIN_ROOM).emit('UPDATE-GAME-LIST-HANDLER');
   });
+
+  //PLAYER TWO IS RREADY TO PLAY
+  socket.on('COMPLETES-PLAYER-TWO-FORM', hostId => {
+    io.to(hostId).emit('COMPLETES-PLAYER-TWO-FORM-HANDLER');
+  });
+
   ///////////////////////////////
   //ADD SHIP LOCATION
   /////////////////////////////
@@ -54,7 +56,14 @@ io.on('connection', socket => {
   });
 
   /////////////////////////////////
-  /////////////////////////////////
+  // OUTSIDE OF PLAYING GAME END//
+  ///////////////////////////////
+
+  //JOIN PRIVATE GAME ROOM
+  socket.on('JOIN-GAME', gameId => {
+    socket.join(gameId);
+    socket.leave(MAIN_ROOM);
+  });
 
   ///////////////////////////////
   // Board click

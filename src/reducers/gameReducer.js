@@ -7,10 +7,7 @@ import {
 import { updateShipLocation } from '../database/crud';
 
 export const initialState = {
-  connectedUsers: [],
-  games: [],
   currentGame: { status: 'INACTIVE' },
-  userStatus: 'INACTIVE',
   privateBoard: {
     board: [...privateBoardTemp],
     ships: [],
@@ -22,51 +19,6 @@ export const gameReducer = (state, action) => {
   const { games } = state;
 
   switch (action.type) {
-    case 'UPDATED-SOCKETS': {
-      return {
-        ...state,
-        connectedUsers: action.payload,
-      };
-    }
-    case 'SET-GAMES': {
-      return {
-        ...state,
-        games: action.payload,
-      };
-    }
-
-    // case 'JOIN-GAME': {
-    //   return {
-    //     ...state,
-    //     // currentGame: action.payload,
-    //     userStatus: 'JOINING',
-    //   };
-    // }
-
-    case 'REMOVE-GAME': {
-      const games = [...state.games];
-      games.splice(action.payload, 1);
-      return {
-        ...state,
-        games: games,
-      };
-    }
-
-    case 'ADD-TO-GAMES': {
-      return {
-        ...state,
-        games: [...state.games, action.payload],
-      };
-    }
-
-    case 'CREATE-GAME': {
-      return {
-        ...state,
-        currentGame: action.payload,
-        userStatus: 'HOSTED',
-      };
-    }
-
     case 'ATTACK-PLAYER': {
       return {
         ...state,
@@ -74,19 +26,6 @@ export const gameReducer = (state, action) => {
           ...state.currentGame,
           game: action.payload,
         },
-      };
-    }
-    case 'SET-CURRENT-GAME': {
-      return {
-        ...state,
-        currentGame: action.payload,
-      };
-    }
-
-    case 'SET-USER-STATUS': {
-      return {
-        ...state,
-        userStatus: action.payload,
       };
     }
 

@@ -1,21 +1,22 @@
 import React, { useContext, useState, useEffect, useReducer } from 'react';
 import styles from './CreateGame.module.scss';
 
-import { GiShipWheel } from 'react-icons/gi';
 import { gamesRef } from '../../database/crud';
-import { GameContext } from '../../context/storeContext';
+import { HostContext } from '../../context/storeContext';
 import { boardBlueprint } from '../../services/boardBlueprint';
-
-import socketActions from '../../services/socketActions';
-import useInput from '../hooks/useInput/useInput';
 import { Loading } from '../ui/Loading/Loading';
+import { socket } from '../../server/socket';
+import { initialHostGame } from '../../reducers/hostReducer';
 
-const CreateGame = ({ socket }) => {
+import useInput from '../hooks/useInput/useInput';
+import { GiCrackedGlass } from 'react-icons/gi';
+
+const CreateGame = () => {
   const [gameName, setGameName] = useState('');
   const [playerOneName, setPlayerOneName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { state, dispatch } = useContext(GameContext);
+  const { hostState, hostDispatch } = useContext(HostContext);
 
   const onClickHandler = () => {
     // TODO validation
@@ -24,37 +25,74 @@ const CreateGame = ({ socket }) => {
     }
     setIsLoading(true);
 
-    const data = {
+    // const data = {
+    //   status: 'HOSTED',
+    //   name: gameName,
+    //   game: {
+    //     board: boardBlueprint,
+    //     playerTurn: 'PLAYER-ONE',
+    //     playerOne: {
+    //       id: socket.id,
+    //       name: playerOneName,
+    //       attackLocation: [{ x: '', y: '', type: '' }],
+    //       shipLocation: [{ x: '', y: '', id: '', size: '' }],
+    //       ready: false,
+    //     },
+    //     playerTwo: {
+    //       id: '',
+    //       name: '',
+    //       attackLocation: [{ x: '', y: '' }],
+    //       shipLocation: [{ x: '', y: '', id: '', size: '' }],
+    //       ready: false,
+    //     },
+    //   },
+    // };
+
+    // gamesRef
+    //   .push(data)
+    //   .then(childRef => {
+    //     childRef.once('value', snapshot => {
+    //       const game = { id: snapshot.key, ...snapshot.val() };
+    //       childRef.update(game, onComplete => {
+    //         setIsLoading(false);
+
+    //         socket.emit('GAME-HOSTED', game);
+    //         hostDispatch({ type: 'CREATE-GAME', payload: game });
+    //       });
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+
+    const newGame = {
+      ...initialHostGame,
       status: 'HOSTED',
       name: gameName,
-      game: {
-        board: boardBlueprint,
-        playerTurn: 'PLAYER-ONE',
-        playerOne: {
-          id: socket.id,
-          name: playerOneName,
-          attackLocation: [{ x: '', y: '', type: '' }],
-          shipLocation: [{ x: '', y: '', id: '', size: '' }],
-          ready: false,
-        },
-        playerTwo: {
-          id: '',
-          name: '',
-          attackLocation: [{ x: '', y: '' }],
-          shipLocation: [{ x: '', y: '', id: '', size: '' }],
-          ready: false,
-        },
+      host: {
+        id: socket.id,
+        status: 'HOSTED',
+        name: playerOneName,
       },
     };
 
     gamesRef
-      .push(data)
+      .push(newGame)
       .then(childRef => {
         childRef.once('value', snapshot => {
-          setIsLoading(false);
-          const game = { id: snapshot.key, ...snapshot.val() };
-          socket.emit('GAME-HOSTED', game);
-          dispatch({ type: 'CREATE-GAME', payload: game });
+          const dbGame = { ...snapshot.val(), id: snapshot.key };
+          childRef.update(dbGame, onComplete => {
+            hostDispatch({
+              type: 'SET-NEW-USER',
+              payload: {
+                id: socket.id,
+                status: 'HOSTED',
+                gameId: dbGame.id,
+                host: true,
+              },
+            });
+            socket.emit('UPDATE-GAME-LIST');
+          });
         });
       })
       .catch(err => {

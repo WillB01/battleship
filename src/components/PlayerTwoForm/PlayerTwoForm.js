@@ -3,16 +3,17 @@ import styles from './PlayerTwoForm.module.scss';
 
 import useInput from '../hooks/useInput/useInput';
 
-import { GameContext } from '../../context/storeContext';
-import { setGameActive, getGameById, gameRef } from '../../database/crud';
+import { isUserOnline } from '../../services/helpers';
+import { HostContext } from '../../context/storeContext';
+import { fetchGameById } from '../../database/crud';
+import { socket } from '../../server/socket';
 import { GiShipWheel } from 'react-icons/gi';
-// import { deleteGame, gamesRef } from '../../../database/crud';
 
-const PlayerTwoForm = ({ socket, gameId }) => {
+const PlayerTwoForm = () => {
   const {
-    state: { currentGame },
-    dispatch,
-  } = useContext(GameContext);
+    hostState: { user, connectedUsers },
+    hostDispatch,
+  } = useContext(HostContext);
   const [playerTwoName, setPlayerTwoName] = useState('');
 
   const onChangeHandler = value => {
@@ -20,32 +21,37 @@ const PlayerTwoForm = ({ socket, gameId }) => {
   };
 
   const onClickHandler = () => {
-    console.log(currentGame);
+    fetchGameById(user.gameId)
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          console.log('no game');
+          console.log(user.gameId);
+          return;
+        }
 
-    // const gameRef = gamesRef.child(`${game.id}`);
-    // gamesRef.up
-    //   .update({
-    //     status: 'HOSTED',
-    //     'game/playerTwo': {
-    //       id: '',
-    //     },
-    //   })
-    //   .then(() => ref.once('value'))
-    //   .then(snapshot => {
-    //     console.log(snapshot.val());
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
-    // setGameActive(currentGame.id, socket.id, playerTwoName);
-    // getGameById(currentGame.id, (game, key) => {
-    //   game = {
-    //     ...game,
-    //     id: key,
-    //   };
-    //   dispatch({ type: 'SET-CURRENT-GAME', payload: game });
-    //   dispatch({ type: 'SET-USER-STATUS', payload: 'ACTIVE' });
-    // });
+        const dbGame = snapshot.val();
+
+        if (!isUserOnline(dbGame.host.id, connectedUsers)) {
+          console.log('NO PLAYER ONE');
+        }
+
+        snapshot.ref.update(
+          {
+            status: 'ACTIVE',
+            player: {
+              ...dbGame.player,
+              name: playerTwoName,
+            },
+          },
+          onComplate => {
+            hostDispatch({ type: 'SET-USER-STATUS', payload: 'ACTIVE' });
+            socket.emit('COMPLETES-PLAYER-TWO-FORM', dbGame.host.id);
+          }
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const useNameInput = useInput(

@@ -1,40 +1,27 @@
-import React, { useContext, useState, useEffect } from 'react';
-import styles from './MainContainer.module.scss';
+import React, { useContext, useState, useEffect, useReducer } from 'react';
 
+import GameContainer from '../GameContainer/GameContainer';
 import HostContainer from '../HostContainer/HostContainer';
-import Game from '../../Game/Game';
-import Chat from '../../Chat/Chat';
-import GameDetails from '../../ui/GameDetails/GameDetails';
-import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
-import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
-import GamesList from '../../GamesList/GameList';
 
-import { GameContext } from '../../../context/storeContext';
+import { GameContext, HostContext } from '../../../context/storeContext';
+import { gameReducer, initialState } from '../../../reducers/gameReducer';
+import { hostReducer, hostInitialState } from '../../../reducers/hostReducer';
 
 const MainContainer = ({ socket }) => {
-  const {
-    state: { currentGame, games, userStatus },
-  } = useContext(GameContext);
+  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const [hostState, hostDispatch] = useReducer(hostReducer, hostInitialState);
 
   return (
     <>
-      {userStatus === 'INACTIVE' && <HostContainer socket={socket} />}
+      <HostContext.Provider value={{ hostState, hostDispatch }}>
+        <HostContainer />
+      </HostContext.Provider>
 
-      {userStatus === 'INACTIVE' && <GamesList socket={socket} />}
-
-      {userStatus === 'HOSTED' && <WaitingForPlayer socket={socket} />}
-
-      {userStatus === 'JOINING' && <PlayerTwoForm socket={socket} />}
-
-      {currentGame.status === 'ACTIVE' &&
-        (socket.id === currentGame.game.playerOne.id ||
-          socket.id === currentGame.game.playerTwo.id) && (
-          <div className={styles.gameContainer}>
-            <GameDetails />
-            <Game socket={socket} currentGame={currentGame} />
-            <Chat socket={socket} type={'private'} gameId={currentGame.id} />
-          </div>
-        )}
+      {hostState.user.status === 'ACTIVE' && (
+        <GameContext.Provider value={{ state, dispatch }}>
+          <GameContainer socket={socket} />
+        </GameContext.Provider>
+      )}
     </>
   );
 };

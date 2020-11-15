@@ -1,32 +1,44 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState } from 'react';
 
 import { isUserOnline } from '../../../services/helpers';
-import { GameContext } from '../../../context/storeContext';
+import { HostContext } from '../../../context/storeContext';
 import { gamesRef, fetchGameById } from '../../../database/crud';
+import { socket } from '../../../server/socket';
 
 import styles from './WaitingForPlayer.module.scss';
 import video from '../../../assets/video/coverr-drone-shot-in-tierra-del-fuego-argentina-18-5280.mp4';
 
 import { GameLoading } from '../Loading/Loading';
 
-const WaitingForPlayer = ({ socket }) => {
+const WaitingForPlayer = () => {
   const {
-    state: { currentGame },
-  } = useContext(GameContext);
+    hostState: { user },
+    hostDispatch,
+  } = useContext(HostContext);
 
-  const statusRef = useRef('waiting for player');
+  const [info, setInfo] = useState('waiting for player');
 
   useEffect(() => {
     socket.on('JOIN-HOST-HANDLER', () => {
-      statusRef.current = 'player is joining';
+      setInfo('player is joining');
     });
+    return () => socket.off('JOIN-HOST-HANDLER');
+  }, [socket.on]);
+
+  useEffect(() => {
+    socket.on('COMPLETES-PLAYER-TWO-FORM-HANDLER', data => {
+      hostDispatch({ type: 'SET-USER-STATUS', payload: 'ACTIVE' });
+    });
+    return () => socket.off('COMPLETES-PLAYER-TWO-FORM-HANDLER');
   }, [socket.on]);
 
   useEffect(() => {
     socket.on('USER-DISCONNECTS', sockets => {
-      fetchGameById(currentGame.id)
+      fetchGameById(user.gameId)
         .then(snapshot => {
-          const playerTwoId = snapshot.val().game.playerTwo.id;
+          const playerTwoId = snapshot.val().player.id;
+
+          console.log(snapshot.val());
 
           if (!playerTwoId) {
             return;
@@ -40,12 +52,14 @@ const WaitingForPlayer = ({ socket }) => {
             snapshot.ref.update(
               {
                 status: 'HOSTED',
-                'game/playerTwo': {
+                player: {
                   id: '',
+                  status: '',
+                  name: '',
                 },
               },
               onComplate => {
-                statusRef.current = 'waiting for super player';
+                setInfo('waiting for super player');
                 socket.emit('UPDATE-GAME-LIST');
               }
             );
@@ -63,7 +77,7 @@ const WaitingForPlayer = ({ socket }) => {
         <source src={video} type="video/mp4"></source>
       </video>
       <div className="center heading--1">
-        <GameLoading>{statusRef.current}</GameLoading>
+        <GameLoading>{info}</GameLoading>
       </div>
     </div>
   );

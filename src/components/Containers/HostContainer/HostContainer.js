@@ -1,46 +1,30 @@
-import React, { useContext, useEffect } from 'react';
-import styles from './HostContainer.module.scss';
+import React, { useContext } from 'react';
 
+import Heading from '../../Heading/Heading';
+import WaitingForPlayer from '../../ui/WaitingForPlayer/WaitingForPlayer';
+import PlayerTwoForm from '../../PlayerTwoForm/PlayerTwoForm';
+import GamesList from '../../GamesList/GameList';
 import CreateGame from '../../CreateGame/CreateGame';
 
-import { GameContext } from '../../../context/storeContext';
-import { HiOutlineUsers } from 'react-icons/hi';
+import { HostContext } from '../../../context/storeContext';
 
-const HostContainer = ({ socket }) => {
+const HostContainer = () => {
   const {
-    state: { connectedUsers },
-    dispatch,
-  } = useContext(GameContext);
-
-  useEffect(() => {
-    socket.on('USER-DISCONNECTS', sockets => {
-      dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
-    });
-
-    socket.on(
-      'USER-CONNECTS',
-      sockets => {
-        dispatch({ type: 'UPDATED-SOCKETS', payload: sockets });
-      },
-      []
-    );
-  }, [socket.on]);
+    hostState: { user },
+  } = useContext(HostContext);
 
   return (
-    <div className={styles.hostContainer}>
-      <>
-        <div className={styles.information}>
-          <div className={`${styles.information__heading} heading--1`}>
-            Host or join a game of battleship!
-          </div>
-          <div className={styles.information__users}>
-            <HiOutlineUsers />
-            <p>{connectedUsers.length}</p>
-          </div>
-        </div>
-        <CreateGame socket={socket} />
-      </>
-    </div>
+    <>
+      {user.status === 'INACTIVE' && <Heading />}
+
+      {user.status === 'INACTIVE' && <CreateGame />}
+
+      {user.status === 'INACTIVE' && <GamesList />}
+
+      {user.status === 'HOSTED' && <WaitingForPlayer />}
+
+      {user.status === 'JOINING' && <PlayerTwoForm />}
+    </>
   );
 };
 

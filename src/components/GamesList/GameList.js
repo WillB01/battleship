@@ -1,8 +1,10 @@
 import React, { useEffect, useContext, useState } from 'react';
 import styles from './GameList.module.scss';
 
-import { GiBattleship } from 'react-icons/gi';
-import { DiYeoman } from 'react-icons/di';
+import { isUserOnline } from '../../services/helpers';
+import { HostContext } from '../../context/storeContext';
+import { Loading } from '../ui/Loading/Loading';
+import { socket } from '../../server/socket';
 
 import {
   removeGameById,
@@ -10,17 +12,12 @@ import {
   fetchGames,
   fetchGameById,
 } from '../../database/crud';
-import { isUserOnline } from '../../services/helpers';
-import { GameContext } from '../../context/storeContext';
 
-import { Loading } from '../ui/Loading/Loading';
-import img from '../../assets/img/war-ship-2.jpg';
-
-const GamesList = ({ socket }) => {
+const GamesList = () => {
   const {
-    state: { games, connectedUsers },
-    dispatch,
-  } = useContext(GameContext);
+    hostState: { games, connectedUsers },
+    hostDispatch,
+  } = useContext(HostContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,10 +27,10 @@ const GamesList = ({ socket }) => {
       return;
     }
     games.map((game, i) => {
-      if (!isUserOnline(game.game.playerOne.id, connectedUsers)) {
+      if (!isUserOnline(game.host.id, connectedUsers)) {
         removeGameById(game.id)
           .then(() => {
-            dispatch({ type: 'REMOVE-GAME', payload: i });
+            hostDispatch({ type: 'REMOVE-GAME', payload: i });
           })
           .catch(err => {
             console.log(err);
@@ -44,11 +41,6 @@ const GamesList = ({ socket }) => {
   }, [connectedUsers]);
 
   // Game hosted / created
-  useEffect(() => {
-    socket.on('GAME-HOSTED-HANDLER', game => {
-      dispatch({ type: 'ADD-TO-GAMES', payload: game });
-    });
-  }, [socket.on]);
 
   // initaial setstate for gamelist
   useEffect(() => {
@@ -60,7 +52,7 @@ const GamesList = ({ socket }) => {
           games.push({ ...child.val(), id: child.key });
         });
         setIsLoading(false);
-        dispatch({ type: 'SET-GAMES', payload: games });
+        hostDispatch({ type: 'SET-GAMES', payload: games });
       })
       .catch(err => {
         setIsLoading(false);
@@ -70,25 +62,24 @@ const GamesList = ({ socket }) => {
 
   // uppdate games if player two disconnects from player two from / awaiting player
   useEffect(() => {
-    socket.on('UPDATE-GAME-LIST-HANDLER', () => {
+    socket.on('UPDATE-GAME-LIST-HANDLER', (gameId, socketId) => {
       fetchGames()
         .then(snapshot => {
           const games = [];
           snapshot.forEach(child => {
             games.push({ ...child.val(), id: child.key });
           });
-          dispatch({ type: 'SET-GAMES', payload: games });
+          hostDispatch({ type: 'SET-GAMES', payload: games });
         })
         .catch(err => {
           console.log(err);
         });
     });
-
-    return () => gamesRef.off('value');
+    return () => socket.off('UPDATE-GAME-LIST-HANDLER');
   }, [socket.on]);
 
   // join game and up date db with socket id to player two
-  const onCLickHandler = (gameId, playerOneId) => {
+  const onCLickHandler = (gameId, hostId) => {
     setIsLoading(true);
 
     fetchGameById(gameId)
@@ -101,21 +92,31 @@ const GamesList = ({ socket }) => {
         snapshot.ref.update(
           {
             status: 'PLAYER-TWO-JOINING',
-            'game/playerTwo': {
+            player: {
+              ...snapshot.val().player,
+              status: 'JOINING',
               id: socket.id,
             },
           },
           onComplate => {
-            dispatch({ type: 'SET-USER-STATUS', payload: 'JOINING' });
-            socket.emit('JOIN-HOST', playerOneId);
-            setIsLoading(false);
+            hostDispatch({
+              type: 'SET-NEW-USER',
+              payload: {
+                id: socket.id,
+                status: 'JOINING',
+                gameId: gameId,
+                host: false,
+              },
+            });
+            console.log(hostId);
+            socket.emit('JOIN-HOST', hostId);
           }
         );
       })
       .catch(err => console.log(err));
   };
 
-  const addStyle = (status, playerOneId) => {
+  const addStyle = status => {
     if (status === 'HOSTED') {
       return styles.hosted;
     }
@@ -136,7 +137,6 @@ const GamesList = ({ socket }) => {
         <Loading>searching games</Loading>
       ) : (
         <div className={styles.gameList}>
-          {/* <div className={styles.img}></div> */}
           {games.length !== 0 &&
             games.map((game, i) => {
               return (
@@ -144,24 +144,18 @@ const GamesList = ({ socket }) => {
                   key={game.id}
                   className={` ${styles.game} ${addStyle(
                     game.status,
-                    game.game.playerOne.id
+                    game.host.id
                   )}`}
                 >
                   <div className={`${styles.content}`}>
-                    <div className={`${styles.content__item}`}>
-                      {/* <GiBattleship /> */}
-                      {game.name}
-                    </div>
+                    <div className={`${styles.content__item}`}>{game.name}</div>
                     <div className={styles.line}></div>
                     <div className={`${styles.content__item}`}>
-                      {game.game.playerOne.name}
-                      {/* <DiYeoman /> */}
+                      {game.host.name}
                     </div>
                     {game.status === 'HOSTED' && (
                       <button
-                        onClick={() =>
-                          onCLickHandler(game.id, game.game.playerOne.id)
-                        }
+                        onClick={() => onCLickHandler(game.id, game.host.id)}
                       >
                         join game
                       </button>

@@ -1,25 +1,19 @@
 import React, { useEffect, useRef, useState, useReducer } from 'react';
 
-import io from 'socket.io-client';
-
 import './App.scss';
-import { GameContext } from './context/storeContext';
-import { gameReducer, initialState } from './reducers/gameReducer';
+// import { GameContext, HostContext } from './context/storeContext';
+// import { gameReducer, initialState } from './reducers/gameReducer';
+// import { hostReducer, hostInitialState } from './reducers/hostReducer';
 
 import MainContainer from './components/Containers/MainContainer/MainContainer';
 
-import { port } from './server/port';
-
-const socket = io.connect(port);
-
 const App = () => {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
+  // const [state, dispatch] = useReducer(gameReducer, initialState);
+  // const [hostState, hostDispatch] = useReducer(hostReducer, hostInitialState);
 
   return (
     <div className="App">
-      <GameContext.Provider value={{ state, dispatch }}>
-        <MainContainer socket={socket} />
-      </GameContext.Provider>
+      <MainContainer />
     </div>
   );
 };
