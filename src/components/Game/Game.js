@@ -33,7 +33,7 @@ const Game = () => {
   }, []);
 
   useEffect(() => {
-    socket.on(socketActions.ATTACK_SHIP_HANDLER, game => {
+    socket.on(socketActions.ATTACK_SHIP_HANDLER, (game, attackBoard) => {
       dispatch({
         type: 'ATTACK-PLAYER',
         payload: game,
@@ -41,16 +41,6 @@ const Game = () => {
     });
     return () => socket.off(socketActions.ATTACK_SHIP_HANDLER);
   }, []);
-
-  const boardClickHandler = (x, y, boardType) => {
-    socket.emit(socketActions.ATTACK_SHIP, {
-      boardType: boardType,
-      x: x,
-      y: y,
-      gameId: game.id,
-      game: game,
-    });
-  };
 
   const readyButtonHandler = () => {
     socket.emit('PLAYER-IS-READY-TO-START', {
@@ -63,7 +53,7 @@ const Game = () => {
 
   return (
     <div>
-      {isBothReady && <AttackBoard onClick={boardClickHandler} />}
+      {isBothReady && <AttackBoard />}
 
       {!game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
         privateBoard.isAllDropped && (

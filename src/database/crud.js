@@ -1,45 +1,11 @@
-import React from 'react';
 import config from '../config';
 
 import firebase from 'firebase';
-import { boardBlueprint } from '../services/boardBlueprint';
 
 firebase.initializeApp(config);
 ///////////////////////////////
 ///GAME///////////////////////
 //////////////////////////////
-export const createGame = (
-  { status, gameName, playerOneId, playerOneName, playerTwoId, playerTwoName },
-  cb
-) => {
-  const ref = firebase
-    .database()
-    .ref('/')
-    .child('/games')
-    .push({
-      status: status,
-      name: gameName,
-      game: {
-        board: boardBlueprint,
-        playerTurn: 'PLAYER-ONE',
-        playerOne: {
-          id: playerOneId,
-          name: playerOneName,
-          attackLocation: [{ x: '', y: '', type: '' }],
-          shipLocation: [{ x: '', y: '', id: '', size: '' }],
-          ready: false,
-        },
-        playerTwo: {
-          id: playerTwoId,
-          name: playerTwoName,
-          attackLocation: [{ x: '', y: '' }],
-          shipLocation: [{ x: '', y: '', id: '', size: '' }],
-          ready: false,
-        },
-      },
-    });
-  return ref.key;
-};
 
 export const gamesRef = firebase.database().ref('/games');
 export const activeGamesRef = firebase.database().ref('/activeGames');

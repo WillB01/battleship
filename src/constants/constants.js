@@ -6,7 +6,7 @@ export const inititalActiveGame = {
   playerOne: {
     id: '',
     name: '',
-    attackLocation: [{ x: '', y: '', type: '' }],
+    attackLocation: [{ x: '', y: '' }],
     shipLocation: [{ x: '', y: '', id: '', size: '' }],
     ready: false,
   },

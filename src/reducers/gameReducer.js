@@ -33,10 +33,7 @@ export const gameReducer = (state, action) => {
     case 'ATTACK-PLAYER': {
       return {
         ...state,
-        currentGame: {
-          ...state.currentGame,
-          game: action.payload,
-        },
+        game: action.payload,
       };
     }
 

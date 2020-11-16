@@ -74,3 +74,6 @@ export const isEventInElement = (event, element) => {
 
 export const getPlayerKey = (playerOneId, socketId) =>
   playerOneId === socketId ? 'playerOne' : 'playerTwo';
+
+export const getOpponentPlayerKey = (playerOneId, socketId) =>
+  playerOneId === socketId ? 'playerTwo' : 'playerOne';

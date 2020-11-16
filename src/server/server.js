@@ -74,8 +74,7 @@ io.on('connection', socket => {
   socket.on(actions.ATTACK_SHIP, data => {
     //TODO REFACTOR
     // PLAYER ONE //////////////
-
-    const { boardType, game, gameId } = data;
+    const { boardType, game, attackBoard } = data;
 
     const p1 = 'p1';
     const p1Ship = 'p1-ship';
@@ -88,14 +87,9 @@ io.on('connection', socket => {
         return;
       }
 
-      // if player hit enemy ship same player turn
-      if (boardType === p2Ship) {
-        game.playerTurn = 'PLAYER-ONE';
-      } else {
-        game.playerTurn = 'PLAYER-TWO';
-      }
+      game.playerTurn = 'PLAYER-TWO';
 
-      game.board[data.y][data.x] = p1;
+      attackBoard[data.y][data.x] = p1;
 
       game.playerOne.attackLocation.push({
         x: data.x,
@@ -103,7 +97,9 @@ io.on('connection', socket => {
         type: data.boardType,
       });
 
-      return io.to(gameId).emit(actions.ATTACK_SHIP_HANDLER, game);
+      return io
+        .to(game.id)
+        .emit(actions.ATTACK_SHIP_HANDLER, game, attackBoard);
     }
 
     // PLAYER TWO //////////////
@@ -113,14 +109,9 @@ io.on('connection', socket => {
         return;
       }
 
-      // if player hit enemy ship same player turn
-      if (boardType === p1Ship) {
-        game.playerTurn = 'PLAYER-TWO';
-      } else {
-        game.playerTurn = 'PLAYER-ONE';
-      }
+      game.playerTurn = 'PLAYER-ONE';
 
-      game.board[data.y][data.x] = p2;
+      attackBoard[data.y][data.x] = p2;
 
       game.playerTwo.attackLocation.push({
         x: data.x,
@@ -128,7 +119,7 @@ io.on('connection', socket => {
         type: data.boardType,
       });
 
-      return io.to(gameId).emit(actions.ATTACK_SHIP_HANDLER, game);
+      return io.to(game.id).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
   });
 
