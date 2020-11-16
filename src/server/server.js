@@ -43,21 +43,24 @@ io.on('connection', socket => {
     io.to(hostId).emit('COMPLETES-PLAYER-TWO-FORM-HANDLER');
   });
 
+  /////////////////////////////////
+  // OUTSIDE OF PLAYING GAME END//
+  ///////////////////////////////
+
+  /////////////////////////////////
+  // ACTIVE GAME /////////////////
+  ///////////////////////////////
+
   ///////////////////////////////
   //ADD SHIP LOCATION
   /////////////////////////////
   socket.on('ADD-SHIP-LOCATION', game => {
-    io.to(game.currentGame.id).emit('ADD-SHIP-LOCATION-HANDLER', game);
+    io.to(game.id).emit('ADD-SHIP-LOCATION-HANDLER', game);
   });
 
   socket.on('PLAYER-IS-READY-TO-START', game => {
-    console.log(game);
     io.to(game.id).emit('PLAYER-IS-READY-TO-START-HANDLER', game.player);
   });
-
-  /////////////////////////////////
-  // OUTSIDE OF PLAYING GAME END//
-  ///////////////////////////////
 
   //JOIN PRIVATE GAME ROOM
   socket.on('JOIN-GAME', gameId => {
@@ -128,12 +131,14 @@ io.on('connection', socket => {
       return io.to(gameId).emit(actions.ATTACK_SHIP_HANDLER, game);
     }
   });
+
   /////////////////////////////////
-  /////////////////////////////////
+  // ACTIVE GAME END /////////////
+  ///////////////////////////////
 
   //////////////////////////////
-  //CHAT//////////////////////
-  /////////////////////////
+  // CHAT /////////////////////
+  ////////////////////////////
   socket.on('sendMessage', data => {
     if (data.type === 'private') {
       console.log('DATAAAAA', data);

@@ -1,9 +1,6 @@
-import { boardBlueprint } from '../services/boardBlueprint';
-
 export const inititalActiveGame = {
   id: '',
   name: '',
-  board: boardBlueprint,
   status: 'ACTIVE',
   playerTurn: 'PLAYER-ONE',
   playerOne: {

@@ -1,13 +1,13 @@
 import React, { useReducer, useContext, useEffect, useState } from 'react';
 import { GameContext } from '../../../context/storeContext';
 import { headingTop, headingSide } from '../../../services/boardBlueprint';
-import styles from './Board.module.scss';
+import styles from './AttackBoard.module.scss';
 import socketActions from '../../../services/socketActions';
 
-const Board = ({ onClick }) => {
+const AttackBoard = ({ onClick }) => {
   const { state, dispatch } = useContext(GameContext);
 
-  const { board } = state.currentGame.game;
+  const { attackBoard } = state;
 
   return (
     <>
@@ -26,7 +26,7 @@ const Board = ({ onClick }) => {
             </div>
           );
         })}
-        {board.map((item, i) => {
+        {attackBoard.board.map((item, i) => {
           return item.map((itemItem, ii) => {
             return (
               <div key={ii} onClick={() => onClick(ii, i, itemItem)}>
@@ -40,4 +40,4 @@ const Board = ({ onClick }) => {
   );
 };
 
-export default Board;
+export default AttackBoard;

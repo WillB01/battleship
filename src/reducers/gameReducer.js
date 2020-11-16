@@ -1,11 +1,18 @@
 import { gameActionTypes } from '../actions/actions';
-import { privateBoardTemp, shipSizes } from '../services/boardBlueprint';
+import {
+  privateBoardTemp,
+  boardBlueprint,
+  shipSizes,
+} from '../services/boardBlueprint';
 import { updateShipLocation } from '../database/crud';
 import { inititalActiveGame } from '../constants/constants';
 
 export const initialState = {
   game: {
     ...inititalActiveGame,
+  },
+  attackBoard: {
+    board: [...boardBlueprint],
   },
   privateBoard: {
     board: [...privateBoardTemp],
@@ -15,8 +22,6 @@ export const initialState = {
 };
 
 export const gameReducer = (state, action) => {
-  const { games } = state;
-
   switch (action.type) {
     case 'INIT': {
       return {
@@ -40,18 +45,9 @@ export const gameReducer = (state, action) => {
     /////////////////////
 
     case 'ADD-SHIP-LOCATION': {
-      const { currentGame, shipLocation, player } = action.payload;
-
-      const updateCurrentGame = { ...currentGame };
-      updateCurrentGame.game[player].shipLocation.push(shipLocation);
-
-      if (updateCurrentGame.game[player].shipLocation.length === 6) {
-        updateCurrentGame.game[player].shipLocation.shift();
-      }
-
       return {
         ...state,
-        currentGame: currentGame,
+        game: action.payload,
       };
     }
 
@@ -66,8 +62,8 @@ export const gameReducer = (state, action) => {
     }
 
     case 'RESET-PRIVATE-BOARD': {
-      const updateCurrentGame = { ...state.currentGame };
-      updateCurrentGame.game[action.payload].shipLocation = [
+      const updateCurrentGame = { ...state.game };
+      updateCurrentGame[action.payload].shipLocation = [
         { x: '', y: '', id: '', size: '' },
       ];
 
@@ -85,7 +81,7 @@ export const gameReducer = (state, action) => {
 
       return {
         ...state,
-        currentGame: updateCurrentGame,
+        game: state.game,
         privateBoard: {
           ...state.privateBoard,
           isAllDropped: false,
@@ -132,12 +128,18 @@ export const gameReducer = (state, action) => {
 
     case 'PLAYER-IS-READY-TO-START': {
       const player = action.payload;
-      const updateCurrentGame = { ...state.currentGame };
-      updateCurrentGame.game[player].ready = true;
+      // const updateCurrentGame = { ...state.game };
+      // updateCurrentGame[player].ready = true;
 
       return {
         ...state,
-        currentGame: updateCurrentGame,
+        game: {
+          ...state.game,
+          [player]: {
+            ...state.game[player],
+            ready: true,
+          },
+        },
       };
     }
     default:

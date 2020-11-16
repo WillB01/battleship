@@ -1,54 +1,18 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-  Children,
-  useRef,
-} from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { GameContext } from '../../context/storeContext';
+import { socket } from '../../server/socket';
+import { getPlayerKey } from '../../services/helpers';
 
 import socketActions from '../../services/socketActions';
-import Board from '../Boards/SharedBoard/Board';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
+import AttackBoard from '../Boards/AttackBoard/AttackBoard';
 
-import styles from './Game.module.scss';
-
-const Game = ({ socket, index }) => {
+const Game = () => {
   const {
-    state: { currentGame, privateBoard },
+    state: { game, privateBoard },
     dispatch,
   } = useContext(GameContext);
-
-  const playerRef = useRef();
-
-  // gamesRef
-  //   .push(data)
-  //   .then(childRef => {
-  //     childRef.once('value', snapshot => {
-  //       const game = { id: snapshot.key, ...snapshot.val() };
-  //       childRef.update(game, onComplete => {
-  //         setIsLoading(false);
-
-  //         socket.emit('GAME-HOSTED', game);
-  //         hostDispatch({ type: 'CREATE-GAME', payload: game });
-  //       });
-  //     });
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
-
-  useEffect(() => {
-    console.log('IN GAME CONTAINER');
-
-    dispatch({ type: 'SET-USER-STATUS', paylaod: 'ACTIVE' });
-  }, []);
-
-  useEffect(() => {
-    playerRef.current =
-      currentGame.game.playerOne.id === socket.id ? 'playerOne' : 'playerTwo';
-  }, []);
 
   useEffect(() => {
     socket.on('PLAYER-IS-READY-TO-START-HANDLER', player => {
@@ -57,6 +21,15 @@ const Game = ({ socket, index }) => {
         payload: player,
       });
     });
+    return () => socket.off('PLAYER-IS-READY-TO-START-HANDLER');
+  }, []);
+
+  useEffect(() => {
+    socket.on('ADD-SHIP-LOCATION-HANDLER', data => {
+      dispatch({ type: 'ADD-SHIP-LOCATION', payload: { ...data } });
+    });
+
+    return () => socket.off('ADD-SHIP-LOCATION-HANDLER');
   }, []);
 
   useEffect(() => {
@@ -66,12 +39,7 @@ const Game = ({ socket, index }) => {
         payload: game,
       });
     });
-  }, []);
-
-  useEffect(() => {
-    socket.on('ADD-SHIP-LOCATION-HANDLER', data => {
-      dispatch({ type: 'ADD-SHIP-LOCATION', payload: { ...data } });
-    });
+    return () => socket.off(socketActions.ATTACK_SHIP_HANDLER);
   }, []);
 
   const boardClickHandler = (x, y, boardType) => {
@@ -79,32 +47,29 @@ const Game = ({ socket, index }) => {
       boardType: boardType,
       x: x,
       y: y,
-      gameId: currentGame.id,
-      game: currentGame.game,
+      gameId: game.id,
+      game: game,
     });
   };
 
   const readyButtonHandler = () => {
     socket.emit('PLAYER-IS-READY-TO-START', {
-      player: playerRef.current,
-      id: currentGame.id,
+      player: getPlayerKey(game.playerOne.id, socket.id),
+      id: game.id,
     });
   };
 
-  console.log('IN GAME CONTAINER');
-  const isBothReady =
-    currentGame.game.playerOne.ready && currentGame.game.playerTwo.ready;
+  const isBothReady = game.playerOne.ready && game.playerTwo.ready;
 
   return (
     <div>
-      {isBothReady && <Board onClick={boardClickHandler} socket={socket} />}
+      {isBothReady && <AttackBoard onClick={boardClickHandler} />}
 
-      {playerRef.current &&
-        !currentGame.game[playerRef.current].ready &&
+      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
         privateBoard.isAllDropped && (
           <button onClick={readyButtonHandler}>ready up</button>
         )}
-      <PrivateBoard socket={socket} />
+      <PrivateBoard />
     </div>
   );
 };

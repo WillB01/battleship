@@ -71,3 +71,6 @@ export const isEventInElement = (event, element) => {
   if (y < rect.top || y >= rect.bottom) return false;
   return true;
 };
+
+export const getPlayerKey = (playerOneId, socketId) =>
+  playerOneId === socketId ? 'playerOne' : 'playerTwo';

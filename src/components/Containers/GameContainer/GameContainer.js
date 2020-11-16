@@ -34,13 +34,11 @@ const GameContainer = ({ gameId }) => {
       });
   }, []);
 
-  console.log(game);
-
   return (
     <>
       <div className={styles.gameContainer}>
-        {/* <GameDetails /> */}
-        {/* <Game socket={socket} currentGame={currentGame} /> */}
+        <GameDetails />
+        <Game socket={socket} />
         <Chat type={'private'} gameId={gameId} />
       </div>
     </>
