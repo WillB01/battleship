@@ -19,7 +19,7 @@ const MainContainer = ({ socket }) => {
 
       {hostState.user.status === 'ACTIVE' && (
         <GameContext.Provider value={{ state, dispatch }}>
-          <GameContainer socket={socket} />
+          <GameContainer gameId={hostState.user.gameId} />
         </GameContext.Provider>
       )}
     </>

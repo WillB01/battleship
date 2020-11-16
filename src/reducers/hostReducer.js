@@ -6,22 +6,6 @@ import {
 } from '../services/boardBlueprint';
 import { updateShipLocation } from '../database/crud';
 
-export const initialHostGame = {
-  id: '',
-  status: '',
-  name: '',
-  host: {
-    id: '',
-    status: '',
-    name: '',
-  },
-  player: {
-    id: '',
-    status: '',
-    name: '',
-  },
-};
-
 export const hostInitialState = {
   connectedUsers: [],
   games: [],

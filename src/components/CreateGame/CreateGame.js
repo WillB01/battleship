@@ -6,7 +6,7 @@ import { HostContext } from '../../context/storeContext';
 import { boardBlueprint } from '../../services/boardBlueprint';
 import { Loading } from '../ui/Loading/Loading';
 import { socket } from '../../server/socket';
-import { initialHostGame } from '../../reducers/hostReducer';
+import { initialHostGame } from '../../constants/constants';
 
 import useInput from '../hooks/useInput/useInput';
 import { GiCrackedGlass } from 'react-icons/gi';
@@ -16,7 +16,7 @@ const CreateGame = () => {
   const [playerOneName, setPlayerOneName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { hostState, hostDispatch } = useContext(HostContext);
+  const { hostDispatch } = useContext(HostContext);
 
   const onClickHandler = () => {
     // TODO validation
@@ -24,46 +24,6 @@ const CreateGame = () => {
       return;
     }
     setIsLoading(true);
-
-    // const data = {
-    //   status: 'HOSTED',
-    //   name: gameName,
-    //   game: {
-    //     board: boardBlueprint,
-    //     playerTurn: 'PLAYER-ONE',
-    //     playerOne: {
-    //       id: socket.id,
-    //       name: playerOneName,
-    //       attackLocation: [{ x: '', y: '', type: '' }],
-    //       shipLocation: [{ x: '', y: '', id: '', size: '' }],
-    //       ready: false,
-    //     },
-    //     playerTwo: {
-    //       id: '',
-    //       name: '',
-    //       attackLocation: [{ x: '', y: '' }],
-    //       shipLocation: [{ x: '', y: '', id: '', size: '' }],
-    //       ready: false,
-    //     },
-    //   },
-    // };
-
-    // gamesRef
-    //   .push(data)
-    //   .then(childRef => {
-    //     childRef.once('value', snapshot => {
-    //       const game = { id: snapshot.key, ...snapshot.val() };
-    //       childRef.update(game, onComplete => {
-    //         setIsLoading(false);
-
-    //         socket.emit('GAME-HOSTED', game);
-    //         hostDispatch({ type: 'CREATE-GAME', payload: game });
-    //       });
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
 
     const newGame = {
       ...initialHostGame,

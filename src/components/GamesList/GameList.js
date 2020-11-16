@@ -108,7 +108,6 @@ const GamesList = () => {
                 host: false,
               },
             });
-            console.log(hostId);
             socket.emit('JOIN-HOST', hostId);
           }
         );

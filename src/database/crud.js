@@ -42,8 +42,12 @@ export const createGame = (
 };
 
 export const gamesRef = firebase.database().ref('/games');
+export const activeGamesRef = firebase.database().ref('/activeGames');
 
 export const fetchGames = () => gamesRef.once('value', snapshot => snapshot);
+
+export const fetchActiveGameById = gameId =>
+  activeGamesRef.child(`${gameId}`).once('value', snapshot => snapshot);
 
 export const fetchGameById = gameId =>
   gamesRef.child(`${gameId}`).once('value', snapshot => snapshot);

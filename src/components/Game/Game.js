@@ -22,12 +22,27 @@ const Game = ({ socket, index }) => {
 
   const playerRef = useRef();
 
-  useEffect(() => {
-    dispatch({ type: 'SET-USER-STATUS', paylaod: 'ACTIVE' });
-  }, []);
+  // gamesRef
+  //   .push(data)
+  //   .then(childRef => {
+  //     childRef.once('value', snapshot => {
+  //       const game = { id: snapshot.key, ...snapshot.val() };
+  //       childRef.update(game, onComplete => {
+  //         setIsLoading(false);
+
+  //         socket.emit('GAME-HOSTED', game);
+  //         hostDispatch({ type: 'CREATE-GAME', payload: game });
+  //       });
+  //     });
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //   });
 
   useEffect(() => {
-    socket.emit('JOIN-GAME', currentGame.id);
+    console.log('IN GAME CONTAINER');
+
+    dispatch({ type: 'SET-USER-STATUS', paylaod: 'ACTIVE' });
   }, []);
 
   useEffect(() => {
@@ -76,6 +91,7 @@ const Game = ({ socket, index }) => {
     });
   };
 
+  console.log('IN GAME CONTAINER');
   const isBothReady =
     currentGame.game.playerOne.ready && currentGame.game.playerTwo.ready;
 

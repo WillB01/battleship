@@ -1,13 +1,12 @@
 import { gameActionTypes } from '../actions/actions';
-import {
-  boardBlueprint,
-  privateBoardTemp,
-  shipSizes,
-} from '../services/boardBlueprint';
+import { privateBoardTemp, shipSizes } from '../services/boardBlueprint';
 import { updateShipLocation } from '../database/crud';
+import { inititalActiveGame } from '../constants/constants';
 
 export const initialState = {
-  currentGame: { status: 'INACTIVE' },
+  game: {
+    ...inititalActiveGame,
+  },
   privateBoard: {
     board: [...privateBoardTemp],
     ships: [],
@@ -19,6 +18,13 @@ export const gameReducer = (state, action) => {
   const { games } = state;
 
   switch (action.type) {
+    case 'INIT': {
+      return {
+        ...state,
+        game: action.payload,
+      };
+    }
+
     case 'ATTACK-PLAYER': {
       return {
         ...state,
