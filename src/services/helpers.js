@@ -92,3 +92,10 @@ export const checkIfSkipSunk = (playerAttackLocation, size, id) => {
 
   return null;
 };
+
+export const checkIfWin = playerAttackLocation => {
+  const temp = [...playerAttackLocation];
+  const filteredLocations = temp.filter(location => location.shipSize !== '');
+
+  return filteredLocations.length === 17;
+};

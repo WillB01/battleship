@@ -1,8 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { GameContext } from '../../context/storeContext';
 import { socket } from '../../server/socket';
-import { getPlayerKey } from '../../services/helpers';
+import { getPlayerKey, checkIfWin } from '../../services/helpers';
 
 import socketActions from '../../services/socketActions';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
@@ -14,6 +14,8 @@ const Game = () => {
     dispatch,
   } = useContext(GameContext);
 
+  const [disabled, setDisabled] = useState(false);
+
   useEffect(() => {
     socket.on('PLAYER-IS-READY-TO-START-HANDLER', player => {
       dispatch({
@@ -22,7 +24,7 @@ const Game = () => {
       });
     });
     return () => socket.off('PLAYER-IS-READY-TO-START-HANDLER');
-  }, []);
+  }, [socket.on]);
 
   useEffect(() => {
     socket.on('ADD-SHIP-LOCATION-HANDLER', data => {
@@ -30,7 +32,30 @@ const Game = () => {
     });
 
     return () => socket.off('ADD-SHIP-LOCATION-HANDLER');
-  }, []);
+  }, [socket.on]);
+
+  useEffect(() => {
+    socket.on('WINNER-HANDLER', game => {
+      if (checkIfWin(game.playerOne.attackLocation)) {
+        return dispatch({
+          type: 'SET-WINNER',
+          payload: { game, player: game.playerOne.name },
+        });
+      }
+      if (checkIfWin(game.playerTwo.attackLocation)) {
+        return dispatch({
+          type: 'SET-WINNER',
+          payload: { game, player: game.playerTwo.name },
+        });
+      }
+    });
+  }, [socket.on]);
+
+  useEffect(() => {
+    if (game.winner) {
+      alert(game.winner + ' IS THE WINNER');
+    }
+  }, [game.winner]);
 
   const readyButtonHandler = () => {
     socket.emit('PLAYER-IS-READY-TO-START', {

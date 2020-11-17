@@ -9,6 +9,7 @@ export const inititalActiveGame = {
   name: '',
   status: 'ACTIVE',
   playerTurn: 'PLAYER-ONE',
+  winner: '',
   playerOne: {
     id: '',
     name: '',

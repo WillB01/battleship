@@ -30,6 +30,16 @@ export const gameReducer = (state, action) => {
       };
     }
 
+    case 'SET-WINNER': {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          winner: action.payload.player,
+        },
+      };
+    }
+
     case 'ADD-SHIPS-TO-ATTACK-BOARD': {
       return {
         ...state,

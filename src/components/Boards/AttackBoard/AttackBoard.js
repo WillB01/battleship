@@ -13,6 +13,7 @@ import {
   getPlayerKey,
   getOpponentPlayerKey,
   checkIfSkipSunk,
+  checkIfWin,
 } from '../../../services/helpers';
 import { GiVikingLonghouse } from 'react-icons/gi';
 
@@ -140,7 +141,12 @@ const AttackBoard = () => {
         {attackBoard.board.map((_, y) => {
           return _.map((square, x) => {
             return (
-              <div key={x} onClick={() => boardClickHandler(y, x, square)}>
+              <div
+                key={x}
+                onClick={() =>
+                  !game.winner ? boardClickHandler(y, x, square) : null
+                }
+              >
                 {square === 'HIT' || square === 'MISS' || square === 'SUNK'
                   ? square
                   : ''}

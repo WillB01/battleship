@@ -73,41 +73,7 @@ io.on('connection', socket => {
   /////////////////////////////
   socket.on(actions.ATTACK_SHIP, (game, attackBoard, toPlayerId) => {
     io.to(toPlayerId).emit(actions.ATTACK_SHIP_HANDLER, game, attackBoard);
-
-    //TODO REFACTOR
-    // PLAYER ONE //////////////
-    // const { boardType, game, attackBoard, player, enemyPlayer, x } = data;
-    // game.playerTurn = player === 'playerOne' ? 'PLAYER-TWO' : 'PLAYER-ONE';
-    // const playerAttackLocation = [...game[player].attackLocation];
-    // const enemyShipLocation = [...game[enemyPlayer].shipLocation];
-    // const updateGame = { ...game };
-    // for (const key in playerAttackLocation) {
-    //   const playerX = playerAttackLocation[key].x;
-    //   const playerY = playerAttackLocation[key].y;
-    //   if (playerX === x && playerY === y) {
-    //     for (const k in enemyShipLocation) {
-    //       const enemyX = enemyShipLocation[k].x;
-    //       const enemyY = enemyShipLocation[k].y;
-    //       if (playerX === enemyX && playerY === enemyY) {
-    //         const enemyShipId = enemyShipLocation[k].id;
-    //         const enemyShipSize = enemyShipLocation[k].size;
-    //         playerAttackLocation.shipId = enemyShipId;
-    //         playerAttackLocation.shipId = enemyShipSize;
-    //         return <div>HIT</div>;
-    //       }
-    //     }
-    //     return <div>{game[player].name}</div>;
-    //   }
-    //   attackBoard[data.y][data.x] = p1;
-    //   game[player].attackLocation.push({
-    //     x: data.x,
-    //     y: data.y,
-    //     size: data.boardType,
-    //   });
-    //   return io
-    //     .to(game.id)
-    //     .emit(actions.ATTACK_SHIP_HANDLER, game, attackBoard);
-    // }
+    io.to(game.id).emit('WINNER-HANDLER', game);
   });
 
   /////////////////////////////////
