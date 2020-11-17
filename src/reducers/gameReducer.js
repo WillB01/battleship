@@ -30,10 +30,42 @@ export const gameReducer = (state, action) => {
       };
     }
 
+    case 'ADD-SHIPS-TO-ATTACK-BOARD': {
+      return {
+        ...state,
+        attackBoard: {
+          ...state.attackBoard,
+          board: action.payload.attackBoard,
+        },
+      };
+    }
+
     case 'ATTACK-PLAYER': {
       return {
         ...state,
         game: action.payload,
+      };
+    }
+
+    case 'UPDATE-ATTACK-BOARD': {
+      return {
+        ...state,
+        attackBoard: {
+          ...state.attackBoard,
+          board: action.payload.attackBoard,
+        },
+        game: action.payload.updateGame,
+      };
+    }
+
+    case 'UPDATE-PRIVATE-BOARD': {
+      return {
+        ...state,
+        privateBoard: {
+          ...state.privateBoard,
+          board: action.payload.board,
+        },
+        game: action.payload.game,
       };
     }
 

@@ -3,12 +3,20 @@ import React, { useReducer, useContext, useEffect, useState } from 'react';
 import styles from './AttackBoard.module.scss';
 
 import { GameContext } from '../../../context/storeContext';
-import { headingTop, headingSide } from '../../../services/boardBlueprint';
+import {
+  headingTop,
+  headingSide,
+  shipSizes,
+} from '../../../services/boardBlueprint';
 import { socket } from '../../../server/socket';
-import { getPlayerKey, getOpponentPlayerKey } from '../../../services/helpers';
+import {
+  getPlayerKey,
+  getOpponentPlayerKey,
+  checkIfSkipSunk,
+} from '../../../services/helpers';
+import { GiVikingLonghouse } from 'react-icons/gi';
 
 import socketActions from '../../../services/socketActions';
-import { GiVikingLonghouse } from 'react-icons/gi';
 
 const AttackBoard = () => {
   const {
@@ -16,39 +24,100 @@ const AttackBoard = () => {
     dispatch,
   } = useContext(GameContext);
 
-  const boardClickHandler = (x, y, boardType) => {
-    socket.emit(socketActions.ATTACK_SHIP, {
-      boardType: boardType,
-      x: x,
-      y: y,
-      game: game,
-      attackBoard: attackBoard.board,
-      // privateBoard:, privateBoard.board
-    });
-  };
-
-  const renderAttackLocation = (y, x) => {
+  useEffect(() => {
     const enemyPlayer = getOpponentPlayerKey(game.playerOne.id, socket.id);
-    const player = getPlayerKey(game.playerOne.id, socket.id);
+    let updateAttackBoard = { ...attackBoard };
 
-    const enemyAttackLocation = game[player].attackLocation;
-    const playerShipLocation = game[enemyPlayer].shipLocation;
+    const enemyShipLocation = game[enemyPlayer].shipLocation;
 
-    for (const key in enemyAttackLocation) {
-      const enemyX = enemyAttackLocation[key].x;
-      const enemyY = enemyAttackLocation[key].y;
-      if (enemyX === x && enemyY === y) {
-        for (const k in playerShipLocation) {
-          const playerX = playerShipLocation[k].x;
-          const playerY = playerShipLocation[k].y;
-          if (playerX === enemyX && playerY === enemyY) {
-            return <div>HIT</div>;
+    updateAttackBoard.board = updateAttackBoard.board.map((_, y) => {
+      return _.map((square, x) => {
+        for (const key in enemyShipLocation) {
+          if (
+            enemyShipLocation[key].y === y &&
+            enemyShipLocation[key].x === x
+          ) {
+            return (square = [
+              enemyShipLocation[key].size,
+              enemyShipLocation[key].id,
+            ]);
           }
         }
+      });
+    });
 
-        return <div>{enemyPlayer} attack</div>;
-      }
+    dispatch({
+      type: 'ADD-SHIPS-TO-ATTACK-BOARD',
+      payload: {
+        attackBoard: updateAttackBoard.board,
+        player: getPlayerKey(game.playerOne.id, socket.id),
+      },
+    });
+  }, []);
+
+  const boardClickHandler = (y, x, square) => {
+    if (square === 'HIT' || square === 'MISS' || square === 'SUNK') {
+      return;
     }
+
+    if (
+      (game.playerTurn === 'PLAYER-ONE' && socket.id === game.playerTwo.id) ||
+      (game.playerTurn === 'PLAYER-ONE' && square === 'HIT')
+    ) {
+      return;
+    }
+    if (game.playerTurn === 'PLAYER-TWO' && socket.id === game.playerOne.id) {
+      return;
+    }
+    const player = getPlayerKey(game.playerOne.id, socket.id);
+
+    const playerAttackLocation = [...game[player].attackLocation];
+
+    const updateGame = { ...game };
+    const updateBoard = { ...attackBoard };
+
+    if (square) {
+      playerAttackLocation.push({
+        x,
+        y,
+        shipSize: square[0],
+        shipId: square[1],
+      });
+      updateBoard.board[y][x] = 'HIT';
+      const sunkenShips = checkIfSkipSunk(
+        playerAttackLocation,
+        square[0],
+        square[1]
+      );
+      if (sunkenShips) {
+        sunkenShips.map(ship => {
+          updateBoard.board[ship.y][ship.x] = 'SUNK';
+        });
+      }
+    } else {
+      playerAttackLocation.push({ x, y, shipSize: '' });
+      updateBoard.board[y][x] = `MISS`;
+    }
+
+    updateGame.playerTurn =
+      updateGame.playerTurn === 'PLAYER-ONE' ? 'PLAYER-TWO' : 'PLAYER-ONE';
+    updateGame[player].attackLocation = playerAttackLocation;
+
+    dispatch({
+      type: 'UPDATE-ATTACK-BOARD',
+      payload: { attackBoard: updateBoard.board, updateGame: updateGame },
+    });
+
+    ///////////////////
+
+    socket.emit(
+      socketActions.ATTACK_SHIP,
+      updateGame,
+      updateBoard.board,
+      updateGame.playerOne.id === socket.id
+        ? updateGame.playerTwo.id
+        : updateGame.playerOne.id
+    );
   };
 
   return (
@@ -68,11 +137,13 @@ const AttackBoard = () => {
             </div>
           );
         })}
-        {attackBoard.board.map((item, i) => {
-          return item.map((itemItem, ii) => {
+        {attackBoard.board.map((_, y) => {
+          return _.map((square, x) => {
             return (
-              <div key={ii} onClick={() => boardClickHandler(ii, i, itemItem)}>
-                {renderAttackLocation(i, ii)}
+              <div key={x} onClick={() => boardClickHandler(y, x, square)}>
+                {square === 'HIT' || square === 'MISS' || square === 'SUNK'
+                  ? square
+                  : ''}
               </div>
             );
           });

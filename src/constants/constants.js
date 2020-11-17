@@ -1,3 +1,9 @@
+import {
+  privateBoardTemp,
+  boardBlueprint,
+  shipSizes,
+} from '../services/boardBlueprint';
+
 export const inititalActiveGame = {
   id: '',
   name: '',
@@ -6,14 +12,14 @@ export const inititalActiveGame = {
   playerOne: {
     id: '',
     name: '',
-    attackLocation: [{ x: '', y: '' }],
+    attackLocation: [{ x: '', y: '', shipSize: '', shipId: '' }],
     shipLocation: [{ x: '', y: '', id: '', size: '' }],
     ready: false,
   },
   playerTwo: {
     id: '',
     name: '',
-    attackLocation: [{ x: '', y: '' }],
+    attackLocation: [{ x: '', y: '', shipSize: '', shipId: '' }],
     shipLocation: [{ x: '', y: '', id: '', size: '' }],
     ready: false,
   },

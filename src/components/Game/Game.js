@@ -32,16 +32,6 @@ const Game = () => {
     return () => socket.off('ADD-SHIP-LOCATION-HANDLER');
   }, []);
 
-  useEffect(() => {
-    socket.on(socketActions.ATTACK_SHIP_HANDLER, (game, attackBoard) => {
-      dispatch({
-        type: 'ATTACK-PLAYER',
-        payload: game,
-      });
-    });
-    return () => socket.off(socketActions.ATTACK_SHIP_HANDLER);
-  }, []);
-
   const readyButtonHandler = () => {
     socket.emit('PLAYER-IS-READY-TO-START', {
       player: getPlayerKey(game.playerOne.id, socket.id),

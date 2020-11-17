@@ -1,3 +1,5 @@
+import { socket } from '../server/socket';
+
 export const getOfflineHosts = (games, sockets) => {
   const removeIds = [];
   games.forEach(v => {
@@ -77,3 +79,16 @@ export const getPlayerKey = (playerOneId, socketId) =>
 
 export const getOpponentPlayerKey = (playerOneId, socketId) =>
   playerOneId === socketId ? 'playerTwo' : 'playerOne';
+
+export const checkIfSkipSunk = (playerAttackLocation, size, id) => {
+  const temp = [...playerAttackLocation];
+  const filteredLocations = temp.filter(
+    location => location.shipSize === size && location.shipId === id
+  );
+
+  if (filteredLocations.length === size) {
+    return filteredLocations;
+  }
+
+  return null;
+};

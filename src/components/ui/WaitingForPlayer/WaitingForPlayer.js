@@ -37,9 +37,6 @@ const WaitingForPlayer = () => {
       fetchGameById(user.gameId)
         .then(snapshot => {
           const playerTwoId = snapshot.val().player.id;
-
-          console.log(snapshot.val());
-
           if (!playerTwoId) {
             return;
           }

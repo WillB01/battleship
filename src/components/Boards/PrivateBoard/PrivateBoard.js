@@ -13,6 +13,7 @@ import {
   isEventInElement,
   getPlayerKey,
   getOpponentPlayerKey,
+  checkIfSkipSunk,
 } from '../../../services/helpers';
 import { GameContext } from '../../../context/storeContext';
 import { headingTop, headingSide } from '../../../services/boardBlueprint';
@@ -59,7 +60,7 @@ export default PrivateBoard;
 
 const RenderBoard = ({ addShipLocation }) => {
   const {
-    state: { game, privateBoard },
+    state: { game, attackBoard, privateBoard },
     dispatch,
   } = useContext(GameContext);
 
@@ -252,29 +253,14 @@ const RenderBoard = ({ addShipLocation }) => {
     setIsDragging(true);
   };
 
-  const renderAttackLocation = (y, x) => {
-    const enemyPlayer = getOpponentPlayerKey(game.playerOne.id, socket.id);
-    const enemyAttackLocation = game[enemyPlayer].attackLocation;
-
-    const player = getPlayerKey(game.playerOne.id, socket.id);
-    const playerShipLocation = game[player].shipLocation;
-
-    for (const key in enemyAttackLocation) {
-      const enemyX = enemyAttackLocation[key].x;
-      const enemyY = enemyAttackLocation[key].y;
-      if (enemyX === x && enemyY === y) {
-        for (const k in playerShipLocation) {
-          const playerX = playerShipLocation[k].x;
-          const playerY = playerShipLocation[k].y;
-          if (playerX === enemyX && playerY === enemyY) {
-            return <div>HIT</div>;
-          }
-        }
-
-        return <div>{enemyPlayer} attack</div>;
-      }
-    }
-  };
+  useEffect(() => {
+    socket.on('ATTACK-SHIP-HANDLER', (newGame, attackBoard) => {
+      dispatch({
+        type: 'UPDATE-PRIVATE-BOARD',
+        payload: { board: attackBoard, game: newGame },
+      });
+    });
+  }, [socket.on]);
 
   return (
     <div className={styles.container}>
@@ -294,25 +280,26 @@ const RenderBoard = ({ addShipLocation }) => {
           );
         })}
         {board &&
-          board.map((item, i) => {
-            return item.map((itemItem, ii) => {
-              return (
-                <div
-                  className={styles.square}
-                  key={`${i}${ii}`}
-                  ref={el => (refs[i][ii].current = el)}
-                  data-pos={[i, ii]}
-                  style={{
-                    background: constants.squareColor,
-                  }}
-                >
-                  <div className={`${styles.square__item}`}>
-                    {renderAttackLocation(i, ii)}
-                  </div>
+          board.map((_, i) =>
+            _.map((square, ii) => (
+              <div
+                className={styles.square}
+                key={`${i}${ii}`}
+                ref={el => (refs[i][ii].current = el)}
+                data-pos={[i, ii]}
+                style={{
+                  background: constants.squareColor,
+                }}
+              >
+                <div className={`${styles.square__item}`}>
+                  {/* {renderAttackLocation(i, ii)} */}
+                  {square === 'HIT' || square === 'MISS' || square === 'SUNK'
+                    ? square
+                    : ''}
                 </div>
-              );
-            });
-          })}
+              </div>
+            ))
+          )}
       </div>
 
       {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
