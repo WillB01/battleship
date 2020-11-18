@@ -231,6 +231,7 @@ const RenderBoard = ({ addShipLocation }) => {
       blocksToHover.map(item => {
         if (!error) {
           item.style.background = constants.squareHoverColor;
+          item.style.zIndex = 44;
           item.children[0].style.height = '3rem';
           item.children[0].style.width = '3rem';
 
@@ -244,6 +245,8 @@ const RenderBoard = ({ addShipLocation }) => {
           item.style.background = constants.squareColor;
           item.children[0].style.height = '1rem';
           item.children[0].style.width = '1rem';
+          item.style.zIndex = 0;
+
           // item.children[0].style.transform = 'scale(0)';
           // item.style.fontSize = '1rem';
         }, 1);
@@ -276,6 +279,24 @@ const RenderBoard = ({ addShipLocation }) => {
 
   return (
     <>
+      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
+        <div className={styles.shipContainer}>
+          {ships &&
+            ships.map((ship, i) => {
+              return (
+                <Ship
+                  key={ship.id}
+                  onDragEnd={onDragEndHandler}
+                  onDragStart={() => onDragStartHandler(ship.id)}
+                  onDrag={onDragHandler}
+                  ship={ship}
+                  isDragging={isDragging}
+                  ships={ships}
+                />
+              );
+            })}
+        </div>
+      )}
       <div className={styles.container}>
         <div className={styles.privateBoard}>
           {headingTop.map((item, i) => {
@@ -343,24 +364,6 @@ const RenderBoard = ({ addShipLocation }) => {
           </button>
         )}
       </div>
-      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
-        <div className={styles.shipContainer}>
-          {ships &&
-            ships.map((ship, i) => {
-              return (
-                <Ship
-                  key={ship.id}
-                  onDragEnd={onDragEndHandler}
-                  onDragStart={() => onDragStartHandler(ship.id)}
-                  onDrag={onDragHandler}
-                  ship={ship}
-                  isDragging={isDragging}
-                  ships={ships}
-                />
-              );
-            })}
-        </div>
-      )}
     </>
   );
 };

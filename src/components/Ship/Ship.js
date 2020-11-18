@@ -73,7 +73,7 @@ const Ship = ({
         background: 'white',
         y: style.pos,
         x: -style.pos,
-        // zIndex: 20,
+        zIndex: 21,
         // y: 10,
         transition: {
           duration: 0.1,
@@ -81,8 +81,8 @@ const Ship = ({
         rotate: [90, 0],
       },
       row: {
-        background: 'cornflowerblue',
-        // zIndex: 21,
+        background: '#262626',
+        zIndex: 20,
         y: 0,
         x: 0,
 
@@ -134,6 +134,19 @@ const Ship = ({
   return (
     <div className={styles.container}>
       <motion.div
+        className={styles.rotateBtn}
+        variants={rotateButtonVariants}
+        animate={direction}
+        initial="visible"
+        transition={spring}
+        style={{
+          visibility: !ship.dropped ? 'visible' : 'hidden',
+        }}
+        onClick={rotateHandler}
+      >
+        <BiRotateRight />
+      </motion.div>
+      <motion.div
         className={styles.shipWrapper}
         style={{
           display: 'flex',
@@ -154,7 +167,7 @@ const Ship = ({
       >
         {blocks.map((block, i) => (
           <motion.div
-            style={{ zIndex: isSelected ? 20 : -1 }}
+            style={{ zIndex: isSelected && 20 }}
             onTapStart={() => onTapHandler(block[0])}
             onClick={() => setIsSelected(false)}
             initial="visible"
@@ -163,20 +176,6 @@ const Ship = ({
             key={block[0]}
           ></motion.div>
         ))}
-      </motion.div>
-
-      <motion.div
-        className={styles.rotateBtn}
-        variants={rotateButtonVariants}
-        animate={direction}
-        initial="visible"
-        transition={spring}
-        style={{
-          visibility: !ship.dropped ? 'visible' : 'hidden',
-        }}
-        onClick={rotateHandler}
-      >
-        <BiRotateRight />
       </motion.div>
     </div>
   );

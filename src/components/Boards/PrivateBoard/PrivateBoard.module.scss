@@ -49,16 +49,17 @@
 }
 
 .shipContainer {
-  position: absolute;
-  transform: translate(-104%);
-  height: 32rem;
-  width: 24rem;
+  height: 100%;
+  width: 100%;
   padding: 1rem;
   border-radius: 0.3rem;
+  background: #2d2d2d2d;
 
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  grid-template-rows: repeat(5, 5rem);
+
   align-items: center;
-  align-content: space-around;
+  align-content: center;
+  z-index: 3;
 }

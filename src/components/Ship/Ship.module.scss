@@ -1,19 +1,27 @@
 .container {
-  width: 100%;
-  position: relative;
-  width: 100%;
-  height: 6rem;
-  display: flex;
-  justify-content: flex-end;
-  align-content: center;
+  // width: 100%;
+  // display: grid;
+  // grid-template-columns: 5rem 1fr;
+  // justify-items: baseline;
+  // align-items: baseline;
 
-  background: orange;
-  padding: 1rem;
-  z-index: -1;
+  width: 60%;
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  justify-items: baseline;
+  align-items: baseline;
+  margin: 0 auto;
+
+  background: rgb(242, 128, 182);
+  background: linear-gradient(
+    90deg,
+    rgba(242, 128, 182, 1) 0%,
+    rgba(33, 101, 191, 1) 50%,
+    rgba(3, 166, 166, 1) 100%
+  );
 }
 
 .shipWrapper {
-  // overflow: hidden;
   align-items: center;
 }
 
@@ -22,9 +30,7 @@
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    background: cornflowerblue;
-    // border-radius: 0.3rem;
-    // filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.9));
+
     // margin-right: 0.1rem;
     // margin-bottom: 0.2rem;
   }
@@ -32,9 +38,9 @@
 
 .rotateBtn {
   cursor: pointer;
-  position: absolute;
-  left: 0rem;
   outline: none;
+  color: #262626;
+  margin-right: 2rem;
 
   transform: rotateX(0);
 

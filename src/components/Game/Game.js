@@ -9,6 +9,7 @@ import { getPlayerKey, checkIfWin } from '../../services/helpers';
 import socketActions from '../../services/socketActions';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
 import AttackBoard from '../Boards/AttackBoard/AttackBoard';
+import MyTurn from '../ui/MyTurn/MyTurn';
 
 const Game = () => {
   const {
@@ -75,8 +76,11 @@ const Game = () => {
           <button onClick={readyButtonHandler}>ready up</button>
         )}
       <div className={styles.boardContainer}>
+        <MyTurn />
         <PrivateBoard />
-        <AttackBoard />
+        {game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
+          <AttackBoard />
+        )}
       </div>
     </>
   );

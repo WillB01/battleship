@@ -37,9 +37,9 @@ const GameContainer = ({ gameId }) => {
   return (
     <>
       <div className={styles.gameContainer}>
-        <GameDetails />
+        {/* <GameDetails /> */}
         <Game socket={socket} />
-        <Chat type={'private'} gameId={gameId} />
+        {/* <Chat type={'private'} gameId={gameId} /> */}
       </div>
     </>
   );
