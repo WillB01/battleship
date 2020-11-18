@@ -1,0 +1,9 @@
+.gameContainer {
+  max-width: 115rem;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(12, minmax(4rem, 1fr));
+  grid-template-rows: 20rem 40rem;
+  gap: 2rem;
+}

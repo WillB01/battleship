@@ -6,3 +6,17 @@
   display: grid;
   justify-items: center;
 }
+
+.boardContainer {
+  // max-width: 95rem;
+  // margin: 0 auto;
+
+  overflow: hidden;
+  border-radius: 0.6rem;
+
+  grid-column: 3 / span 10;
+  grid-row: 2 / span 4;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}

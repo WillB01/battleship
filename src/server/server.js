@@ -72,7 +72,12 @@ io.on('connection', socket => {
   // Board click
   /////////////////////////////
   socket.on(actions.ATTACK_SHIP, (game, attackBoard, toPlayerId) => {
-    io.to(toPlayerId).emit(actions.ATTACK_SHIP_HANDLER, game, attackBoard);
+    io.to(toPlayerId).emit(
+      actions.ATTACK_SHIP_HANDLER,
+      game,
+      attackBoard,
+      toPlayerId
+    );
     io.to(game.id).emit('WINNER-HANDLER', game);
   });
 

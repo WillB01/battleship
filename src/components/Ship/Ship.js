@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './Ship.module.scss';
 
 import { motion } from 'framer-motion';
+import { BiRotateRight } from 'react-icons/bi';
 
 const Ship = ({
   onDragEnd,
@@ -15,6 +16,7 @@ const Ship = ({
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
   const [isSelected, setIsSelected] = useState(false);
+  const [zIndex, setZindex] = useState(1);
 
   const elementRef = useRef(null);
   const shipClickIndex = useRef('');
@@ -46,52 +48,136 @@ const Ship = ({
     onDrag(e, elementRef.current, ship, direction, shipClickIndex.current);
   };
 
+  const shipContainer = {
+    column: {
+      transition: {
+        duration: 0.1,
+        delayChildren: 0.1,
+        staggerChildren: 0.1,
+        staggerDirection: -1,
+      },
+    },
+    row: {
+      transition: {
+        ease: 'cubic-bezier(.5,-.75,.7,2)',
+        duration: 0.1,
+        delayChildren: 0.1,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const shipBlock = style => {
+    return {
+      column: {
+        background: 'white',
+        y: style.pos,
+        x: -style.pos,
+        // zIndex: 20,
+        // y: 10,
+        transition: {
+          duration: 0.1,
+        },
+        rotate: [90, 0],
+      },
+      row: {
+        background: 'cornflowerblue',
+        // zIndex: 21,
+        y: 0,
+        x: 0,
+
+        transition: {
+          duration: 0.1,
+        },
+        rotate: [90, 0],
+      },
+    };
+  };
+
+  const rotateButtonVariants = {
+    column: {
+      // background: 'red',
+      transition: {
+        duration: 0.1,
+      },
+      rotate: [0, 90],
+    },
+    row: {
+      // background: 'blue',
+      transition: {
+        duration: 0.1,
+      },
+      rotate: [90, 0],
+      x: 0,
+    },
+  };
+
+  let xCounter = 0;
   const crateBlocks = length => {
     const blocks = [];
     for (let i = 0; i < length; i++) {
-      blocks.push(
-        <motion.div
-          onTapStart={() => onTapHandler(i)}
-          onClick={() => setIsSelected(false)}
-          animate={{}}
-          className={styles.ship__square}
-          key={i}
-        ></motion.div>
-      );
+      if (i !== 0) {
+        xCounter += 35;
+      }
+
+      blocks.push([i, { pos: xCounter }]);
     }
     return blocks;
+  };
+
+  const spring = {
+    type: 'spring',
+    damping: 10,
+    stiffness: 100,
   };
 
   return (
     <div className={styles.container}>
       <motion.div
+        className={styles.shipWrapper}
         style={{
           display: 'flex',
-          flexDirection: direction,
           visibility: !ship.dropped ? 'visible' : 'hidden',
-          zIndex: direction === 'column' ? 10 : 1,
+
           cursor: isSelected ? 'grabbing' : 'grab',
         }}
-        animate={{ position: 'absolute' }}
         ref={elementRef}
         drag
         dragMomentum={false}
         onDragStart={onDragStartHandler}
         onDragEnd={onHandEndHandler}
         onDrag={onDragHandler}
+        variants={shipContainer}
+        initial="row"
+        animate={direction}
+        transition={spring}
       >
-        {blocks.map(block => block)}
+        {blocks.map((block, i) => (
+          <motion.div
+            style={{ zIndex: isSelected ? 20 : -1 }}
+            onTapStart={() => onTapHandler(block[0])}
+            onClick={() => setIsSelected(false)}
+            initial="visible"
+            variants={shipBlock(block[1])}
+            className={styles.ship__square}
+            key={block[0]}
+          ></motion.div>
+        ))}
       </motion.div>
 
-      <div
+      <motion.div
         className={styles.rotateBtn}
+        variants={rotateButtonVariants}
+        animate={direction}
+        initial="visible"
+        transition={spring}
         style={{
           visibility: !ship.dropped ? 'visible' : 'hidden',
         }}
         onClick={rotateHandler}
       >
-        rotate icon
-      </div>
+        <BiRotateRight />
+      </motion.div>
     </div>
   );
 };

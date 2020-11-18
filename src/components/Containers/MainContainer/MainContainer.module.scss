@@ -1,19 +1,1 @@
 @import '../../../scss/variables';
-
-.gameContainer {
-  width: 100%;
-
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(8, max-content);
-  align-items: center;
-
-  // display: grid;
-  // grid-template-columns: repeat(8, minmax(5rem, 1fr));
-  // grid-template-rows: repeat(8, 1fr);
-
-  // @media screen and (max-width: $bp-m) {
-  //   grid-template-columns: 1fr;
-  //   grid-template-rows: repeat(8, max-content);
-  //   align-items: center;
-  // }
-}

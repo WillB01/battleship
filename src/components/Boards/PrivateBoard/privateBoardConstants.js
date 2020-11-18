@@ -1,6 +1,6 @@
 export const shipDropColor = 'orangered';
 export const squareHoverColor = 'hotpink';
-export const squareColor = 'yellowgreen';
+export const squareColor = 'none';
 
 export const directionColumn = 'column';
 export const directionRow = 'row';

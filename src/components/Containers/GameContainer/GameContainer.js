@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import styles from '../MainContainer/MainContainer.module.scss';
+import styles from './GameContainer.module.scss';
 
 import Game from '../../Game/Game';
 import Chat from '../../Chat/Chat';

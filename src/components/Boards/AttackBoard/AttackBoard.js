@@ -1,6 +1,7 @@
 import React, { useReducer, useContext, useEffect, useState } from 'react';
 
 import styles from './AttackBoard.module.scss';
+import boardStyles from '../board.module.scss';
 
 import { GameContext } from '../../../context/storeContext';
 import {
@@ -16,6 +17,7 @@ import {
   checkIfWin,
 } from '../../../services/helpers';
 import { GiVikingLonghouse } from 'react-icons/gi';
+import Cube from '../../ui/Cube/Cube';
 
 import socketActions from '../../../services/socketActions';
 
@@ -26,6 +28,7 @@ const AttackBoard = () => {
   } = useContext(GameContext);
 
   useEffect(() => {
+    console.log('DO THIS');
     const enemyPlayer = getOpponentPlayerKey(game.playerOne.id, socket.id);
     let updateAttackBoard = { ...attackBoard };
 
@@ -54,7 +57,7 @@ const AttackBoard = () => {
         player: getPlayerKey(game.playerOne.id, socket.id),
       },
     });
-  }, []);
+  }, [game[getOpponentPlayerKey(game.playerOne.id, socket.id)].ready]);
 
   const boardClickHandler = (y, x, square) => {
     if (square === 'HIT' || square === 'MISS' || square === 'SUNK') {
@@ -76,8 +79,10 @@ const AttackBoard = () => {
 
     const updateGame = { ...game };
     const updateBoard = { ...attackBoard };
+    console.log(square, 'attackboard', attackBoard);
 
     if (square) {
+      console.log('inside');
       playerAttackLocation.push({
         x,
         y,
@@ -126,15 +131,37 @@ const AttackBoard = () => {
       <div className={styles.playerBoard}>
         {headingTop.map((item, i) => {
           return (
-            <div key={i} style={{ gridColumn: `${i + 2} / span 1` }}>
-              {item}
+            <div
+              className={boardStyles.heading}
+              key={i}
+              style={{ gridColumn: `${i + 2} / span 1` }}
+            >
+              <div className={boardStyles.heading__y}>
+                {item}
+                <Cube
+                  color={[
+                    '#F2A663',
+                    '#F2955E',
+                    '#F27457',
+                    '#F26052',
+                    '#A64444',
+                    '#f2c288',
+                  ]}
+                />
+              </div>
             </div>
           );
         })}
         {headingSide.map((item, i) => {
           return (
-            <div key={i} style={{ gridRow: `${i + 2} / span 1` }}>
-              {item}
+            <div
+              className={boardStyles.heading}
+              key={i}
+              style={{ gridRow: `${i + 2} / span 1` }}
+            >
+              <div className={boardStyles.heading__x}>
+                <div className={boardStyles.attack}>{item}</div>
+              </div>
             </div>
           );
         })}
@@ -142,14 +169,19 @@ const AttackBoard = () => {
           return _.map((square, x) => {
             return (
               <div
+                className={styles.square}
                 key={x}
                 onClick={() =>
-                  !game.winner ? boardClickHandler(y, x, square) : null
+                  !game.winner || (game.playerOne.ready && game.playerTwo.ready)
+                    ? boardClickHandler(y, x, square)
+                    : null
                 }
               >
-                {square === 'HIT' || square === 'MISS' || square === 'SUNK'
-                  ? square
-                  : ''}
+                <div className={`${styles.square__circle}`}>
+                  {square === 'HIT' || square === 'MISS' || square === 'SUNK'
+                    ? square
+                    : ''}
+                </div>
               </div>
             );
           });

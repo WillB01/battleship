@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import styles from './Game.module.scss';
+
 import { GameContext } from '../../context/storeContext';
 import { socket } from '../../server/socket';
 import { getPlayerKey, checkIfWin } from '../../services/helpers';
@@ -67,15 +69,16 @@ const Game = () => {
   const isBothReady = game.playerOne.ready && game.playerTwo.ready;
 
   return (
-    <div>
-      {isBothReady && <AttackBoard />}
-
+    <>
       {!game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
         privateBoard.isAllDropped && (
           <button onClick={readyButtonHandler}>ready up</button>
         )}
-      <PrivateBoard />
-    </div>
+      <div className={styles.boardContainer}>
+        <PrivateBoard />
+        <AttackBoard />
+      </div>
+    </>
   );
 };
 

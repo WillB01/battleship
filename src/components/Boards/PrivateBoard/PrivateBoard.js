@@ -7,6 +7,8 @@ import React, {
 } from 'react';
 
 import styles from '../PrivateBoard/PrivateBoard.module.scss';
+import boardStyles from '../board.module.scss';
+
 import * as constants from './privateBoardConstants';
 
 import {
@@ -18,8 +20,10 @@ import {
 import { GameContext } from '../../../context/storeContext';
 import { headingTop, headingSide } from '../../../services/boardBlueprint';
 import { socket } from '../../../server/socket';
+import { motion } from 'framer-motion';
 
 import Ship from '../../Ship/Ship';
+import Cube from '../../ui/Cube/Cube';
 
 const PrivateBoard = () => {
   const {
@@ -115,8 +119,9 @@ const RenderBoard = ({ addShipLocation }) => {
             for (let i = 0; i < ship.size; i++) {
               if (direction === constants.directionRow) {
                 if (
-                  board[indexX + i].current.style.background ===
-                  constants.squareColor
+                  board[indexX + i].current.style.background
+                    .split(' ')
+                    .shift() === constants.squareColor
                 ) {
                   blocksToHover.push({
                     element: board[indexX + i].current,
@@ -131,8 +136,9 @@ const RenderBoard = ({ addShipLocation }) => {
               }
               if (direction === constants.directionColumn) {
                 if (
-                  refs[indexY + i][originalX].current.style.background ===
-                  constants.squareColor
+                  refs[indexY + i][originalX].current.style.background
+                    .split(' ')
+                    .shift() === constants.squareColor
                 ) {
                   blocksToHover.push({
                     element: refs[indexY + i][originalX].current,
@@ -181,7 +187,6 @@ const RenderBoard = ({ addShipLocation }) => {
   const onDragHandler = (e, dragElement, ship, direction, shipClickIndex) => {
     const blocksToHover = [];
     let error = false;
-
     try {
       refs.map((board, i) => {
         board.map((square, ii) => {
@@ -197,16 +202,19 @@ const RenderBoard = ({ addShipLocation }) => {
             for (let i = 0; i < ship.size; i++) {
               if (direction === constants.directionRow) {
                 if (
-                  board[indexX + i].current.style.background ===
-                  constants.squareColor
+                  // weird fix for firefox dont like
+                  board[indexX + i].current.style.background
+                    .split(' ')
+                    .shift() === constants.squareColor
                 ) {
                   blocksToHover.push(board[indexX + i].current);
                 }
               }
               if (direction === constants.directionColumn) {
                 if (
-                  refs[indexY + i][originalX].current.style.background ===
-                  constants.squareColor
+                  refs[indexY + i][originalX].current.style.background
+                    .split(' ')
+                    .shift() === constants.squareColor
                 ) {
                   blocksToHover.push(refs[indexY + i][originalX].current);
                 }
@@ -223,6 +231,8 @@ const RenderBoard = ({ addShipLocation }) => {
       blocksToHover.map(item => {
         if (!error) {
           item.style.background = constants.squareHoverColor;
+          item.children[0].style.height = '3rem';
+          item.children[0].style.width = '3rem';
 
           // item.children[0].style.background = 'hotpink';
           // item.children[0].style.position = 'absoulute';
@@ -232,6 +242,8 @@ const RenderBoard = ({ addShipLocation }) => {
         }
         setTimeout(() => {
           item.style.background = constants.squareColor;
+          item.children[0].style.height = '1rem';
+          item.children[0].style.width = '1rem';
           // item.children[0].style.transform = 'scale(0)';
           // item.style.fontSize = '1rem';
         }, 1);
@@ -263,65 +275,92 @@ const RenderBoard = ({ addShipLocation }) => {
   }, [socket.on]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.privateBoard}>
-        {headingTop.map((item, i) => {
-          return (
-            <div key={i} style={{ gridColumn: `${i + 2} / span 1` }}>
-              {item}
-            </div>
-          );
-        })}
-        {headingSide.map((item, i) => {
-          return (
-            <div key={i} style={{ gridRow: `${i + 2} / span 1` }}>
-              {item}
-            </div>
-          );
-        })}
-        {board &&
-          board.map((_, i) =>
-            _.map((square, ii) => (
+    <>
+      <div className={styles.container}>
+        <div className={styles.privateBoard}>
+          {headingTop.map((item, i) => {
+            return (
               <div
-                className={styles.square}
-                key={`${i}${ii}`}
-                ref={el => (refs[i][ii].current = el)}
-                data-pos={[i, ii]}
-                style={{
-                  background: constants.squareColor,
-                }}
+                key={i}
+                className={boardStyles.heading}
+                style={{ gridColumn: `${i + 2} / span 1` }}
               >
-                <div className={`${styles.square__item}`}>
-                  {/* {renderAttackLocation(i, ii)} */}
-                  {square === 'HIT' || square === 'MISS' || square === 'SUNK'
-                    ? square
-                    : ''}
+                <div className={boardStyles.heading__y}>
+                  {item}
+                  {/* <div className={boardStyles.lineY}></div> */}
+                  <Cube
+                    color={[
+                      '#F280B6',
+                      '#F2CEE2',
+                      '#2165BF',
+                      '#3587F2',
+                      '#204359',
+                      '#03A6A6',
+                    ]}
+                  />
                 </div>
               </div>
-            ))
-          )}
-      </div>
-
-      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
-        <button onClick={resetBoard}>reset</button>
-      )}
-
-      <div className={styles.shipContainer}>
-        {ships &&
-          ships.map((ship, i) => {
-            return (
-              <Ship
-                key={ship.id}
-                onDragEnd={onDragEndHandler}
-                onDragStart={() => onDragStartHandler(ship.id)}
-                onDrag={onDragHandler}
-                ship={ship}
-                isDragging={isDragging}
-                ships={ships}
-              />
             );
           })}
+          {headingSide.map((item, i) => {
+            return (
+              <div
+                key={i}
+                className={boardStyles.heading}
+                style={{ gridRow: `${i + 2} / span 1` }}
+              >
+                <div className={boardStyles.heading__x}>
+                  <div className={boardStyles.private}>{item}</div>
+                </div>
+              </div>
+            );
+          })}
+          {board &&
+            board.map((_, i) =>
+              _.map((square, ii) => (
+                <div
+                  className={styles.square}
+                  key={`${i}${ii}`}
+                  ref={el => (refs[i][ii].current = el)}
+                  data-pos={[i, ii]}
+                  style={{
+                    background: constants.squareColor,
+                  }}
+                >
+                  <motion.div className={`${styles.square__circle}`}>
+                    {square === 'HIT' || square === 'MISS' || square === 'SUNK'
+                      ? square
+                      : ''}
+                  </motion.div>
+                </div>
+              ))
+            )}
+        </div>
+
+        {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
+          <button className={styles.btn} onClick={resetBoard}>
+            reset
+          </button>
+        )}
       </div>
-    </div>
+      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
+        <div className={styles.shipContainer}>
+          {ships &&
+            ships.map((ship, i) => {
+              return (
+                <Ship
+                  key={ship.id}
+                  onDragEnd={onDragEndHandler}
+                  onDragStart={() => onDragStartHandler(ship.id)}
+                  onDrag={onDragHandler}
+                  ship={ship}
+                  isDragging={isDragging}
+                  ships={ships}
+                />
+              );
+            })}
+        </div>
+      )}
+    </>
   );
 };
