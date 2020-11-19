@@ -77,4 +77,22 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  .drop {
+    position: relative;
+    background: rgb(242, 128, 182);
+    background: linear-gradient(
+      90deg,
+      rgba(242, 128, 182, 1) 0%,
+      rgba(33, 101, 191, 1) 50%,
+      rgba(3, 166, 166, 1) 100%
+    ) !important;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    // width: 100%;
+    // height: 100%;
+    z-index: 1;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
 }

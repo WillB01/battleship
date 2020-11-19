@@ -4,6 +4,7 @@ import React, {
   useState,
   createRef,
   useMemo,
+  useRef,
 } from 'react';
 
 import styles from '../PrivateBoard/PrivateBoard.module.scss';
@@ -33,7 +34,6 @@ const PrivateBoard = () => {
 
   const addShipLocation = ships => {
     const player = getPlayerKey(game.playerOne.id, socket.id);
-
     const updatedGame = { ...game };
 
     ships.map(ship => {
@@ -76,6 +76,8 @@ const RenderBoard = ({ addShipLocation }) => {
     return (item = Array.from({ length: 10 }).map(() => createRef()));
   });
 
+  const blocksToAddRef = useRef();
+
   useEffect(() => {
     dispatch({ type: 'SET-SHIPS' });
   }, []);
@@ -83,7 +85,8 @@ const RenderBoard = ({ addShipLocation }) => {
   const resetBoard = () => {
     refs.map((board, i) => {
       board.map((square, ii) => {
-        square.current.style.background = constants.squareColor;
+        square.current.classList.remove('drop');
+        square.current.classList.remove('hover');
       });
     });
 
@@ -104,27 +107,65 @@ const RenderBoard = ({ addShipLocation }) => {
     const blocksToHover = [];
 
     let error = false;
+    let doDispatch = false;
+    try {
+      blocksToAddRef.current.map(block => {
+        if (isEventInElement(e, blocksToAddRef.current[shipClickIndex].hover)) {
+          if (blocksToAddRef.current.length === ship.size) {
+            block.hover.classList.add('drop');
+            doDispatch = true;
+          }
+        }
+      });
+
+      if (doDispatch) {
+        const updateShips = [...ships];
+        updateShips.map((s, i) => {
+          if (s.id === ship.id) {
+            s.dropped = true;
+            s.hide = true;
+          } else {
+            s.hide = false;
+          }
+          return s;
+        });
+        dispatch({ type: 'UPDATE-SHIPS', payload: updateShips });
+        setIsDragging(false);
+        addShipLocation(blocksToAddRef.current);
+      }
+    } catch (e) {
+      error = true;
+      console.log(e);
+    }
+  };
+
+  //TODO Refactor and fix better drop validation then background color!!!!!!////
+  //////////////////////
+  ///////////////////////////////////////////
+  const onDragHandler = (e, dragElement, ship, direction, shipClickIndex) => {
+    const blocksToHover = [];
+    let error = false;
     try {
       refs.map((board, i) => {
         board.map((square, ii) => {
           const el = square.current;
-
-          const originalY = parseInt(el.dataset.pos[0]);
-          const originalX = parseInt(el.dataset.pos[2]);
-
+          const originalY = parseInt(
+            el.dataset.pos[0] || el.children[0].dataset.pos[0]
+          );
+          const originalX = parseInt(
+            el.dataset.pos[2] || el.children[0].dataset.pos[0]
+          );
           if (isEventInElement(e, square.current)) {
             const indexX = originalX - shipClickIndex;
             const indexY = originalY - shipClickIndex;
-
             for (let i = 0; i < ship.size; i++) {
               if (direction === constants.directionRow) {
                 if (
-                  board[indexX + i].current.style.background
-                    .split(' ')
-                    .shift() === constants.squareColor
+                  !board[indexX + i].current.classList.contains('hover') &&
+                  !board[indexX + i].current.classList.contains('drop')
                 ) {
                   blocksToHover.push({
-                    element: board[indexX + i].current,
+                    hover: board[indexX + i].current,
                     shipLocation: {
                       x: indexX + i,
                       y: originalY,
@@ -136,12 +177,15 @@ const RenderBoard = ({ addShipLocation }) => {
               }
               if (direction === constants.directionColumn) {
                 if (
-                  refs[indexY + i][originalX].current.style.background
-                    .split(' ')
-                    .shift() === constants.squareColor
+                  !refs[indexY + i][originalX].current.classList.contains(
+                    'hover'
+                  ) &&
+                  !refs[indexY + i][originalX].current.classList.contains(
+                    'drop'
+                  )
                 ) {
                   blocksToHover.push({
-                    element: refs[indexY + i][originalX].current,
+                    hover: refs[indexY + i][originalX].current,
                     shipLocation: {
                       x: originalX,
                       y: indexY + i,
@@ -156,100 +200,19 @@ const RenderBoard = ({ addShipLocation }) => {
         });
       });
     } catch (e) {
-      error = true;
-    }
-
-    if (!error && blocksToHover.length === ship.size) {
-      const updateShips = [...ships];
-      updateShips.map((s, i) => {
-        if (s.id === ship.id) {
-          s.dropped = true;
-          s.hide = true;
-        } else {
-          s.hide = false;
-        }
-        return s;
-      });
-
-      blocksToHover.map(block => {
-        block.element.style.background = constants.shipDropColor;
-      });
-
-      dispatch({ type: 'UPDATE-SHIPS', payload: updateShips });
-      setIsDragging(false);
-      addShipLocation(blocksToHover);
-    }
-  };
-
-  //TODO Refactor and fix better drop validation then background color!!!!!!////
-  //////////////////////
-  ///////////////////////////////////////////
-  const onDragHandler = (e, dragElement, ship, direction, shipClickIndex) => {
-    const blocksToHover = [];
-    let error = false;
-    try {
-      refs.map((board, i) => {
-        board.map((square, ii) => {
-          const el = square.current;
-
-          const originalY = parseInt(el.dataset.pos[0]);
-          const originalX = parseInt(el.dataset.pos[2]);
-
-          if (isEventInElement(e, square.current)) {
-            const indexX = originalX - shipClickIndex;
-            const indexY = originalY - shipClickIndex;
-
-            for (let i = 0; i < ship.size; i++) {
-              if (direction === constants.directionRow) {
-                if (
-                  // weird fix for firefox dont like
-                  board[indexX + i].current.style.background
-                    .split(' ')
-                    .shift() === constants.squareColor
-                ) {
-                  blocksToHover.push(board[indexX + i].current);
-                }
-              }
-              if (direction === constants.directionColumn) {
-                if (
-                  refs[indexY + i][originalX].current.style.background
-                    .split(' ')
-                    .shift() === constants.squareColor
-                ) {
-                  blocksToHover.push(refs[indexY + i][originalX].current);
-                }
-              }
-            }
-          }
-        });
-      });
-    } catch (e) {
+      console.log(e);
       error = true;
     }
 
     if (blocksToHover.length === ship.size) {
+      blocksToAddRef.current = blocksToHover;
       blocksToHover.map(item => {
         if (!error) {
-          item.style.background = constants.squareHoverColor;
-          item.style.zIndex = 44;
-          item.children[0].style.height = '3rem';
-          item.children[0].style.width = '3rem';
-
-          // item.children[0].style.background = 'hotpink';
-          // item.children[0].style.position = 'absoulute';
-          // item.children[0].style.transform = 'scale(2)';
-
-          // item.style.fontSize = '2.2rem';
+          item.hover.classList.add(`${styles.hover}`);
         }
         setTimeout(() => {
-          item.style.background = constants.squareColor;
-          item.children[0].style.height = '1rem';
-          item.children[0].style.width = '1rem';
-          item.style.zIndex = 0;
-
-          // item.children[0].style.transform = 'scale(0)';
-          // item.style.fontSize = '1rem';
-        }, 1);
+          item.hover.classList.remove(`${styles.hover}`);
+        }, 50);
       });
     }
   };
@@ -349,9 +312,21 @@ const RenderBoard = ({ addShipLocation }) => {
                   }}
                 >
                   <motion.div className={`${styles.square__circle}`}>
-                    {square === 'HIT' || square === 'MISS' || square === 'SUNK'
-                      ? square
-                      : ''}
+                    {square === 'MISS' || square === 'SUNK' ? square : ''}
+
+                    {square === 'HIT' && (
+                      <Cube
+                        size={'m'}
+                        color={[
+                          '#F2A663',
+                          '#F2955E',
+                          '#F27457',
+                          '#F26052',
+                          '#A64444',
+                          '#f2c288',
+                        ]}
+                      />
+                    )}
                   </motion.div>
                 </div>
               ))

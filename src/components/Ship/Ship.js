@@ -81,7 +81,7 @@ const Ship = ({
         rotate: [90, 0],
       },
       row: {
-        background: '#262626',
+        backgroundColor: '#262626',
         zIndex: 20,
         y: 0,
         x: 0,
@@ -117,7 +117,8 @@ const Ship = ({
     const blocks = [];
     for (let i = 0; i < length; i++) {
       if (i !== 0) {
-        xCounter += 35;
+        // xCounter += 35;
+        xCounter += 25;
       }
 
       blocks.push([i, { pos: xCounter }]);

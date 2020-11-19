@@ -4,9 +4,9 @@ import styles from './Cube.module.scss';
 import { motion } from 'framer-motion';
 
 //  transform: rotateX(125deg) rotateY(155deg);
-const Cube = ({ color }) => {
+const Cube = ({ color, size }) => {
   return (
-    <div className={styles.container}>
+    <div className={[styles.container, size === 'm' && styles.m].join(' ')}>
       <motion.div
         className={styles.cube}
         style={{ rotateY: '30deg', rotateX: '40deg' }}

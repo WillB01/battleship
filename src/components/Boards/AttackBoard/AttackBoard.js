@@ -28,7 +28,6 @@ const AttackBoard = () => {
   } = useContext(GameContext);
 
   useEffect(() => {
-    console.log('DO THIS');
     const enemyPlayer = getOpponentPlayerKey(game.playerOne.id, socket.id);
     let updateAttackBoard = { ...attackBoard };
 
@@ -178,9 +177,21 @@ const AttackBoard = () => {
                 }
               >
                 <div className={`${styles.square__circle}`}>
-                  {square === 'HIT' || square === 'MISS' || square === 'SUNK'
-                    ? square
-                    : ''}
+                  {square === 'MISS' || square === 'SUNK' ? square : ''}
+
+                  {square === 'HIT' && (
+                    <Cube
+                      size={'m'}
+                      color={[
+                        '#F2A663',
+                        '#F2955E',
+                        '#F27457',
+                        '#F26052',
+                        '#A64444',
+                        '#f2c288',
+                      ]}
+                    />
+                  )}
                 </div>
               </div>
             );

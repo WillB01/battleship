@@ -1,8 +1,13 @@
+//TODO REFACTOR WITH ECTENDS !!!!!
+
 .container {
   position: relative;
   height: 100%;
   perspective: 700px;
   -webkit-perspective: 700px;
+  &.m {
+    transform: scale(2);
+  }
 }
 
 .cube {
@@ -55,3 +60,58 @@
   transform: rotateX(-90deg) translateZ(0.5rem);
   background: #f2c288;
 }
+
+.m {
+  transform: scale(2.6);
+}
+
+// .cube__m {
+//   position: relative;
+//   width: 2rem;
+//   height: 2rem;
+//   transform-style: preserve-3d;
+//   transform: rotateY(54deg) rotatex(45deg);
+//   transition: 300ms ease-in;
+//   z-index: -2;
+// }
+
+// .cube__m:hover {
+//   transform: rotateX(125deg) rotateY(155deg);
+// }
+
+// .cube__m div {
+//   position: absolute;
+//   width: 2rem;
+//   height: 2rem;
+//   background: rgba(0, 0, 0, 0.1);
+// }
+
+// .cube__m div:nth-child(1) {
+//   transform: translateZ(1rem);
+//   background: #e2e2e2;
+// }
+
+// .cube__m div:nth-child(2) {
+//   transform: rotateX(180deg) translateZ(1rem);
+//   background: #26010f;
+// }
+
+// .cube__m div:nth-child(3) {
+//   transform: rotateY(-90deg) translateZ(1rem);
+//   background: #bf455b;
+// }
+
+// .cube__m div:nth-child(4) {
+//   transform: rotateY(90deg) translateZ(1rem);
+//   background: #bf7960;
+// }
+
+// .cube__m div:nth-child(5) {
+//   transform: rotateX(90deg) translateZ(1rem);
+//   background: #bf3030;
+// }
+
+// .cube__m div:nth-child(6) {
+//   transform: rotateX(-90deg) translateZ(1rem);
+//   background: #f2c288;
+// }
