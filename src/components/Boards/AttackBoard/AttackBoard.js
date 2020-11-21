@@ -177,7 +177,9 @@ const AttackBoard = () => {
                 }
               >
                 <div className={`${styles.square__circle}`}>
-                  {square === 'MISS' || square === 'SUNK' ? square : ''}
+                  {/* {square === 'MISS' || square === 'SUNK' ? square : ''}
+
+                  
 
                   {square === 'HIT' && (
                     <Cube
@@ -191,7 +193,8 @@ const AttackBoard = () => {
                         '#f2c288',
                       ]}
                     />
-                  )}
+                  )} */}
+                  {square}
                 </div>
               </div>
             );

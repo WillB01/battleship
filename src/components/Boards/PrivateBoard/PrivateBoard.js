@@ -22,6 +22,7 @@ import { GameContext } from '../../../context/storeContext';
 import { headingTop, headingSide } from '../../../services/boardBlueprint';
 import { socket } from '../../../server/socket';
 import { motion } from 'framer-motion';
+import { debounce } from 'lodash';
 
 import Ship from '../../Ship/Ship';
 import Cube from '../../ui/Cube/Cube';
@@ -70,6 +71,7 @@ const RenderBoard = ({ addShipLocation }) => {
 
   const { board, ships } = privateBoard;
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedShip, setSelectedShip] = useState();
 
   let refs = useMemo(() => Array.from({ length: 10 }).map(() => ''), []);
   refs = refs.map(item => {
@@ -77,6 +79,7 @@ const RenderBoard = ({ addShipLocation }) => {
   });
 
   const blocksToAddRef = useRef();
+  const zIndexRef = useRef(1);
 
   useEffect(() => {
     dispatch({ type: 'SET-SHIPS' });
@@ -86,10 +89,13 @@ const RenderBoard = ({ addShipLocation }) => {
     refs.map((board, i) => {
       board.map((square, ii) => {
         square.current.classList.remove('drop');
-        square.current.classList.remove('hover');
+        square.current.classList.remove(`${styles.hover}`);
       });
     });
 
+    zIndexRef.current = 1;
+
+    setSelectedShip('');
     setIsDragging(false);
     dispatch({
       type: 'RESET-PRIVATE-BOARD',
@@ -105,6 +111,9 @@ const RenderBoard = ({ addShipLocation }) => {
     shipClickIndex
   ) => {
     const blocksToHover = [];
+    setSelectedShip('');
+    zIndexRef.current = 0;
+    console.log('DROP');
 
     let error = false;
     let doDispatch = false;
@@ -112,6 +121,7 @@ const RenderBoard = ({ addShipLocation }) => {
       blocksToAddRef.current.map(block => {
         if (isEventInElement(e, blocksToAddRef.current[shipClickIndex].hover)) {
           if (blocksToAddRef.current.length === ship.size) {
+            block.hover.classList.remove(`${styles.hover}`);
             block.hover.classList.add('drop');
             doDispatch = true;
           }
@@ -135,6 +145,8 @@ const RenderBoard = ({ addShipLocation }) => {
       }
     } catch (e) {
       error = true;
+      zIndexRef.current = 0;
+
       console.log(e);
     }
   };
@@ -143,92 +155,80 @@ const RenderBoard = ({ addShipLocation }) => {
   //////////////////////
   ///////////////////////////////////////////
   const onDragHandler = (e, dragElement, ship, direction, shipClickIndex) => {
-    const blocksToHover = [];
-    let error = false;
-    try {
-      refs.map((board, i) => {
-        board.map((square, ii) => {
-          const el = square.current;
-          const originalY = parseInt(
-            el.dataset.pos[0] || el.children[0].dataset.pos[0]
-          );
-          const originalX = parseInt(
-            el.dataset.pos[2] || el.children[0].dataset.pos[0]
-          );
-          if (isEventInElement(e, square.current)) {
-            const indexX = originalX - shipClickIndex;
-            const indexY = originalY - shipClickIndex;
-            for (let i = 0; i < ship.size; i++) {
-              if (direction === constants.directionRow) {
-                if (
-                  !board[indexX + i].current.classList.contains('hover') &&
-                  !board[indexX + i].current.classList.contains('drop')
-                ) {
-                  blocksToHover.push({
-                    hover: board[indexX + i].current,
-                    shipLocation: {
-                      x: indexX + i,
-                      y: originalY,
-                      id: ship.id,
-                      size: ship.size,
-                    },
-                  });
-                }
-              }
-              if (direction === constants.directionColumn) {
-                if (
-                  !refs[indexY + i][originalX].current.classList.contains(
-                    'hover'
-                  ) &&
-                  !refs[indexY + i][originalX].current.classList.contains(
-                    'drop'
-                  )
-                ) {
-                  blocksToHover.push({
-                    hover: refs[indexY + i][originalX].current,
-                    shipLocation: {
-                      x: originalX,
-                      y: indexY + i,
-                      id: ship.id,
-                      size: ship.size,
-                    },
-                  });
-                }
-              }
-            }
-          }
-        });
-      });
-    } catch (e) {
-      console.log(e);
-      error = true;
-    }
-
-    if (blocksToHover.length === ship.size) {
-      blocksToAddRef.current = blocksToHover;
-      blocksToHover.map(item => {
-        if (!error) {
-          item.hover.classList.add(`${styles.hover}`);
-        }
-        setTimeout(() => {
-          item.hover.classList.remove(`${styles.hover}`);
-        }, 50);
-      });
-    }
-  };
-
-  const onDragStartHandler = id => {
-    let updateShips = [...ships];
-    updateShips.map(ship => {
-      if (ship.id === id) {
-        ship.hide = false;
-      } else {
-        ship.hide = true;
-      }
-    });
-
-    dispatch({ type: 'UPDATE-SHIPS', payload: updateShips });
-    setIsDragging(true);
+    // fix for miboole
+    // const blocksToHover = [];
+    // let error = false;
+    // try {
+    //   refs.map((board, i) => {
+    //     board.map((square, ii) => {
+    //       const el = square.current;
+    //       if (
+    //         board[shipClickIndex].current.classList.contains(`${styles.hover}`)
+    //       ) {
+    //         return;
+    //       }
+    //       const originalY = parseInt(
+    //         el.dataset.pos[0] || el.children[0].dataset.pos[0]
+    //       );
+    //       const originalX = parseInt(
+    //         el.dataset.pos[2] || el.children[0].dataset.pos[0]
+    //       );
+    //       if (isEventInElement(e, square.current)) {
+    //         const indexX = originalX - shipClickIndex;
+    //         const indexY = originalY - shipClickIndex;
+    //         for (let i = 0; i < ship.size; i++) {
+    //           if (direction === constants.directionRow) {
+    //             if (!board[indexX + i].current.classList.contains('drop')) {
+    //               board[indexX + i].current.classList.add(`${styles.hover}`);
+    //               blocksToHover.push({
+    //                 hover: board[indexX + i].current,
+    //                 shipLocation: {
+    //                   x: indexX + i,
+    //                   y: originalY,
+    //                   id: ship.id,
+    //                   size: ship.size,
+    //                 },
+    //               });
+    //             }
+    //           }
+    //           if (direction === constants.directionColumn) {
+    //             if (
+    //               !refs[indexY + i][originalX].current.classList.contains(
+    //                 'drop'
+    //               )
+    //             ) {
+    //               blocksToHover.push({
+    //                 hover: refs[indexY + i][originalX].current,
+    //                 shipLocation: {
+    //                   x: originalX,
+    //                   y: indexY + i,
+    //                   id: ship.id,
+    //                   size: ship.size,
+    //                 },
+    //               });
+    //             }
+    //           }
+    //         }
+    //       }
+    //     });
+    //   });
+    // } catch (e) {
+    //   console.log(e);
+    //   error = true;
+    // }
+    // if (blocksToHover.length === ship.size) {
+    //   if (!error) {
+    //     blocksToHover.map(block => {
+    //       block.hover.classList.add(`${styles.hover}`);
+    //       setTimeout(() => {
+    //         block.hover.classList.remove(`${styles.hover}`);
+    //       }, 100);
+    //     });
+    //     if (!error) {
+    //       blocksToAddRef.current = blocksToHover;
+    //     }
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -240,6 +240,93 @@ const RenderBoard = ({ addShipLocation }) => {
     });
   }, [socket.on]);
 
+  const addHover = (isAdd, y, x) => {
+    let isError = false;
+    const blocksToHover = [];
+    const { direction, shipClickIndex, shipIndex } = selectedShip;
+    const originalX = x;
+    const originalY = y;
+    const indexX = originalX - shipClickIndex;
+    const indexY = originalY - shipClickIndex;
+    const ship = ships[shipIndex];
+
+    try {
+      for (let i = 0; i < ship.size; i++) {
+        if (direction === constants.directionRow) {
+          if (!refs[y][indexX + i].current.classList.contains('drop')) {
+            if (isAdd) {
+              // refs[y][indexX + i].current.classList.add(`${styles.hover}`);
+
+              blocksToHover.push({
+                hover: refs[originalY][indexX + i].current,
+                shipLocation: {
+                  x: indexX + i,
+                  y: originalY,
+                  id: ship.id,
+                  size: ship.size,
+                },
+              });
+            } else {
+              refs[y][indexX + i].current.classList.remove(`${styles.hover}`);
+            }
+          }
+        }
+        if (direction === constants.directionColumn) {
+          if (!refs[indexY + i][originalX].current.classList.contains('drop')) {
+            if (isAdd) {
+              blocksToHover.push({
+                hover: refs[indexY + i][originalX].current,
+                shipLocation: {
+                  x: originalX,
+                  y: indexY + i,
+                  id: ship.id,
+                  size: ship.size,
+                },
+              });
+            } else {
+              refs[indexY + i][originalX].current.classList.remove(
+                `${styles.hover}`
+              );
+            }
+          }
+        }
+      }
+    } catch (err) {
+      isError = true;
+      zIndexRef.current = 0;
+      console.log(err);
+    }
+
+    if (blocksToHover.length === ship.size) {
+      blocksToHover.map(block => {
+        block.hover.classList.add(`${styles.hover}`);
+      });
+      blocksToAddRef.current = blocksToHover;
+    }
+  };
+
+  const mouseLeaveHandler = (e, y, x) => {
+    if (!selectedShip) {
+      return;
+    }
+    addHover(false, y, x);
+  };
+
+  const mouseEnterHandler = (e, y, x) => {
+    if (!selectedShip) {
+      return;
+    }
+    zIndexRef.current = 60;
+    addHover(true, y, x);
+  };
+
+  const shipOnTop = (shipClickIndex, shipIndex, direction) => {
+    console.log('hello');
+    zIndexRef.current = 60;
+
+    setSelectedShip({ shipClickIndex, shipIndex, direction });
+  };
+
   return (
     <>
       {!game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
@@ -250,11 +337,16 @@ const RenderBoard = ({ addShipLocation }) => {
                 <Ship
                   key={ship.id}
                   onDragEnd={onDragEndHandler}
-                  onDragStart={() => onDragStartHandler(ship.id)}
                   onDrag={onDragHandler}
+                  onDragStart={(shipClickIndex, direction) =>
+                    shipOnTop(shipClickIndex, i, direction)
+                  }
                   ship={ship}
                   isDragging={isDragging}
                   ships={ships}
+                  onTap={(shipClickIndex, direction) =>
+                    shipOnTop(shipClickIndex, i, direction)
+                  }
                 />
               );
             })}
@@ -304,16 +396,16 @@ const RenderBoard = ({ addShipLocation }) => {
               _.map((square, ii) => (
                 <div
                   className={styles.square}
+                  style={{ zIndex: zIndexRef.current }}
                   key={`${i}${ii}`}
                   ref={el => (refs[i][ii].current = el)}
                   data-pos={[i, ii]}
-                  style={{
-                    background: constants.squareColor,
-                  }}
+                  onMouseLeave={e => mouseLeaveHandler(e, i, ii)}
+                  onMouseEnter={e => mouseEnterHandler(e, i, ii)}
                 >
                   <motion.div className={`${styles.square__circle}`}>
-                    {square === 'MISS' || square === 'SUNK' ? square : ''}
-
+                    {square === 'MISS' && 'sometinh'}
+                    {square === 'SUNK' && 'something'}
                     {square === 'HIT' && (
                       <Cube
                         size={'m'}

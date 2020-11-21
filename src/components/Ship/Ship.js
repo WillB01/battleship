@@ -16,7 +16,6 @@ const Ship = ({
   const [blocks, setBlocks] = useState([]);
   const [direction, setDirection] = useState('row');
   const [isSelected, setIsSelected] = useState(false);
-  const [zIndex, setZindex] = useState(1);
 
   const elementRef = useRef(null);
   const shipClickIndex = useRef('');
@@ -30,13 +29,11 @@ const Ship = ({
     setDirection(direction === 'row' ? 'column' : 'row');
   };
 
-  const onTapHandler = i => {
+  const onTapHandler = (i, ship) => {
+    //todo att in privatebord
+    // set ships and hin get location from boardhober instead off lopping
     shipClickIndex.current = i;
     setIsSelected(true);
-  };
-
-  const onDragStartHandler = () => {
-    onDragStart(ship.id);
   };
 
   const onHandEndHandler = e => {
@@ -158,9 +155,9 @@ const Ship = ({
         ref={elementRef}
         drag
         dragMomentum={false}
-        onDragStart={onDragStartHandler}
         onDragEnd={onHandEndHandler}
         onDrag={onDragHandler}
+        onDragStart={() => onDragStart(shipClickIndex.current, direction)}
         variants={shipContainer}
         initial="row"
         animate={direction}
@@ -169,7 +166,7 @@ const Ship = ({
         {blocks.map((block, i) => (
           <motion.div
             style={{ zIndex: isSelected && 20 }}
-            onTapStart={() => onTapHandler(block[0])}
+            onTapStart={() => onTapHandler(block[0], ship)}
             onClick={() => setIsSelected(false)}
             initial="visible"
             variants={shipBlock(block[1])}

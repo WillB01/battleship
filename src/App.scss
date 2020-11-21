@@ -80,19 +80,38 @@
 
   .drop {
     position: relative;
-    background: rgb(242, 128, 182);
-    background: linear-gradient(
-      90deg,
-      rgba(242, 128, 182, 1) 0%,
-      rgba(33, 101, 191, 1) 50%,
-      rgba(3, 166, 166, 1) 100%
-    ) !important;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: #03a6a6;
     // width: 100%;
     // height: 100%;
-    z-index: 1;
-    height: 2.5rem;
-    width: 2.5rem;
+    z-index: 1 !important;
+    height: 100%;
+    width: 100%;
+    transform: scale(1) rotate(4deg);
+    transition: all 0.3s;
+
+    animation: shrink 0.2s cubic-bezier(0.22, 0.68, 0, 1.71) 0.2s forwards;
+    overflow: hidden;
+  }
+
+  @keyframes shrink {
+    0% {
+      transform: scale(0.5);
+    }
+
+    80% {
+      transform: scale(1.2);
+    }
+
+    90% {
+      transform: scale(0.7);
+    }
+
+    95% {
+      transform: scale(1.1);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 }

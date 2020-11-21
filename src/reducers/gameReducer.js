@@ -75,7 +75,7 @@ export const gameReducer = (state, action) => {
           ...state.privateBoard,
           board: action.payload.board,
         },
-        game: action.payload.game,
+        game: action.payload.game || state.game,
       };
     }
 
