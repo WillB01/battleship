@@ -21,3 +21,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
+.button__container {
+  width: 20rem;
+  height: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}

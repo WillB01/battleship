@@ -17,6 +17,7 @@ import {
   checkIfWin,
 } from '../../../services/helpers';
 import { GiVikingLonghouse } from 'react-icons/gi';
+import { BiTargetLock } from 'react-icons/bi';
 import Cube from '../../ui/Cube/Cube';
 
 import socketActions from '../../../services/socketActions';
@@ -73,15 +74,14 @@ const AttackBoard = () => {
       return;
     }
     const player = getPlayerKey(game.playerOne.id, socket.id);
+    const enemyPlayer = getOpponentPlayerKey(game.playerOne.id, socket.id);
 
     const playerAttackLocation = [...game[player].attackLocation];
 
     const updateGame = { ...game };
     const updateBoard = { ...attackBoard };
-    console.log(square, 'attackboard', attackBoard);
 
     if (square) {
-      console.log('inside');
       playerAttackLocation.push({
         x,
         y,
@@ -106,6 +106,16 @@ const AttackBoard = () => {
 
     updateGame.playerTurn =
       updateGame.playerTurn === 'PLAYER-ONE' ? 'PLAYER-TWO' : 'PLAYER-ONE';
+
+    if (player === 'playerOne') {
+      updateGame.playerOne.myTurn = false;
+      updateGame.playerTwo.myTurn = true;
+    }
+    if (player === 'playerTwo') {
+      updateGame.playerTwo.myTurn = false;
+      updateGame.playerOne.myTurn = true;
+    }
+
     updateGame[player].attackLocation = playerAttackLocation;
 
     dispatch({

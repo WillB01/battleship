@@ -18,6 +18,7 @@ export const initialState = {
     board: [...privateBoardTemp],
     ships: [],
     isAllDropped: false,
+    reset: false,
   },
 };
 

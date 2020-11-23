@@ -10,6 +10,7 @@ import socketActions from '../../services/socketActions';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
 import AttackBoard from '../Boards/AttackBoard/AttackBoard';
 import MyTurn from '../ui/MyTurn/MyTurn';
+import Modal from '../ui/Modal/Modal';
 
 const Game = () => {
   const {
@@ -18,6 +19,7 @@ const Game = () => {
   } = useContext(GameContext);
 
   const [disabled, setDisabled] = useState(false);
+  const [resetPrivateBoard, setResetPrivateBoard] = useState(false);
 
   useEffect(() => {
     socket.on('PLAYER-IS-READY-TO-START-HANDLER', player => {
@@ -71,17 +73,26 @@ const Game = () => {
 
   return (
     <>
-      {!game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
-        privateBoard.isAllDropped && (
-          <button onClick={readyButtonHandler}>ready up</button>
-        )}
       <div className={styles.boardContainer}>
-        <MyTurn />
-        <PrivateBoard />
+        {game.playerOne.ready && game.playerTwo.ready && <MyTurn />}
+        <PrivateBoard reset={resetPrivateBoard} />
         {game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
           <AttackBoard />
         )}
       </div>
+      <Modal
+        isOpen={
+          !game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
+          privateBoard.isAllDropped
+        }
+      >
+        <div className={styles.button__container}>
+          <button onClick={readyButtonHandler}>ready up</button>
+          <button onClick={() => setResetPrivateBoard(!resetPrivateBoard)}>
+            reset
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };

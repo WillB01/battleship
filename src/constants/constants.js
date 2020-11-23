@@ -16,6 +16,7 @@ export const inititalActiveGame = {
     attackLocation: [{ x: '', y: '', shipSize: '', shipId: '' }],
     shipLocation: [{ x: '', y: '', id: '', size: '' }],
     ready: false,
+    myTurn: true,
   },
   playerTwo: {
     id: '',
@@ -23,6 +24,7 @@ export const inititalActiveGame = {
     attackLocation: [{ x: '', y: '', shipSize: '', shipId: '' }],
     shipLocation: [{ x: '', y: '', id: '', size: '' }],
     ready: false,
+    myTurn: false,
   },
 };
 

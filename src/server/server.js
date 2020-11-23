@@ -79,6 +79,7 @@ io.on('connection', socket => {
       toPlayerId
     );
     io.to(game.id).emit('WINNER-HANDLER', game);
+    io.to(game.id).emit('MY-TURN', game);
   });
 
   /////////////////////////////////
