@@ -67,7 +67,7 @@ const Ship = ({
   const shipBlock = style => {
     return {
       column: {
-        background: 'white',
+        background: '#f2c288',
         y: style.pos,
         x: -style.pos,
         zIndex: 21,
@@ -78,7 +78,7 @@ const Ship = ({
         rotate: [90, 0],
       },
       row: {
-        backgroundColor: '#262626',
+        background: '#054a44',
         zIndex: 20,
         y: 0,
         x: 0,

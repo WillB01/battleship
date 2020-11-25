@@ -20,12 +20,15 @@
 
   display: grid;
   grid-template-columns: 1fr 1fr;
+
+  backface-visibility: hidden;
 }
 
 .button__container {
-  width: 20rem;
-  height: 3rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2rem;
+  grid-column: 1 / -1;
+  grid-row: 2 / span 4;
+  backface-visibility: hidden;
 }

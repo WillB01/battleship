@@ -18,9 +18,12 @@ import {
 } from '../../../services/helpers';
 import { GiVikingLonghouse } from 'react-icons/gi';
 import { BiTargetLock } from 'react-icons/bi';
-import Cube from '../../ui/Cube/Cube';
+import { RiShipLine } from 'react-icons/ri';
+import { motion } from 'framer-motion';
 
+import Cube from '../../ui/Cube/Cube';
 import socketActions from '../../../services/socketActions';
+import SquareContent from '../SquareContent/SquareContent';
 
 const AttackBoard = () => {
   const {
@@ -135,6 +138,14 @@ const AttackBoard = () => {
     );
   };
 
+  const rednerSquare = square => {
+    if (square === 'HIT') {
+      return <div className={styles.hit}></div>;
+    }
+
+    return <div className={`${styles.square__circle}`}></div>;
+  };
+
   return (
     <>
       <div className={styles.playerBoard}>
@@ -186,7 +197,9 @@ const AttackBoard = () => {
                     : null
                 }
               >
-                <div className={`${styles.square__circle}`}>
+                <SquareContent square={square} />
+                {/* {rednerSquare(square)} */}
+                {/* <div className={`${styles.square__circle}`}>
                   {/* {square === 'MISS' || square === 'SUNK' ? square : ''}
 
                   
@@ -204,8 +217,9 @@ const AttackBoard = () => {
                       ]}
                     />
                   )} */}
-                  {square}
-                </div>
+                {/* {square} */}
+
+                {/* </div> */}
               </div>
             );
           });

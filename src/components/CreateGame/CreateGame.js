@@ -9,7 +9,7 @@ import { socket } from '../../server/socket';
 import { initialHostGame } from '../../constants/constants';
 
 import useInput from '../hooks/useInput/useInput';
-import { GiCrackedGlass } from 'react-icons/gi';
+import { RiShip2Line } from 'react-icons/ri';
 
 const CreateGame = () => {
   const [gameName, setGameName] = useState('');
@@ -93,7 +93,9 @@ const CreateGame = () => {
         <Loading />
       ) : (
         <div className={`${styles.createRoom}`}>
-          <div className={`${styles.item} ${styles.item__icon}`}>heading</div>
+          <div className={`${styles.item} ${styles.item__icon}`}>
+            <RiShip2Line />
+          </div>
 
           <div className={`${styles.item} ${styles.item__1}`}>
             {useGameInput}

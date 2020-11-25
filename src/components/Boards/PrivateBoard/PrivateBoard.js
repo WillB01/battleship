@@ -26,6 +26,8 @@ import { socket } from '../../../server/socket';
 import { motion } from 'framer-motion';
 
 import Ship from '../../Ship/Ship';
+import SquareContent from '../SquareContent/SquareContent';
+
 import Cube from '../../ui/Cube/Cube';
 
 const PrivateBoard = ({ reset }) => {
@@ -326,7 +328,8 @@ const RenderBoard = ({ addShipLocation, reset }) => {
                   ref={el => (refs[i][ii].current = el)}
                   data-pos={[i, ii]}
                 >
-                  <motion.div className={`${styles.square__circle}`}>
+                  <SquareContent square={square} />
+                  {/* <motion.div className={`${styles.square__circle}`}>
                     {square === 'MISS' && 'sometinh'}
                     {square === 'SUNK' && 'something'}
                     {square === 'HIT' && (
@@ -342,7 +345,7 @@ const RenderBoard = ({ addShipLocation, reset }) => {
                         ]}
                       />
                     )}
-                  </motion.div>
+                  </motion.div> */}
                 </div>
               ))
             )}

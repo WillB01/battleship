@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import styles from '../Containers/MainContainer/MainContainer.module.scss';
+import styles from './Heading.module.scss';
 
 import { HostContext } from '../../context/storeContext';
 import { HiOutlineUsers } from 'react-icons/hi';
@@ -29,7 +29,7 @@ const Heading = () => {
     <div className={styles.hostContainer}>
       <>
         <div className={styles.information}>
-          <div className={`${styles.information__heading} heading--1`}>
+          <div className={`${styles.information__heading} heading heading--1`}>
             Host or join a game of battleship!
           </div>
           <div className={styles.information__users}>

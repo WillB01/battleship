@@ -147,9 +147,15 @@ const GamesList = () => {
                   )}`}
                 >
                   <div className={`${styles.content}`}>
-                    <div className={`${styles.content__item}`}>{game.name}</div>
+                    <div
+                      className={`${styles.content__item} ${styles.content__item_1}`}
+                    >
+                      {game.name}
+                    </div>
                     <div className={styles.line}></div>
-                    <div className={`${styles.content__item}`}>
+                    <div
+                      className={`${styles.content__item} ${styles.content__item_2}`}
+                    >
                       {game.host.name}
                     </div>
                     {game.status === 'HOSTED' && (

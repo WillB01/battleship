@@ -7,10 +7,11 @@
 
 .label {
   position: absolute;
-
   font-size: 1.2rem;
   transition: all 0.3s;
   margin-top: 0.5rem;
+
+  color: #f2c288;
   &__showLabel {
     transform: translateY(0);
     opacity: 1;

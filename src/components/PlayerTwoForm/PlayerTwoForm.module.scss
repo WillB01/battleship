@@ -5,19 +5,23 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100vh;
-  width: 100%;
+  padding: 2rem;
+  height: 9rem;
+  max-width: 30rem;
+  color: #fff !important;
+  background: none;
 
   button {
-    margin-top: 2rem;
+    margin-top: 5rem;
   }
 
   input {
     padding: 0.4rem 0;
+    background: #121b26 !important;
   }
 
   svg {
-    color: $c-gray-dark-1;
+    // color: $c-gray-dark-1;
     height: 9rem;
     width: 9rem;
     margin-bottom: 5rem;

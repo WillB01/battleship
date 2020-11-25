@@ -8,10 +8,11 @@
     position: fixed;
     top: 0;
     left: 0;
-    filter: contrast(0.5) brightness(0.5);
+    filter: contrast(0.5) brightness(0.3);
   }
 
   div {
-    color: $c-primary-blue-light;
+    // color: $c-primary-blue-light;
+    // color: #fff;
   }
 }

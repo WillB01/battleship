@@ -5,6 +5,7 @@ import styles from './Game.module.scss';
 import { GameContext } from '../../context/storeContext';
 import { socket } from '../../server/socket';
 import { getPlayerKey, checkIfWin } from '../../services/helpers';
+import { motion, transform } from 'framer-motion';
 
 import socketActions from '../../services/socketActions';
 import PrivateBoard from '../Boards/PrivateBoard/PrivateBoard';
@@ -69,30 +70,31 @@ const Game = () => {
     });
   };
 
-  const isBothReady = game.playerOne.ready && game.playerTwo.ready;
+  const showButtons =
+    !game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
+    privateBoard.isAllDropped;
 
   return (
     <>
-      <div className={styles.boardContainer}>
+      <motion.div
+        className={styles.boardContainer}
+        style={{ opacity: showButtons ? 0 : 1 }}
+      >
         {game.playerOne.ready && game.playerTwo.ready && <MyTurn />}
         <PrivateBoard reset={resetPrivateBoard} />
         {game[getPlayerKey(game.playerOne.id, socket.id)].ready && (
           <AttackBoard />
         )}
-      </div>
-      <Modal
-        isOpen={
-          !game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
-          privateBoard.isAllDropped
-        }
+      </motion.div>
+      <motion.div
+        className={`${styles.button__container} center`}
+        style={{ opacity: showButtons ? 1 : 0, x: showButtons ? 0 : 3000 }}
       >
-        <div className={styles.button__container}>
-          <button onClick={readyButtonHandler}>ready up</button>
-          <button onClick={() => setResetPrivateBoard(!resetPrivateBoard)}>
-            reset
-          </button>
-        </div>
-      </Modal>
+        <button onClick={readyButtonHandler}>ready up</button>
+        <button onClick={() => setResetPrivateBoard(!resetPrivateBoard)}>
+          reset
+        </button>
+      </motion.div>
     </>
   );
 };

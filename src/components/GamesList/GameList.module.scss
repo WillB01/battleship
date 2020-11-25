@@ -33,11 +33,7 @@
 
   // border: 0.5rem solid $c-gray-light--1;
 
-  background: linear-gradient(
-    90deg,
-    $c-gray-light--1 50%,
-    rgb(211, 211, 211) 50%
-  );
+  background: linear-gradient(90deg, #053e39 50%, #f2c288 50%);
   background-size: cover;
   object-fit: cover;
   width: 100%;
@@ -59,9 +55,11 @@
     transform: translateY(-0.1rem);
     width: 100%;
     overflow: scroll;
+    color: #f2c288 !important;
 
     &:first-child {
       grid-column: 3 / -1;
+      color: #054a44 !important;
     }
   }
 

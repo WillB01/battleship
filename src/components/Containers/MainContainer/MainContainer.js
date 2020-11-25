@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useReducer } from 'react';
 
 import GameContainer from '../GameContainer/GameContainer';
 import HostContainer from '../HostContainer/HostContainer';
+import SquareContent from '../../Boards/SquareContent/SquareContent';
 
 import { GameContext, HostContext } from '../../../context/storeContext';
 import { gameReducer, initialState } from '../../../reducers/gameReducer';
@@ -13,6 +14,7 @@ const MainContainer = ({ socket }) => {
 
   return (
     <>
+      {/* <SquareContent square={'HIT'} /> */}
       <HostContext.Provider value={{ hostState, hostDispatch }}>
         <HostContainer />
       </HostContext.Provider>
