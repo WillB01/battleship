@@ -133,7 +133,7 @@ const GamesList = () => {
   return (
     <>
       {isLoading ? (
-        <Loading>searching games</Loading>
+        <Loading></Loading>
       ) : (
         <div className={styles.gameList}>
           {games.length !== 0 &&

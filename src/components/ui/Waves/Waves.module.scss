@@ -1,0 +1,149 @@
+@import '../../../scss/variables';
+
+.water {
+  background: rgb(78, 78, 211);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  transform: rotate(180deg);
+
+  animation: waveOne 7s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+
+  clip-path: $wave;
+}
+
+.waterTwo {
+  // background: rgb(28, 28, 99);
+  transition: background-color ease 3s;
+  background: linear-gradient(
+    -45deg,
+    rgba(78, 78, 211, 1) 0%,
+    rgba(44, 44, 134, 1) 36%,
+    rgba(28, 28, 99, 1) 68%,
+    rgba(14, 14, 51, 1) 100%
+  );
+
+  background-size: 400% 400%;
+
+  width: 1000px;
+  height: 80%;
+  transform: rotate(180deg);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation: waveTwo 20s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  clip-path: $wave;
+}
+
+.smallWaveContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation: samllWavesContainer 30s cubic-bezier(0.445, 0.05, 0.55, 0.95)
+    infinite;
+
+  .smallWave {
+    position: absolute;
+    clip-path: $wave;
+    transform: rotate(180deg);
+    background: rgb(14, 14, 51);
+
+    animation: smallWaves 5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+  }
+
+  .waveOne {
+    width: 30%;
+    height: 100%;
+    left: 0;
+  }
+
+  .waveTwo {
+    width: 30%;
+    height: 100%;
+    left: 25%;
+  }
+
+  .waveThree {
+    width: 28%;
+    height: 100%;
+    right: 22%;
+  }
+
+  .waveFour {
+    width: 26%;
+    height: 100%;
+    right: 0;
+  }
+}
+
+@keyframes samllWavesContainer {
+  0% {
+    width: 800px;
+  }
+  50% {
+    width: 3000px;
+  }
+  100% {
+    width: 800px;
+  }
+}
+
+@keyframes waveTwo {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(180deg) translateX(0rem);
+    background-position: 0% 50%;
+  }
+
+  20% {
+    transform: translate3d(0, 12vh, 0) rotate(180deg) translateX(0rem);
+  }
+
+  40% {
+    transform: translate3d(0, 0, 0) rotate(180deg) translateX(0rem);
+    background-position: 0% 50%;
+  }
+
+  60% {
+    transform: translate3d(0, 0, 0) rotate(180deg) translateX(20rem);
+    background-position: 0% 50%;
+  }
+
+  80% {
+    transform: translate3d(0, 12vh, 0) rotate(180deg) translateX(0rem);
+    background-position: 100% 50%;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(180deg) translateX(0rem);
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes waveOne {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(180deg);
+  }
+  50% {
+    transform: translate3d(0, 10vh, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(180deg);
+  }
+}
+
+@keyframes smallWaves {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(180deg);
+  }
+  50% {
+    transform: translate3d(0, 10vh, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(180deg);
+  }
+}

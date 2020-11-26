@@ -1,17 +1,16 @@
+@import '../../scss/variables';
+
 .createRoom {
   position: relative;
   margin: 0 auto;
   max-width: 40rem;
   transition: all 0.3s;
   border-radius: 0.3rem;
-  // background: #f2f2f2;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 3rem 2rem;
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4rem 10rem 10rem 6rem;
-
-  // align-items: center;
+  grid-template-rows: 6rem 10rem 10rem 6rem;
   justify-items: center;
 
   width: 100%;
@@ -23,9 +22,6 @@
   input {
     width: 100%;
     height: 5rem;
-    // background: rgba(224, 224, 224, 0.349);
-    // border-bottom: none;
-    // padding: 1rem;
   }
 }
 
@@ -44,18 +40,9 @@
     width: 100%;
     height: 100%;
 
-    // justify-self: center;
     grid-column: 1 / -1;
     grid-row: 1 / span 1;
-    // align-self: center;
-
-    animation: moveRight 3s ease infinite;
-
-    svg {
-      width: 2rem;
-      height: 2rem;
-      object-fit: cover;
-    }
+    color: $c-primary-beige;
   }
 
   &__btn {
@@ -86,29 +73,4 @@
 .label {
   font-size: 1.2rem;
   transition: all 0.3s;
-}
-
-@keyframes moveRight {
-  0% {
-    transform: translateX(-10%);
-    color: #f2c288;
-  }
-
-  40% {
-    color: #f2955e;
-  }
-
-  60% {
-    color: #f27457;
-  }
-
-  80% {
-    color: #f26052;
-  }
-
-  100% {
-    transform: translateX(110%);
-
-    color: #a64444;
-  }
 }

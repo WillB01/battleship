@@ -1,14 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './PlayerTwoForm.module.scss';
 
-import useInput from '../hooks/useInput/useInput';
-
 import { isUserOnline } from '../../services/helpers';
 import { HostContext } from '../../context/storeContext';
 import { fetchGameById, activeGamesRef } from '../../database/crud';
 import { socket } from '../../server/socket';
 import { GiShipWheel } from 'react-icons/gi';
 import { inititalActiveGame } from '../../constants/constants';
+
+import useInput from '../hooks/useInput/useInput';
+import Waves from '../ui/Waves/Waves';
 
 const PlayerTwoForm = () => {
   const {
@@ -81,6 +82,9 @@ const PlayerTwoForm = () => {
       <GiShipWheel />
       {useNameInput}
       <button onClick={onClickHandler}>Let's go!</button>
+      <div className={[styles.wavesContainer, 'center'].join(' ')}>
+        <Waves />
+      </div>
     </div>
   );
 };

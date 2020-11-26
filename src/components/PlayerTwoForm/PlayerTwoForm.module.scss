@@ -13,11 +13,14 @@
 
   button {
     margin-top: 5rem;
+    z-index: 200;
   }
 
   input {
+    position: relative;
     padding: 0.4rem 0;
     background: #121b26 !important;
+    z-index: 200 !important;
   }
 
   svg {
@@ -30,4 +33,13 @@
     //   margin-bottom: 5rem;
     // }
   }
+}
+
+.wavesContainer {
+  position: relative;
+  width: 100%;
+  height: 30rem;
+  overflow: hidden;
+  filter: opacity(0.1);
+  z-index: 1;
 }

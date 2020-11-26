@@ -1,3 +1,5 @@
+@import '../../scss/variables';
+
 .container {
   // width: 100%;
   // display: grid;
@@ -12,13 +14,13 @@
   align-items: baseline;
   margin: 0 auto;
 
-  background: rgb(242, 128, 182);
-  background: linear-gradient(
-    90deg,
-    rgba(242, 128, 182, 1) 0%,
-    rgba(33, 101, 191, 1) 50%,
-    rgba(3, 166, 166, 1) 100%
-  );
+  // background: rgb(242, 128, 182);
+  // background: linear-gradient(
+  //   90deg,
+  //   $c-purple-light--2 0%,
+  //   $c-purple-dark--1 50%,
+  //   $c-purple-dark--2 100%
+  // );
 }
 
 .shipWrapper {
@@ -42,7 +44,7 @@
 .rotateBtn {
   cursor: pointer;
   outline: none;
-  color: #262626;
+  color: $c-primary-beige;
   margin-right: 2rem;
 
   transform: rotateX(0);

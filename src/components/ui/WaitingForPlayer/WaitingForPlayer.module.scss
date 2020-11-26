@@ -1,6 +1,11 @@
 @import '../../../scss//variables';
 
 .waitingForPlayer {
+  overflow: hidden;
+  background: #e91e63;
+  height: 20rem;
+  width: 20rem;
+  border-radius: 0.3rem;
   video {
     object-fit: cover;
     width: 100vw;
@@ -10,9 +15,12 @@
     left: 0;
     filter: contrast(0.5) brightness(0.3);
   }
+}
 
-  div {
-    // color: $c-primary-blue-light;
-    // color: #fff;
-  }
+.wavesContainer {
+  position: relative;
+  width: 50rem;
+  height: 50rem;
+  overflow: hidden;
+  filter: opacity(0.7);
 }

@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useContext, useState } from 'react';
+import styles from './WaitingForPlayer.module.scss';
 
 import { isUserOnline } from '../../../services/helpers';
 import { HostContext } from '../../../context/storeContext';
-import { gamesRef, fetchGameById } from '../../../database/crud';
+import { fetchGameById } from '../../../database/crud';
 import { socket } from '../../../server/socket';
-
-import styles from './WaitingForPlayer.module.scss';
-import video from '../../../assets/video/coverr-drone-shot-in-tierra-del-fuego-argentina-18-5280.mp4';
-
 import { GameLoading } from '../Loading/Loading';
+
+import Waves from '../../ui/Waves/Waves';
 
 const WaitingForPlayer = () => {
   const {
@@ -69,12 +68,12 @@ const WaitingForPlayer = () => {
   }, [socket.on]);
 
   return (
-    <div className={styles.waitingForPlayer}>
-      <video autoPlay muted loop id="myVideo">
-        <source src={video} type="video/mp4"></source>
-      </video>
-      <div className="center heading--1">
-        <GameLoading>{info}</GameLoading>
+    <div className={[styles.waitingForPlayer, 'center'].join(' ')}>
+      <div className="center heading--1">{info}</div>
+      <GameLoading></GameLoading>
+
+      <div className={[styles.wavesContainer, 'center'].join(' ')}>
+        <Waves />
       </div>
     </div>
   );

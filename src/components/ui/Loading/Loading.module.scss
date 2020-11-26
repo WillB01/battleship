@@ -1,9 +1,13 @@
+@import '../../../scss/variables';
+
 .loading {
   text-align: center;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  // overflow: hidden;
+  height: 60rem;
 
   svg {
     color: currentColor;
@@ -11,17 +15,18 @@
     width: 9rem;
     margin-top: 1.5rem;
     transform: rotate(359deg);
-
-    animation: rotate 1s infinite;
+    animation: rotate 10s infinite;
   }
 
   @keyframes rotate {
     0% {
-      transform: rotate(0deg);
+      transform: translate3d(0, 6vh, 0) rotate(0deg) translateX(0rem);
     }
-
+    50% {
+      transform: translate3d(0, 20vh, 0) rotate(-180deg) translateX(5vh);
+    }
     100% {
-      transform: rotate(360deg);
+      transform: translate3d(0, 6vh, 0) rotate(0deg) translateX(0rem);
     }
   }
 }
@@ -47,7 +52,7 @@
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #054a44;
+  background: $c-primary-beige;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds div:nth-child(1) {

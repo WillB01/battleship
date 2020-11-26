@@ -3,13 +3,12 @@ import styles from './CreateGame.module.scss';
 
 import { gamesRef } from '../../database/crud';
 import { HostContext } from '../../context/storeContext';
-import { boardBlueprint } from '../../services/boardBlueprint';
 import { Loading } from '../ui/Loading/Loading';
 import { socket } from '../../server/socket';
 import { initialHostGame } from '../../constants/constants';
 
 import useInput from '../hooks/useInput/useInput';
-import { RiShip2Line } from 'react-icons/ri';
+import Waves from '../ui/Waves/Waves';
 
 const CreateGame = () => {
   const [gameName, setGameName] = useState('');
@@ -94,7 +93,7 @@ const CreateGame = () => {
       ) : (
         <div className={`${styles.createRoom}`}>
           <div className={`${styles.item} ${styles.item__icon}`}>
-            <RiShip2Line />
+            <Waves />
           </div>
 
           <div className={`${styles.item} ${styles.item__1}`}>

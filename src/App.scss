@@ -6,8 +6,9 @@
   height: 100%;
   min-height: 100vh;
   padding: 1rem;
+  font-weight: 600;
 
-  color: #f2c288;
+  color: $c-primary-beige;
 
   @media screen and (max-width: $bp-m) {
     padding: 0;
@@ -18,12 +19,12 @@
     border: none;
     // padding: 1rem;
     background: none;
-    border-bottom: solid 0.3rem #f2c288;
+    border-bottom: solid 0.3rem $c-primary-beige;
     height: 5rem;
-    color: #f2c288 !important;
+    color: $c-primary-beige !important;
 
     &::placeholder {
-      color: #f2c288 !important;
+      color: $c-primary-beige !important;
     }
 
     &:focus,
@@ -33,10 +34,11 @@
   }
 
   button {
+    font-family: inherit;
     cursor: pointer;
     border: none;
-    font-size: 1.8rem;
-    padding: 1em 1.6em;
+    font-size: 2rem !important;
+    padding: 1rem 1rem;
     border-radius: 0.15em;
     text-transform: uppercase;
     // color: #ffffff;
@@ -51,8 +53,8 @@
     display: flex;
     justify-content: center;
     align-content: center;
-    background: #054a44;
-    color: #f2c288;
+    background: $c-purple-light--2;
+    color: $c-primary-beige;
     font-weight: 700;
     font-size: 1.6rem;
 
@@ -74,7 +76,7 @@
 
   .heading {
     text-align: center;
-    color: #f2c288;
+    color: $c-primary-beige;
 
     &--1 {
       text-transform: uppercase;
@@ -111,23 +113,23 @@
   }
 
   .blue {
-    background: blue;
+    background: $c-purple-light--1;
   }
 
   .white {
-    background: white;
+    background: $c-purple-light--2;
   }
 
   .orange {
-    background: orange;
+    background: $c-purple-dark--1;
   }
 
   .green {
-    background: green;
+    background: $c-purple-dark--2;
   }
 
   .purple {
-    background: purple;
+    background: $c-purple-light--3;
   }
 
   @keyframes shrink {
@@ -152,4 +154,3 @@
     }
   }
 }
-
