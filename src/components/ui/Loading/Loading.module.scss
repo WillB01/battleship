@@ -1,36 +1,5 @@
 @import '../../../scss/variables';
 
-.loading {
-  text-align: center;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  // overflow: hidden;
-  height: 60rem;
-
-  svg {
-    color: currentColor;
-    height: 9rem;
-    width: 9rem;
-    margin-top: 1.5rem;
-    transform: rotate(359deg);
-    animation: rotate 10s infinite;
-  }
-
-  @keyframes rotate {
-    0% {
-      transform: translate3d(0, 6vh, 0) rotate(0deg) translateX(0rem);
-    }
-    50% {
-      transform: translate3d(0, 20vh, 0) rotate(-180deg) translateX(5vh);
-    }
-    100% {
-      transform: translate3d(0, 6vh, 0) rotate(0deg) translateX(0rem);
-    }
-  }
-}
-
 .container {
   position: relative;
   margin: 0 auto;

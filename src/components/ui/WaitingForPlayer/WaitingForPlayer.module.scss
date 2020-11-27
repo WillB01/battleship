@@ -2,9 +2,8 @@
 
 .waitingForPlayer {
   overflow: hidden;
-  background: #e91e63;
-  height: 20rem;
-  width: 20rem;
+  height: 100%;
+  width: 100%;
   border-radius: 0.3rem;
   video {
     object-fit: cover;
@@ -23,4 +22,37 @@
   height: 50rem;
   overflow: hidden;
   filter: opacity(0.7);
+}
+
+.wheel {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // overflow: hidden;
+  // transform: translate3d(0, 0, 0) rotateX(-40deg) rotateY(-40deg);
+  svg {
+    color: currentColor;
+    height: 9rem;
+    width: 9rem;
+    margin-top: 1.5rem;
+    animation: rotate linear 1s infinite;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate (0);
+    }
+
+    50% {
+    }
+
+    100% {
+      transform: rotate(90deg);
+    }
+  }
 }

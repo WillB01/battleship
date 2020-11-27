@@ -5,7 +5,8 @@ import { isUserOnline } from '../../../services/helpers';
 import { HostContext } from '../../../context/storeContext';
 import { fetchGameById } from '../../../database/crud';
 import { socket } from '../../../server/socket';
-import { GameLoading } from '../Loading/Loading';
+
+import { GiShipWheel } from 'react-icons/gi';
 
 import Waves from '../../ui/Waves/Waves';
 
@@ -70,10 +71,11 @@ const WaitingForPlayer = () => {
   return (
     <div className={[styles.waitingForPlayer, 'center'].join(' ')}>
       <div className="center heading--1">{info}</div>
-      <GameLoading></GameLoading>
-
       <div className={[styles.wavesContainer, 'center'].join(' ')}>
         <Waves />
+        <div className={styles.wheel}>
+          <GiShipWheel />
+        </div>
       </div>
     </div>
   );
