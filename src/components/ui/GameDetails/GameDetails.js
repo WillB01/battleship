@@ -11,16 +11,13 @@ const GameDetails = () => {
 
   return (
     <div className={styles.gameDetails}>
-      <div className={`${styles.item} ${styles.item__1}`}>
-        game: {game.name}
-      </div>
+      <div className={`${styles.item} ${styles.item__1}`}>{game.name}</div>
       <div className={`${styles.item} ${styles.item__2}`}>
-        <div>player one: {game.playerOne.name}</div>
-        <div>{game.playerTurn === 'PLAYER-ONE' && <p>my turn</p>}</div>
+        <div>{game.playerOne.name}</div>
       </div>
+      <div>vs</div>
       <div className={`${styles.item} ${styles.item__3}`}>
-        <div>player two: {game.playerTwo.name}</div>
-        <div>{game.playerTurn === 'PLAYER-TWO' && <p>my turn</p>}</div>
+        <div>{game.playerTwo.name}</div>
       </div>
     </div>
   );

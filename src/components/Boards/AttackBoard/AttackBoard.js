@@ -197,7 +197,7 @@ const AttackBoard = () => {
                     : null
                 }
               >
-                <SquareContent square={square} />
+                <SquareContent square={square} type={'attack'} />
                 {/* {rednerSquare(square)} */}
                 {/* <div className={`${styles.square__circle}`}>
                   {/* {square === 'MISS' || square === 'SUNK' ? square : ''}

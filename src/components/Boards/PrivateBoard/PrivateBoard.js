@@ -328,7 +328,7 @@ const RenderBoard = ({ addShipLocation, reset }) => {
                   ref={el => (refs[i][ii].current = el)}
                   data-pos={[i, ii]}
                 >
-                  <SquareContent square={square} />
+                  <SquareContent square={square} type={'private'} />
                   {/* <motion.div className={`${styles.square__circle}`}>
                     {square === 'MISS' && 'sometinh'}
                     {square === 'SUNK' && 'something'}

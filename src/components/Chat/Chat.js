@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { socket } from '../../server/socket';
+import { motion } from 'framer-motion';
 
 import useInput from '../hooks/useInput/useInput';
 import styles from './Chat.module.scss';
@@ -8,6 +9,7 @@ import styles from './Chat.module.scss';
 const Chat = ({ type, gameId }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([{}]);
+  const [showChat, setShowChat] = useState(true);
 
   useEffect(() => {
     socket.on('sendMessageHandler', data => {
@@ -35,37 +37,43 @@ const Chat = ({ type, gameId }) => {
       gameId,
     });
   };
-  return (
-    <div className={styles.chat}>
-      <div className={styles.messages}>
-        {messages.length !== 1 &&
-          messages.map((message, i) => {
-            return (
-              <div key={i} className={styles.message}>
-                <div
-                  className={`${
-                    message.id === socket.id
-                      ? styles.message__self
-                      : styles.message__other
-                  }`}
-                >
-                  {message.message && (
-                    <div className={styles.message__text}>
-                      {message.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-      </div>
 
-      <div className={styles.inputContainer}>
-        {useInput(onClickHandler, setInput, input, 'message', '', true)}
-        <div className={styles.button}>
-          <i onClick={onClickHandler} className="far fa-paper-plane"></i>
+  const showChatHandler = () => {
+    console.log('object');
+  };
+  return (
+    <div>
+      <motion.div className={styles.chat}>
+        <div className={styles.messages}>
+          {messages.length !== 1 &&
+            messages.map((message, i) => {
+              return (
+                <div key={i} className={styles.message}>
+                  <div
+                    className={`${
+                      message.id === socket.id
+                        ? styles.message__self
+                        : styles.message__other
+                    }`}
+                  >
+                    {message.message && (
+                      <div className={styles.message__text}>
+                        {message.message}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
-      </div>
+
+        <div className={styles.inputContainer}>
+          {useInput(onClickHandler, setInput, input, 'message', '', true)}
+          <div className={styles.button}>
+            <i onClick={onClickHandler} className="far fa-paper-plane"></i>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

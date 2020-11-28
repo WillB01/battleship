@@ -78,7 +78,7 @@ const Ship = ({
         rotate: [90, 0],
       },
       row: {
-        background: '#054a44',
+        background: '#343479',
         zIndex: 20,
         y: 0,
         x: 0,

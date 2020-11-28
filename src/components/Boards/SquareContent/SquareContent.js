@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './SquareContent.module.scss';
 
-const SquareContent = ({ square }) => {
+const SquareContent = ({ square, type }) => {
   const rednerSquare = () => {
     if (square === 'HIT') {
       return (
@@ -20,7 +20,13 @@ const SquareContent = ({ square }) => {
       return <div className={styles.sunk}></div>;
     }
 
-    return <div className={`${styles.circle}`}></div>;
+    return (
+      <div
+        className={`${styles.circle} ${
+          type === 'private' ? styles.private : styles.attack
+        }`}
+      ></div>
+    );
   };
   return <>{rednerSquare()}</>;
 };

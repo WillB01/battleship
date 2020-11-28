@@ -4,6 +4,6 @@
 
   display: grid;
   grid-template-columns: repeat(12, minmax(4rem, 1fr));
-  grid-template-rows: 20rem 40rem;
+  grid-template-rows: 10rem 40rem;
   gap: 2rem;
 }

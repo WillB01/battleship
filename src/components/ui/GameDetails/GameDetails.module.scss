@@ -1,16 +1,22 @@
 .gameDetails {
-  background: red;
   padding: 2rem;
-  grid-column: 3 / span 5;
+  grid-column: 3 / span 8;
   grid-row: 1 / span 1;
 
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
   align-items: center;
+
+  text-transform: uppercase;
+  font-weight: 700;
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 .item {
+  padding: 1rem;
   &__1 {
     grid-column: 1 / -1;
   }
