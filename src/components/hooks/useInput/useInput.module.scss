@@ -3,6 +3,7 @@
 }
 
 .input {
+  z-index: 200 !important;
 }
 
 .label {
@@ -16,6 +17,7 @@
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
+    z-index: 200 !important;
   }
 
   &__hideLabel {

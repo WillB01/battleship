@@ -79,7 +79,6 @@ const PlayerTwoForm = () => {
 
   return (
     <div className={`${styles.playerTwoForm} center`}>
-      <GiShipWheel />
       {useNameInput}
       <button onClick={onClickHandler}>Let's go!</button>
       <div className={[styles.wavesContainer, 'center'].join(' ')}>

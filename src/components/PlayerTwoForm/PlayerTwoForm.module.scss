@@ -6,10 +6,11 @@
   justify-content: center;
   flex-direction: column;
   padding: 2rem;
-  height: 9rem;
-  max-width: 30rem;
-  color: #fff !important;
+
   background: none;
+
+  width: 50rem;
+  height: 50rem;
 
   button {
     margin-top: 5rem;
@@ -19,8 +20,6 @@
   input {
     position: relative;
     padding: 0.4rem 0;
-    background: #121b26 !important;
-    z-index: 200 !important;
   }
 
   svg {
