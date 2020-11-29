@@ -34,6 +34,7 @@
     border: 0.2rem solid transparent;
     content: '';
     border-radius: 50%;
+    position: absolute;
 
     animation: test 1.5s 0.3s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
     background: #f2c288;
@@ -145,6 +146,7 @@
 .sunk {
   background: #f2c288;
   animation: sunkFrame 0.5s cubic-bezier(0.32, 2, 0.55, 0.27) forwards;
+  border-radius: $ship-b-radius;
 }
 
 @keyframes sunkFrame {

@@ -138,14 +138,6 @@ const AttackBoard = () => {
     );
   };
 
-  const rednerSquare = square => {
-    if (square === 'HIT') {
-      return <div className={styles.hit}></div>;
-    }
-
-    return <div className={`${styles.square__circle}`}></div>;
-  };
-
   return (
     <>
       <div className={styles.playerBoard}>
@@ -158,7 +150,7 @@ const AttackBoard = () => {
             >
               <div className={boardStyles.heading__y}>
                 {item}
-                <Cube
+                {/* <Cube
                   color={[
                     '#F2A663',
                     '#F2955E',
@@ -167,7 +159,7 @@ const AttackBoard = () => {
                     '#A64444',
                     '#f2c288',
                   ]}
-                />
+                /> */}
               </div>
             </div>
           );

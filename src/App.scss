@@ -102,6 +102,7 @@
 
     // animation: shrink 0.2s cubic-bezier(0.22, 0.68, 0, 1.71) 0.2s forwards;
     overflow: hidden;
+    border-radius: $ship-b-radius;
 
     animation: float 6s ease-in-out infinite;
 

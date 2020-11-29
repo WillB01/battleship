@@ -1,3 +1,13 @@
+@import '../../scss/variables.scss';
+
+@mixin center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+}
+
 .chat {
   border-radius: 0.3rem;
   background: #2d2d2d2d;
@@ -49,6 +59,84 @@
 
 .inputContainer:focus-within {
   width: 100%;
+}
+
+.chatIcon {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border: 0.4rem solid $c-primary-beige;
+  border-radius: 1.5rem 1.5rem 1.5rem 0;
+  cursor: pointer;
+  transition: all 1s cubic-bezier(0.32, 2, 0.55, 0.27);
+
+  &:hover {
+    border-radius: 1.5rem 0 1.5rem 1.5rem;
+    background: $c-purple-light--2;
+  }
+}
+
+.plus {
+  position: relative;
+
+  &::before {
+    @include center;
+    transition: all 0.3s cubic-bezier(0.57, 0.21, 0.69, 3.25);
+
+    content: '';
+    width: 0.5rem;
+    height: 2rem;
+    background: $c-primary-beige;
+    border-radius: 1rem;
+  }
+
+  &::after {
+    @include center;
+    transition: all 0.3s 0.2s cubic-bezier(0.17, 0.67, 1, 1.23);
+
+    content: '';
+    width: 2rem;
+    height: 0.5rem;
+    background: $c-primary-beige;
+    border-radius: 1rem;
+  }
+}
+
+.cross {
+  position: relative;
+
+  &::before {
+    @include center;
+    transition: all 0.3s cubic-bezier(0.57, 0.21, 0.69, 3.25);
+    transform: translate(-50%, -50%) rotate(-45deg);
+
+    content: '';
+    width: 0.5rem;
+    height: 2rem;
+    background: $c-primary-beige;
+    border-radius: 1rem;
+  }
+
+  &::after {
+    @include center;
+    transition: all 0.3s 0.2s cubic-bezier(0.17, 0.67, 1, 1.23);
+
+    transform: translate(-50%, -50%) rotate(-45deg);
+
+    content: '';
+    width: 2rem;
+    height: 0.5rem;
+    background: $c-primary-beige;
+    border-radius: 1rem;
+  }
+}
+
+.buttonContainer {
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin-top: 2rem;
 }
 
 .button {

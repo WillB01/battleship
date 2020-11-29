@@ -292,7 +292,7 @@ const RenderBoard = ({ addShipLocation, reset }) => {
                 <div className={boardStyles.heading__y}>
                   {item}
                   {/* <div className={boardStyles.lineY}></div> */}
-                  <Cube
+                  {/* <Cube
                     color={[
                       '#F280B6',
                       '#F2CEE2',
@@ -301,7 +301,7 @@ const RenderBoard = ({ addShipLocation, reset }) => {
                       '#204359',
                       '#03A6A6',
                     ]}
-                  />
+                  /> */}
                 </div>
               </div>
             );

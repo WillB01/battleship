@@ -8,10 +8,11 @@ import GameDetails from '../../ui/GameDetails/GameDetails';
 import { fetchActiveGameById } from '../../../database/crud';
 import { GameContext } from '../../../context/storeContext';
 import { socket } from '../../../server/socket';
+import { getPlayerKey, checkIfWin } from '../../../services/helpers';
 
 const GameContainer = ({ gameId }) => {
   const {
-    state: { game },
+    state: { game, privateBoard },
     dispatch,
   } = useContext(GameContext);
 
@@ -34,13 +35,17 @@ const GameContainer = ({ gameId }) => {
       });
   }, []);
 
+  const showButtons =
+    !game[getPlayerKey(game.playerOne.id, socket.id)].ready &&
+    privateBoard.isAllDropped;
+
   return (
     <>
       <div className={styles.gameContainer}>
-        <GameDetails />
+        {!showButtons && <GameDetails />}
         <Game socket={socket} />
       </div>
-      <Chat type={'private'} gameId={gameId} />
+      {!showButtons && <Chat type={'private'} gameId={gameId} />}
     </>
   );
 };

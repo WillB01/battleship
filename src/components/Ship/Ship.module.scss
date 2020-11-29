@@ -1,26 +1,12 @@
 @import '../../scss/variables';
 
 .container {
-  // width: 100%;
-  // display: grid;
-  // grid-template-columns: 5rem 1fr;
-  // justify-items: baseline;
-  // align-items: baseline;
-
   width: 60%;
   display: grid;
   grid-template-columns: 5rem 1fr;
   justify-items: baseline;
   align-items: baseline;
   margin: 0 auto;
-
-  // background: rgb(242, 128, 182);
-  // background: linear-gradient(
-  //   90deg,
-  //   $c-purple-light--2 0%,
-  //   $c-purple-dark--1 50%,
-  //   $c-purple-dark--2 100%
-  // );
 }
 
 .shipWrapper {
@@ -29,15 +15,9 @@
 
 .ship {
   &__square {
-    // width: 3.5rem;
-    // height: 3.5rem;
-    // border-radius: 50%;
-
-    width: 2.5rem;
-    height: 2.5rem;
-
-    // margin-right: 0.1rem;
-    // margin-bottom: 0.2rem;
+    border-radius: $ship-b-radius;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 }
 

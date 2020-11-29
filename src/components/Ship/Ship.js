@@ -93,14 +93,12 @@ const Ship = ({
 
   const rotateButtonVariants = {
     column: {
-      // background: 'red',
       transition: {
         duration: 0.1,
       },
       rotate: [0, 90],
     },
     row: {
-      // background: 'blue',
       transition: {
         duration: 0.1,
       },
@@ -114,8 +112,7 @@ const Ship = ({
     const blocks = [];
     for (let i = 0; i < length; i++) {
       if (i !== 0) {
-        // xCounter += 35;
-        xCounter += 25;
+        xCounter += 35;
       }
 
       blocks.push([i, { pos: xCounter }]);
